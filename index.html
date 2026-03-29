@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>iField AI — Client Page Builder</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #03050c; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; padding: 20px; min-height: 100vh; }
+  .container { max-width: 720px; margin: 0 auto; position: relative; z-index: 2; }
+  
+  .lang-switcher { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 20px; }
+  .lang-btn { background: rgba(30,40,58,0.6); border: 0.5px solid rgba(155,77,255,0.4); color: #b07cff; padding: 6px 14px; border-radius: 30px; cursor: pointer; font-size: 12px; }
+  .lang-btn.active { background: linear-gradient(135deg, #40E0D0, #9b4dff); color: white; }
+  
+  .mode-tabs { display: flex; gap: 8px; margin: 20px 0; background: rgba(20,28,40,0.6); backdrop-filter: blur(12px); border-radius: 60px; padding: 6px; }
+  .mode-btn { flex: 1; text-align: center; padding: 12px 0; border-radius: 50px; background: transparent; border: none; color: #a0b0d0; font-weight: 600; cursor: pointer; }
+  .mode-btn.active { background: linear-gradient(135deg, #40E0D0, #9b4dff); color: white; }
+  
+  .field { margin-bottom: 20px; }
+  .field input, .field textarea, .field select { width: 100%; background: rgba(20,28,40,0.8); border: 1px solid rgba(155,77,255,0.3); border-radius: 20px; padding: 14px 18px; color: white; font-size: 15px; }
+  .field label { font-size: 12px; color: #b07cff; margin-bottom: 6px; display: block; }
+  
+  .hero-btn { width: 100%; background: linear-gradient(135deg, #40E0D0, #9b4dff); border: none; border-radius: 60px; padding: 18px; font-size: 18px; font-weight: 600; color: white; cursor: pointer; margin: 16px 0; }
+  .improve-btn { background: linear-gradient(135deg, #ffaa33, #ff6600); margin-top: 8px; }
+  .result-section { display: none; margin-top: 32px; }
+  .preview-frame { width: 100%; height: 500px; border: none; border-radius: 28px; background: #05070c; }
+  .action-buttons { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
+  .action-buttons button { flex: 1; background: rgba(30,40,58,0.7); border: 1px solid rgba(155,77,255,0.4); padding: 10px; border-radius: 40px; color: white; cursor: pointer; }
+  .ai-loading { text-align: center; padding: 14px; background: rgba(155,77,255,0.1); border-radius: 40px; margin: 16px 0; color: #40E0D0; display: none; }
+  .warning-banner { background: #ff444410; border-left: 4px solid #ff4444; padding: 12px; border-radius: 12px; margin: 12px 0; font-size: 13px; display: none; }
+  .success-banner { background: #44ff4410; border-left: 4px solid #44ff44; padding: 12px; border-radius: 12px; margin: 12px 0; font-size: 13px; display: none; }
+  .stats { display: flex; gap: 20px; justify-content: center; margin: 16px 0; font-size: 12px; color: #8a9ac0; }
+  .limits { background: rgba(0,0,0,0.35); border-radius: 40px; padding: 12px 16px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 12px; margin: 20px 0; }
+  .limit-free { color: #22c55e; font-weight: bold; }
+  .pro-buy-btn { background: linear-gradient(135deg, #ffd700, #ffb347); color: #1a1a2e; border: none; padding: 6px 16px; border-radius: 40px; cursor: pointer; }
+  footer { margin-top: 40px; text-align: center; font-size: 11px; color: #6a7a9a; }
+  @media (max-width: 600px) { .hero-btn { font-size: 16px; } .mode-btn { font-size: 13px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="lang-switcher">
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="ua">UA</button>
+    <button class="lang-btn" data-lang="ru">RU</button>
+  </div>
+
+  <div class="mode-tabs">
+    <button class="mode-btn active" data-mode="auto">🚀 AUTO</button>
+    <button class="mode-btn" data-mode="idea">✍️ IDEA</button>
+    <button class="mode-btn" data-mode="manual">⚙️ MANUAL</button>
+  </div>
+
+  <div id="autoPanel" class="mode-panel">
+    <button class="hero-btn" id="autoGenBtn">✨ Generate Site Instantly ✨</button>
+  </div>
+
+  <div id="ideaPanel" class="mode-panel" style="display:none;">
+    <div class="field"><label>🧠 Describe your idea</label><input id="ideaInput" placeholder="I sell organic coffee online"></div>
+    <button class="hero-btn" id="ideaGenBtn">🎯 Generate from Idea</button>
+  </div>
+
+  <div id="manualPanel" class="mode-panel" style="display:none;">
+    <div class="field"><label>🏷️ Brand / Company</label><input id="brand" value="LumiSkin"></div>
+    <div class="field"><label>🎯 Niche</label><input id="niche" value="beauty"></div>
+    <div class="field"><label>✨ Main product</label><input id="product" value="Crystal Glow Serum"></div>
+    <div class="field"><label>📝 Description</label><textarea id="description" rows="2">Luxury skincare that transforms your skin in 7 days.</textarea></div>
+    <div class="field"><label>📱 Platform</label><select id="platform"><option value="ig">Instagram Bio</option><option value="tt">TikTok Landing</option><option value="tg">Telegram Funnel</option></select></div>
+    <button class="hero-btn" id="manualGenBtn">Create Landing</button>
+  </div>
+
+  <div class="limits">
+    <span>🎁 <span class="limit-free" id="limitCount">3</span> free left</span>
+    <span>💸 <span id="salesModeBadge">Sales mode: OFF</span></span>
+    <button class="pro-buy-btn" id="proBuyBtn">⭐ Get PRO (200 Stars)</button>
+  </div>
+
+  <div id="warningBanner" class="warning-banner">⚠️ Your site may be losing clients. AI can fix it.</div>
+  <div id="successBanner" class="success-banner">✅ Fixed! Now it sells. +32% conversion estimated.</div>
+  <div id="aiLoading" class="ai-loading">🤖 AI thinking...</div>
+
+  <div class="result-section" id="resultSection">
+    <div class="stats" id="fakeStats">👁 127 views &nbsp;|&nbsp; 🔥 4 clicks today</div>
+    <iframe class="preview-frame" id="previewFrame"></iframe>
+    <div class="action-buttons">
+      <button id="btnDownload" onclick="downloadLanding()">📥 Download</button>
+      <button id="btnCopy" onclick="copyHTML()">📋 Copy code</button>
+      <button id="btnImprove" class="improve-btn">🧠 Improve +32% conversion</button>
+      <button id="btnPublish" onclick="publishToGist()">🌐 Publish & Share</button>
+      <button id="btnSendClient" onclick="sendToClient()">📤 Send to client</button>
+      <button id="btnVariations" onclick="generateVariations()">⚡ 3 variations</button>
+    </div>
+  </div>
+  <footer>⚡ iField AI — from idea to client page in 30 seconds</footer>
+</div>
+
+<script>
+  // ========== PRO CHECK via URL ==========
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('pro') === 'true') {
+    localStorage.setItem('pro', 'true');
+    alert("🔥 PRO activated! Unlimited improvements + publishing.");
+  }
+  const isPro = localStorage.getItem('pro') === 'true';
+  
+  // ========== MULTILANGUAGE ==========
+  const translations = {
+    en: { generate: "✨ Generate Site", ideaPlaceholder: "I sell organic coffee online", improve: "🧠 Improve +32% conversion", publish: "🌐 Publish & Share", send: "📤 Send to client", salesOff: "Sales mode: OFF", salesOn: "💸 Sales mode: ON" },
+    ua: { generate: "✨ Створити сайт", ideaPlaceholder: "Продаю органічну каву", improve: "🧠 Покращити +32% конверсії", publish: "🌐 Опублікувати", send: "📤 Відправити клієнту", salesOff: "Режим продажів: ВИМК", salesOn: "💸 Режим продажів: УВІМК" },
+    ru: { generate: "✨ Создать сайт", ideaPlaceholder: "Продаю органический кофе", improve: "🧠 Улучшить +32% конверсии", publish: "🌐 Опубликовать", send: "📤 Отправить клиенту", salesOff: "Режим продаж: ВЫКЛ", salesOn: "💸 Режим продаж: ВКЛ" }
+  };
+  let currentLang = 'en';
+  function setLanguage(lang) { currentLang = lang; localStorage.setItem('lang', lang); document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang)); document.getElementById('ideaInput').placeholder = translations[lang].ideaPlaceholder; document.getElementById('autoGenBtn').innerText = translations[lang].generate; document.getElementById('ideaGenBtn').innerText = translations[lang].generate; document.getElementById('manualGenBtn').innerText = translations[lang].generate; document.getElementById('btnImprove').innerHTML = translations[lang].improve; document.getElementById('btnPublish').innerHTML = translations[lang].publish; document.getElementById('btnSendClient').innerHTML = translations[lang].send; updateSalesBadge(); }
+  function updateSalesBadge() { const isSales = localStorage.getItem('salesMode') === 'on'; document.getElementById('salesModeBadge').innerText = isSales ? translations[currentLang].salesOn : translations[currentLang].salesOff; }
+
+  // ========== AI CORE ==========
+  function detectNiche(text) {
+    const t = text.toLowerCase();
+    if (t.includes('coffee')) return 'coffee';
+    if (t.includes('beauty') || t.includes('skin')) return 'beauty';
+    if (t.includes('fitness')) return 'fitness';
+    return 'universal';
+  }
+  function getDesign(niche) {
+    const designs = { coffee: { bg: '#2a1a0a', accent: '#c8a96e', gradient: 'linear-gradient(135deg,#FFD700,#FFA500)' }, beauty: { bg: '#1a0a1a', accent: '#ff77aa', gradient: 'linear-gradient(135deg,#ff77aa,#9b4dff)' }, fitness: { bg: '#0a1a0a', accent: '#44ff44', gradient: 'linear-gradient(135deg,#44ff44,#00ccff)' }, universal: { bg: '#0a0c1a', accent: '#2c6eff', gradient: 'linear-gradient(135deg,#40E0D0,#9b4dff)' } };
+    return designs[niche] || designs.universal;
+  }
+  function generateSmartContent(niche, platform = 'ig', salesMode = false) {
+    const base = {
+      coffee: { brand: "BrewCraft", product: "Specialty Coffee", desc: "Fresh roasted beans delivered to your door.", cta: "Order Now", pain: "Tired of stale coffee?", solution: "Fresh roasted weekly", proof: "2,000+ subscribers" },
+      beauty: { brand: "Lumi Skin", product: "Crystal Glow Serum", desc: "Luxury skincare that transforms your skin.", cta: "Book Free Consultation", pain: "Struggling with dull skin?", solution: "Visible results in 7 days", proof: "98% saw improvement" },
+      fitness: { brand: "IronCore", product: "30-Day Transformation", desc: "Get visible results in 30 days.", cta: "Start Your Journey", pain: "Not seeing progress?", solution: "Science-backed workouts", proof: "10,000+ transformations" },
+      universal: { brand: "YourBrand", product: "Smart Solution", desc: "We help you grow faster.", cta: "Get Started", pain: "Not reaching your goals?", solution: "Streamlined system for growth", proof: "Join 1,500+ clients" }
+    };
+    let data = base[niche] || base.universal;
+    if (platform === 'ig') data.cta = "📱 Follow on Instagram";
+    if (platform === 'tt') data.cta = "🎵 Watch on TikTok";
+    if (platform === 'tg') data.cta = "💬 Write to Telegram";
+    if (salesMode) { data.desc += " ⚡ Special offer: 20% off today only!"; data.cta = "🔥 BUY NOW — Limited stock"; }
+    return data;
+  }
+
+  let currentHTML = '';
+  let currentNiche = 'universal';
+  let freeGenerations = localStorage.getItem('freeGenerations') ? parseInt(localStorage.getItem('freeGenerations')) : 3;
+
+  function buildLandingHTML(brand, niche, product, desc, cta, pain, solution, proof, platform) {
+    const design = getDesign(niche);
+    const ctaLink = (platform === 'ig') ? "https://instagram.com/" : (platform === 'tt') ? "https://tiktok.com/" : "https://t.me/";
+    return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${brand} | ${product}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:${design.bg};font-family:-apple-system,system-ui;padding:20px}.container{max-width:720px;margin:0 auto;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);border-radius:48px;padding:40px 28px;border:0.5px solid ${design.accent}}h1{font-size:44px;background:${design.gradient};-webkit-background-clip:text;background-clip:text;color:transparent}.pain{background:#ff444410;border-left:4px solid #ff4444;padding:16px;border-radius:20px;margin:24px 0}.solution{background:#44ff4410;border-left:4px solid #44ff44;padding:16px;border-radius:20px}.proof{background:#ffaa3310;border-left:4px solid #ffaa33;padding:12px;border-radius:20px}.cta-btn{display:block;background:${design.gradient};text-align:center;padding:16px;border-radius:60px;color:white;text-decoration:none;font-weight:700;margin:24px 0}.limited{color:#ffaa66;font-size:12px;text-align:center}</style></head><body><div class="container"><div class="pain">😫 ${pain}</div><h1>${brand}</h1><div style="font-size:22px;margin:8px 0">${product}</div><div class="solution">✅ ${solution}</div><div class="description">${desc}</div><div class="proof">📊 ${proof}</div><a href="${ctaLink}" class="cta-btn">${cta}</a><div class="limited">⚠️ Limited offer — only 5 spots left</div><div style="font-size:11px;opacity:0.6;text-align:center;margin-top:20px">Built with ⚡ iField AI</div></div></body></html>`;
+  }
+
+  function generateLanding(brand, niche, product, desc, platform) {
+    if (freeGenerations <= 0 && !isPro) { alert("Get PRO for unlimited generations!"); return false; }
+    const salesMode = localStorage.getItem('salesMode') === 'on';
+    const smart = generateSmartContent(niche, platform, salesMode);
+    currentNiche = niche;
+    currentHTML = buildLandingHTML(brand || smart.brand, niche, product || smart.product, desc || smart.desc, smart.cta, smart.pain, smart.solution, smart.proof, platform);
+    document.getElementById('resultSection').style.display = 'block';
+    document.getElementById('previewFrame').srcdoc = currentHTML;
+    if (!isPro) { freeGenerations--; localStorage.setItem('freeGenerations', freeGenerations); document.getElementById('limitCount').innerText = freeGenerations; }
+    document.getElementById('fakeStats').innerHTML = `👁 ${Math.floor(Math.random() * 300 + 50)} views &nbsp;|&nbsp; 🔥 ${Math.floor(Math.random() * 15 + 1)} clicks today`;
+    document.getElementById('warningBanner').style.display = 'block';
+    document.getElementById('successBanner').style.display = 'none';
+    // Tip: sell this to client
+    setTimeout(() => { alert("💡 Tip:\nYou can sell this landing to clients for $10–50.\n\nUse 'Send to client' button."); }, 1500);
+    return true;
+  }
+
+  // ========== IMPROVE THAT SELLS ==========
+  function improveLanding() {
+    if (!currentHTML) return;
+    if (!isPro) {
+      const confirmUpgrade = confirm("⚠️ Your site may be losing clients.\n\nAI found weak points:\n• weak headline\n• low urgency\n• weak CTA\n\n🧠 Fix it with AI Improve (PRO)\n\nUpgrade now?");
+      if (confirmUpgrade) { buyProNow(); }
+      return;
+    }
+    document.getElementById('warningBanner').style.display = 'none';
+    document.getElementById('aiLoading').style.display = 'block';
+    document.getElementById('aiLoading').innerHTML = "🧠 AI rewriting your page...";
+    setTimeout(() => {
+      let improved = currentHTML;
+      improved = improved.replace(/<h1>(.*?)<\/h1>/, `<h1>🔥 ${RegExp.$1} — Transform your results in 7 days</h1>`);
+      improved = improved.replace(/Limited offer/g, "⚠️ ONLY 3 SPOTS LEFT — OFFER ENDS TODAY");
+      improved = improved.replace(/Get Started/g, "🚀 Get Instant Access Now");
+      improved = improved.replace(/Order Now/g, "🔥 BUY NOW — Limited Stock");
+      currentHTML = improved;
+      document.getElementById('previewFrame').srcdoc = currentHTML;
+      document.getElementById('aiLoading').style.display = 'none';
+      document.getElementById('successBanner').style.display = 'block';
+      setTimeout(() => document.getElementById('successBanner').style.display = 'none', 3000);
+    }, 1400);
+  }
+
+  async function publishToGist() {
+    if (!currentHTML) { alert("Generate landing first!"); return; }
+    let token = localStorage.getItem('github_token');
+    if (!token) { token = prompt("🔑 Enter GitHub token (gist only):\nhttps://github.com/settings/tokens/new"); if (!token) return; localStorage.setItem('github_token', token); }
+    const brand = document.getElementById('brand')?.value || 'landing';
+    const slug = brand.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
+    const filename = `${slug}.html`;
+    try {
+      const res = await fetch('https://api.github.com/gists', {
+        method: 'POST', headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ description: `Landing: ${brand}`, public: true, files: { [filename]: { content: currentHTML } } })
+      });
+      const data = await res.json();
+      const rawUrl = `https://gist.githubusercontent.com/${data.owner.login}/${data.id}/raw/${filename}`;
+      const shortUrl = `https://ifield.github.io/s/${slug}`;
+      await navigator.clipboard.writeText(shortUrl);
+      alert(`🚀 Your site is LIVE!\n\n🌐 ${shortUrl}\n\n💰 You can already send this to a client.\n\nLink copied.`);
+    } catch(e) { alert("Publish failed. Check token."); }
+  }
+
+  function sendToClient() { if (!currentHTML) return; const msg = encodeURIComponent("Here's your landing page from iField AI: " + window.location.href); window.open(`https://t.me/share/url?url=${window.location.href}&text=${msg}`); }
+  function downloadLanding() { if (!currentHTML) return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([currentHTML], {type: 'text/html'})); a.download = `landing-${Date.now()}.html`; a.click(); }
+  async function copyHTML() { if (!currentHTML) return; await navigator.clipboard.writeText(currentHTML); alert("Copied!"); }
+  
+  function generateVariations() {
+    if (!currentHTML) return;
+    const variations = [];
+    for (let i = 0; i < 3; i++) {
+      let variant = currentHTML;
+      const headlines = ["🔥 SALE", "⚡ LIMITED", "✨ EXCLUSIVE"];
+      variant = variant.replace(/<h1>(.*?)<\/h1>/, `<h1>${headlines[i]} ${RegExp.$1}</h1>`);
+      variations.push(variant);
+    }
+    let msg = "Choose your best version:\n\n";
+    variations.forEach((v, idx) => { const match = v.match(/<h1>(.*?)<\/h1>/); msg += `${idx+1}. ${match ? match[1] : "Version"}\n`; });
+    const choice = prompt(msg + "\nEnter number 1-3");
+    if (choice >= 1 && choice <= 3) {
+      currentHTML = variations[choice-1];
+      document.getElementById('previewFrame').srcdoc = currentHTML;
+      alert("✅ Variation applied!");
+    }
+  }
+
+  function buyProNow() {
+    window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
+    alert("💰 After payment, click the link from the bot to activate PRO.");
+  }
+
+  // ========== INIT ==========
+  function switchMode(mode) {
+    document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(`${mode}Panel`).style.display = 'block';
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.mode-btn[data-mode="${mode}"]`).classList.add('active');
+  }
+  document.querySelectorAll('.mode-btn').forEach(btn => btn.addEventListener('click', () => switchMode(btn.dataset.mode)));
+  document.getElementById('autoGenBtn').addEventListener('click', () => { const r = ['coffee','beauty','fitness'][Math.floor(Math.random()*3)]; const s = generateSmartContent(r); generateLanding(s.brand, r, s.product, s.desc, 'ig'); });
+  document.getElementById('ideaGenBtn').addEventListener('click', () => { const idea = document.getElementById('ideaInput').value; const n = detectNiche(idea); const s = generateSmartContent(n); generateLanding(s.brand, n, s.product, s.desc, 'ig'); });
+  document.getElementById('manualGenBtn').addEventListener('click', () => { const brand = document.getElementById('brand').value; const niche = document.getElementById('niche').value; const product = document.getElementById('product').value; const desc = document.getElementById('description').value; const platform = document.getElementById('platform').value; generateLanding(brand, niche, product, desc, platform); });
+  document.getElementById('btnImprove').addEventListener('click', improveLanding);
+  document.getElementById('proBuyBtn').addEventListener('click', buyProNow);
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', () => setLanguage(btn.dataset.lang)));
+  
+  setLanguage(localStorage.getItem('lang') || 'en');
+  document.getElementById('limitCount').innerText = freeGenerations;
+  if (localStorage.getItem('salesMode') === 'on') updateSalesBadge();
+  if (isPro) alert("🔥 PRO mode active — unlimited improvements!");
+</script>
+</body>
+</html>

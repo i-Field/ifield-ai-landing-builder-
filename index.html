@@ -3,259 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>iField AI — Космический генератор лендингов</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%239b4dff'>⚡</text></svg>">
+<title>iField AI — Client Page Builder</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #03050c;
-    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+  body { background: #03050c; font-family: -apple-system, "SF Pro Text", system-ui, sans-serif; padding: 20px; min-height: 100vh; }
+  .container { max-width: 720px; margin: 0 auto; position: relative; z-index: 2; }
   
-  /* CANVAS КОСМОС */
-  #spaceCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    display: block;
-  }
+  .lang-switcher { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 20px; }
+  .lang-btn { background: rgba(30,40,58,0.6); border: 0.5px solid rgba(155,77,255,0.4); color: #b07cff; padding: 6px 14px; border-radius: 30px; cursor: pointer; font-size: 12px; }
+  .lang-btn.active { background: linear-gradient(135deg, #40E0D0, #9b4dff); color: white; }
   
-  /* КОНТЕЙНЕР ПОВЕРХ КОСМОСА */
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-    padding: 20px;
-  }
+  .mode-tabs { display: flex; gap: 8px; margin: 20px 0; background: rgba(20,28,40,0.6); backdrop-filter: blur(12px); border-radius: 60px; padding: 6px; }
+  .mode-btn { flex: 1; text-align: center; padding: 12px 0; border-radius: 50px; background: transparent; border: none; color: #a0b0d0; font-weight: 600; cursor: pointer; }
+  .mode-btn.active { background: linear-gradient(135deg, #40E0D0, #9b4dff); color: white; }
   
-  /* ЯЗЫКИ */
-  .lang-switcher {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .lang-btn {
-    background: rgba(30,40,58,0.6);
-    backdrop-filter: blur(10px);
-    border: 0.5px solid rgba(155,77,255,0.4);
-    color: #b07cff;
-    padding: 6px 14px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: all 0.2s;
-  }
-  .lang-btn.active {
-    background: linear-gradient(135deg, #40E0D0, #9b4dff);
-    color: white;
-  }
-  
-  /* РЕЖИМЫ */
-  .mode-tabs {
-    display: flex;
-    gap: 8px;
-    margin: 20px 0;
-    background: rgba(20,28,40,0.5);
-    backdrop-filter: blur(12px);
-    border-radius: 60px;
-    padding: 6px;
-  }
-  .mode-btn {
-    flex: 1;
-    text-align: center;
-    padding: 12px 0;
-    border-radius: 50px;
-    background: transparent;
-    border: none;
-    color: #a0b0d0;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .mode-btn.active {
-    background: linear-gradient(135deg, #40E0D0, #9b4dff);
-    color: white;
-    box-shadow: 0 0 15px rgba(64,224,208,0.5);
-  }
-  
-  /* ПОЛЯ */
   .field { margin-bottom: 20px; }
-  .field input, .field textarea, .field select {
-    width: 100%;
-    background: rgba(20,28,40,0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(155,77,255,0.3);
-    border-radius: 20px;
-    padding: 14px 18px;
-    color: white;
-    font-size: 15px;
-  }
-  .field input:focus, .field textarea:focus {
-    outline: none;
-    border-color: #40E0D0;
-    box-shadow: 0 0 12px rgba(64,224,208,0.3);
-  }
-  .field label {
-    font-size: 12px;
-    color: #b07cff;
-    margin-bottom: 6px;
-    display: block;
-  }
+  .field input, .field textarea, .field select { width: 100%; background: rgba(20,28,40,0.8); border: 1px solid rgba(155,77,255,0.3); border-radius: 20px; padding: 14px 18px; color: white; font-size: 15px; }
+  .field label { font-size: 12px; color: #b07cff; margin-bottom: 6px; display: block; }
   
-  /* КНОПКИ С ПУЛЬСОМ И GLOW */
-  .hero-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #40E0D0, #9b4dff);
-    border: none;
-    border-radius: 60px;
-    padding: 18px;
-    font-size: 18px;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    margin: 16px 0;
-    position: relative;
-    overflow: hidden;
-    z-index: 1;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 20px rgba(64,224,208,0.3);
-  }
-  .hero-btn::before {
-    content: '';
-    position: absolute;
-    top: -5px; left: -5px; right: -5px; bottom: -5px;
-    border-radius: 60px;
-    border: 2px solid #40E0D0;
-    opacity: 0.6;
-    animation: pulse 2s infinite;
-    pointer-events: none;
-  }
-  @keyframes pulse {
-    0% { transform: scale(0.95); opacity: 0.4; }
-    50% { transform: scale(1.02); opacity: 1; }
-    100% { transform: scale(0.95); opacity: 0.4; }
-  }
-  .hero-btn:hover {
-    transform: scale(1.02);
-    box-shadow: 0 0 35px rgba(64,224,208,0.6);
-  }
-  
-  .improve-btn {
-    background: linear-gradient(135deg, #ffaa33, #ff6600);
-    box-shadow: 0 0 15px rgba(255,102,0,0.3);
-  }
-  .improve-btn::before {
-    border-color: #ffaa33;
-  }
-  
+  .hero-btn { width: 100%; background: linear-gradient(135deg, #40E0D0, #9b4dff); border: none; border-radius: 60px; padding: 18px; font-size: 18px; font-weight: 600; color: white; cursor: pointer; margin: 16px 0; }
+  .improve-btn { background: linear-gradient(135deg, #ffaa33, #ff6600); margin-top: 8px; }
   .result-section { display: none; margin-top: 32px; }
-  .preview-frame {
-    width: 100%;
-    height: 500px;
-    border: none;
-    border-radius: 28px;
-    background: #05070c;
-    box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  }
+  .preview-frame { width: 100%; height: 500px; border: none; border-radius: 28px; background: #05070c; }
   .action-buttons { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-  .action-buttons button {
-    flex: 1;
-    background: rgba(30,40,58,0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(155,77,255,0.4);
-    padding: 10px;
-    border-radius: 40px;
-    color: white;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .action-buttons button:hover {
-    border-color: #40E0D0;
-    box-shadow: 0 0 12px rgba(64,224,208,0.3);
-  }
-  .ai-loading {
-    text-align: center;
-    padding: 14px;
-    background: rgba(155,77,255,0.15);
-    backdrop-filter: blur(10px);
-    border-radius: 40px;
-    margin: 16px 0;
-    color: #40E0D0;
-    display: none;
-  }
-  .warning-banner {
-    background: rgba(255,68,68,0.15);
-    backdrop-filter: blur(10px);
-    border-left: 4px solid #ff4444;
-    padding: 12px;
-    border-radius: 12px;
-    margin: 12px 0;
-    font-size: 13px;
-    display: none;
-  }
-  .success-banner {
-    background: rgba(68,255,68,0.15);
-    backdrop-filter: blur(10px);
-    border-left: 4px solid #44ff44;
-    padding: 12px;
-    border-radius: 12px;
-    margin: 12px 0;
-    font-size: 13px;
-    display: none;
-  }
-  .stats {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    margin: 16px 0;
-    font-size: 12px;
-    color: #8a9ac0;
-  }
-  .limits {
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 40px;
-    padding: 12px 16px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    flex-wrap: wrap;
-    font-size: 12px;
-    margin: 20px 0;
-  }
+  .action-buttons button { flex: 1; background: rgba(30,40,58,0.7); border: 1px solid rgba(155,77,255,0.4); padding: 10px; border-radius: 40px; color: white; cursor: pointer; }
+  .ai-loading { text-align: center; padding: 14px; background: rgba(155,77,255,0.1); border-radius: 40px; margin: 16px 0; color: #40E0D0; display: none; }
+  .warning-banner { background: #ff444410; border-left: 4px solid #ff4444; padding: 12px; border-radius: 12px; margin: 12px 0; font-size: 13px; display: none; }
+  .success-banner { background: #44ff4410; border-left: 4px solid #44ff44; padding: 12px; border-radius: 12px; margin: 12px 0; font-size: 13px; display: none; }
+  .stats { display: flex; gap: 20px; justify-content: center; margin: 16px 0; font-size: 12px; color: #8a9ac0; }
+  .limits { background: rgba(0,0,0,0.35); border-radius: 40px; padding: 12px 16px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 12px; margin: 20px 0; }
   .limit-free { color: #22c55e; font-weight: bold; }
-  .pro-buy-btn {
-    background: linear-gradient(135deg, #ffd700, #ffb347);
-    color: #1a1a2e;
-    border: none;
-    padding: 6px 16px;
-    border-radius: 40px;
-    cursor: pointer;
-    font-weight: bold;
-  }
-  footer {
-    margin-top: 40px;
-    text-align: center;
-    font-size: 11px;
-    color: #6a7a9a;
-  }
-  @media (max-width: 600px) {
-    .hero-btn { font-size: 16px; padding: 14px; }
-    .mode-btn { font-size: 13px; }
-  }
+  .pro-buy-btn { background: linear-gradient(135deg, #ffd700, #ffb347); color: #1a1a2e; border: none; padding: 6px 16px; border-radius: 40px; cursor: pointer; }
+  footer { margin-top: 40px; text-align: center; font-size: 11px; color: #6a7a9a; }
+  @media (max-width: 600px) { .hero-btn { font-size: 16px; } .mode-btn { font-size: 13px; } }
 </style>
 </head>
 <body>
-
-<canvas id="spaceCanvas"></canvas>
-
 <div class="container">
   <div class="lang-switcher">
     <button class="lang-btn" data-lang="en">EN</button>
@@ -312,109 +95,8 @@
   <footer>⚡ iField AI — from idea to client page in 30 seconds</footer>
 </div>
 
-<script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js"
-    }
-  }
-</script>
-
 <script>
-  // ========== THREE.JS КОСМОС ==========
-  import * as THREE from 'three';
-  
-  const canvas = document.getElementById('spaceCanvas');
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  
-  camera.position.z = 500;
-  
-  // Звёзды
-  const starGeometry = new THREE.BufferGeometry();
-  const starCount = 2500;
-  const starVertices = [];
-  for (let i = 0; i < starCount; i++) {
-    starVertices.push((Math.random() - 0.5) * 2000);
-    starVertices.push((Math.random() - 0.5) * 2000);
-    starVertices.push((Math.random() - 0.5) * 1000 - 500);
-  }
-  starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-  const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1.2, transparent: true, opacity: 0.8 });
-  const stars = new THREE.Points(starGeometry, starMaterial);
-  scene.add(stars);
-  
-  // Цветные звёзды
-  const colorStarGeometry = new THREE.BufferGeometry();
-  const colorCount = 800;
-  const colorVertices = [];
-  const colorColors = [];
-  for (let i = 0; i < colorCount; i++) {
-    colorVertices.push((Math.random() - 0.5) * 1800);
-    colorVertices.push((Math.random() - 0.5) * 1800);
-    colorVertices.push((Math.random() - 0.5) * 800 - 400);
-    const r = Math.random() > 0.7 ? 1 : 0.8;
-    const g = Math.random() > 0.7 ? 0.5 : 0.8;
-    const b = Math.random() > 0.7 ? 1 : 0.9;
-    colorColors.push(r, g, b);
-  }
-  colorStarGeometry.setAttribute('position', new THREE.Float32BufferAttribute(colorVertices, 3));
-  colorStarGeometry.setAttribute('color', new THREE.Float32BufferAttribute(colorColors, 3));
-  const colorStarMaterial = new THREE.PointsMaterial({ size: 0.8, vertexColors: true, transparent: true, opacity: 0.7 });
-  const colorStars = new THREE.Points(colorStarGeometry, colorStarMaterial);
-  scene.add(colorStars);
-  
-  // Спутники (маленькие сферы с металликом)
-  const satGeometry = new THREE.SphereGeometry(4, 24, 24);
-  const satMaterial = new THREE.MeshStandardMaterial({ color: 0x40e0d0, emissive: 0x008080, emissiveIntensity: 0.3, metalness: 0.8, roughness: 0.2 });
-  const satellites = [];
-  for (let i = 0; i < 12; i++) {
-    const sat = new THREE.Mesh(satGeometry, satMaterial.clone());
-    sat.position.set((Math.random() - 0.5) * 1200, (Math.random() - 0.5) * 800, (Math.random() - 0.5) * 600);
-    sat.userData = { speedX: (Math.random() - 0.5) * 0.5, speedY: (Math.random() - 0.5) * 0.5, rotSpeed: Math.random() * 0.02 };
-    scene.add(sat);
-    satellites.push(sat);
-  }
-  
-  // Дополнительный свет
-  const ambientLight = new THREE.AmbientLight(0x222222);
-  scene.add(ambientLight);
-  const pointLight = new THREE.PointLight(0x9b4dff, 0.5, 1000);
-  pointLight.position.set(200, 200, 300);
-  scene.add(pointLight);
-  
-  // Анимация
-  let time = 0;
-  function animateSpace() {
-    requestAnimationFrame(animateSpace);
-    time += 0.005;
-    
-    stars.rotation.y += 0.0003;
-    stars.rotation.x = Math.sin(time * 0.1) * 0.05;
-    colorStars.rotation.y -= 0.0002;
-    colorStars.rotation.x = Math.cos(time * 0.08) * 0.03;
-    
-    satellites.forEach(sat => {
-      sat.rotation.x += sat.userData.rotSpeed;
-      sat.rotation.y += sat.userData.rotSpeed * 0.7;
-      sat.position.x += Math.sin(time + sat.position.z * 0.001) * 0.15;
-      sat.position.y += Math.cos(time + sat.position.x * 0.001) * 0.15;
-    });
-    
-    renderer.render(scene, camera);
-  }
-  animateSpace();
-  
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-  
-  // ========== PRO CHECK ==========
+  // ========== PRO CHECK via URL ==========
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('pro') === 'true') {
     localStorage.setItem('pro', 'true');
@@ -429,24 +111,9 @@
     ru: { generate: "✨ Создать сайт", ideaPlaceholder: "Продаю органический кофе", improve: "🧠 Улучшить +32% конверсии", publish: "🌐 Опубликовать", send: "📤 Отправить клиенту", salesOff: "Режим продаж: ВЫКЛ", salesOn: "💸 Режим продаж: ВКЛ" }
   };
   let currentLang = 'en';
-  function setLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('lang', lang);
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang));
-    document.getElementById('ideaInput').placeholder = translations[lang].ideaPlaceholder;
-    document.getElementById('autoGenBtn').innerText = translations[lang].generate;
-    document.getElementById('ideaGenBtn').innerText = translations[lang].generate;
-    document.getElementById('manualGenBtn').innerText = translations[lang].generate;
-    document.getElementById('btnImprove').innerHTML = translations[lang].improve;
-    document.getElementById('btnPublish').innerHTML = translations[lang].publish;
-    document.getElementById('btnSendClient').innerHTML = translations[lang].send;
-    updateSalesBadge();
-  }
-  function updateSalesBadge() {
-    const isSales = localStorage.getItem('salesMode') === 'on';
-    document.getElementById('salesModeBadge').innerText = isSales ? translations[currentLang].salesOn : translations[currentLang].salesOff;
-  }
-  
+  function setLanguage(lang) { currentLang = lang; localStorage.setItem('lang', lang); document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.lang === lang)); document.getElementById('ideaInput').placeholder = translations[lang].ideaPlaceholder; document.getElementById('autoGenBtn').innerText = translations[lang].generate; document.getElementById('ideaGenBtn').innerText = translations[lang].generate; document.getElementById('manualGenBtn').innerText = translations[lang].generate; document.getElementById('btnImprove').innerHTML = translations[lang].improve; document.getElementById('btnPublish').innerHTML = translations[lang].publish; document.getElementById('btnSendClient').innerHTML = translations[lang].send; updateSalesBadge(); }
+  function updateSalesBadge() { const isSales = localStorage.getItem('salesMode') === 'on'; document.getElementById('salesModeBadge').innerText = isSales ? translations[currentLang].salesOn : translations[currentLang].salesOff; }
+
   // ========== AI CORE ==========
   function detectNiche(text) {
     const t = text.toLowerCase();
@@ -473,17 +140,17 @@
     if (salesMode) { data.desc += " ⚡ Special offer: 20% off today only!"; data.cta = "🔥 BUY NOW — Limited stock"; }
     return data;
   }
-  
+
   let currentHTML = '';
   let currentNiche = 'universal';
   let freeGenerations = localStorage.getItem('freeGenerations') ? parseInt(localStorage.getItem('freeGenerations')) : 3;
-  
+
   function buildLandingHTML(brand, niche, product, desc, cta, pain, solution, proof, platform) {
     const design = getDesign(niche);
     const ctaLink = (platform === 'ig') ? "https://instagram.com/" : (platform === 'tt') ? "https://tiktok.com/" : "https://t.me/";
     return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${brand} | ${product}</title><style>*{margin:0;padding:0;box-sizing:border-box}body{background:${design.bg};font-family:-apple-system,system-ui;padding:20px}.container{max-width:720px;margin:0 auto;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);border-radius:48px;padding:40px 28px;border:0.5px solid ${design.accent}}h1{font-size:44px;background:${design.gradient};-webkit-background-clip:text;background-clip:text;color:transparent}.pain{background:#ff444410;border-left:4px solid #ff4444;padding:16px;border-radius:20px;margin:24px 0}.solution{background:#44ff4410;border-left:4px solid #44ff44;padding:16px;border-radius:20px}.proof{background:#ffaa3310;border-left:4px solid #ffaa33;padding:12px;border-radius:20px}.cta-btn{display:block;background:${design.gradient};text-align:center;padding:16px;border-radius:60px;color:white;text-decoration:none;font-weight:700;margin:24px 0}.limited{color:#ffaa66;font-size:12px;text-align:center}</style></head><body><div class="container"><div class="pain">😫 ${pain}</div><h1>${brand}</h1><div style="font-size:22px;margin:8px 0">${product}</div><div class="solution">✅ ${solution}</div><div class="description">${desc}</div><div class="proof">📊 ${proof}</div><a href="${ctaLink}" class="cta-btn">${cta}</a><div class="limited">⚠️ Limited offer — only 5 spots left</div><div style="font-size:11px;opacity:0.6;text-align:center;margin-top:20px">Built with ⚡ iField AI</div></div></body></html>`;
   }
-  
+
   function generateLanding(brand, niche, product, desc, platform) {
     if (freeGenerations <= 0 && !isPro) { alert("Get PRO for unlimited generations!"); return false; }
     const salesMode = localStorage.getItem('salesMode') === 'on';
@@ -496,10 +163,12 @@
     document.getElementById('fakeStats').innerHTML = `👁 ${Math.floor(Math.random() * 300 + 50)} views &nbsp;|&nbsp; 🔥 ${Math.floor(Math.random() * 15 + 1)} clicks today`;
     document.getElementById('warningBanner').style.display = 'block';
     document.getElementById('successBanner').style.display = 'none';
+    // Tip: sell this to client
     setTimeout(() => { alert("💡 Tip:\nYou can sell this landing to clients for $10–50.\n\nUse 'Send to client' button."); }, 1500);
     return true;
   }
-  
+
+  // ========== IMPROVE THAT SELLS ==========
   function improveLanding() {
     if (!currentHTML) return;
     if (!isPro) {
@@ -523,7 +192,7 @@
       setTimeout(() => document.getElementById('successBanner').style.display = 'none', 3000);
     }, 1400);
   }
-  
+
   async function publishToGist() {
     if (!currentHTML) { alert("Generate landing first!"); return; }
     let token = localStorage.getItem('github_token');
@@ -543,7 +212,7 @@
       alert(`🚀 Your site is LIVE!\n\n🌐 ${shortUrl}\n\n💰 You can already send this to a client.\n\nLink copied.`);
     } catch(e) { alert("Publish failed. Check token."); }
   }
-  
+
   function sendToClient() { if (!currentHTML) return; const msg = encodeURIComponent("Here's your landing page from iField AI: " + window.location.href); window.open(`https://t.me/share/url?url=${window.location.href}&text=${msg}`); }
   function downloadLanding() { if (!currentHTML) return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([currentHTML], {type: 'text/html'})); a.download = `landing-${Date.now()}.html`; a.click(); }
   async function copyHTML() { if (!currentHTML) return; await navigator.clipboard.writeText(currentHTML); alert("Copied!"); }
@@ -566,12 +235,12 @@
       alert("✅ Variation applied!");
     }
   }
-  
+
   function buyProNow() {
     window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
     alert("💰 After payment, click the link from the bot to activate PRO.");
   }
-  
+
   // ========== INIT ==========
   function switchMode(mode) {
     document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');

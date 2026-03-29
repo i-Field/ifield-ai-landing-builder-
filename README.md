@@ -1,6 +1,9 @@
 # ifield-ai-landing-builder-
 ⚡ AI Landing Page Builder — generate client-ready landing pages in 10 seconds. No coding. No design skills. Just describe your idea.
-⚡ iField AI — Landing Page Builder
+<p align="center">
+  <img src="https://placehold.co/1200x300/1a1a2e/40E0D0?text=iField+AI+-+Landing+Builder" alt="iField AI Banner">
+</p>
+ # ⚡ iField AI — Landing Page Builder
 
 **From idea to client page in 10 seconds.**
 
@@ -61,3 +64,17 @@ iField AI is a **smart landing page generator** that creates professional, conve
 ## 🧠 Why this exists
 
 Most landing builders are **too complex**. iField AI gives you **a ready-to-sell page in seconds** — not a blank canvas.
+
+---
+
+## 📄 License
+
+MIT — free for personal and commercial use
+
+---
+
+## 🙏 Support
+
+- 💬 [Telegram](https://t.me/ifield_studio)
+- ⭐ Star this repo if you like it
+

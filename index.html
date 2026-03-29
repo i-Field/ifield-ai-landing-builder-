@@ -1,738 +1,1092 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>iField AI — Living Cosmic Generator</title>
+<title>⚡ iField — Instant Landing Builder</title>
 <style>
-  *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;background:#03050c;color:#fff;overflow-x:hidden;min-height:100vh}
-  
-  /* ЖИВОЙ КОСМОС */
-  .stars{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:0;
-    overflow:hidden;
-  }
-  .star{
-    position:absolute;
-    background:#fff;
-    border-radius:50%;
-    opacity:0;
-    animation:twinkle 4s infinite alternate;
-    will-change:transform,opacity;
-  }
-  @keyframes twinkle{
-    0%{opacity:0;transform:scale(0.5)}
-    100%{opacity:0.8;transform:scale(1)}
-  }
-  
-  /* Глубокий космический фон */
-  .cosmic-bg{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:radial-gradient(ellipse at center,#070a16,#010108);
-    z-index:0;
-  }
-  
-  .edge-glow{
-    position:fixed;
-    top:0;left:0;
-    width:100%;height:100%;
-    pointer-events:none;
-    z-index:1;
-    box-shadow:inset 0 0 80px rgba(64,224,208,0.2),inset 0 0 120px rgba(155,77,255,0.15);
-  }
-  
-  .container{
-    max-width:720px;
-    margin:0 auto;
-    position:relative;
-    z-index:10;
-    padding:20px;
-  }
-  
-  .glitch-logo{
-    position:fixed;
-    top:20px;
-    left:20px;
-    font-size:24px;
-    font-weight:700;
-    background:linear-gradient(135deg,#40E0D0,#9b4dff);
-    -webkit-background-clip:text;
-    background-clip:text;
-    color:transparent;
-    pointer-events:none;
-    z-index:100;
-  }
-  
-  .mode-tabs{
-    display:flex;
-    gap:8px;
-    margin:60px 0 20px;
-    background:rgba(20,28,40,0.6);
-    backdrop-filter:blur(12px);
-    border-radius:60px;
-    padding:6px;
-  }
-  .mode-btn{
-    flex:1;
-    text-align:center;
-    padding:12px 0;
-    border-radius:50px;
-    background:transparent;
-    border:none;
-    color:#a0b0d0;
-    font-weight:600;
-    font-size:16px;
-    cursor:pointer;
-    transition:all 0.2s;
-  }
-  .mode-btn.active{
-    background:linear-gradient(135deg,#40E0D0,#9b4dff);
-    color:#fff;
-    box-shadow:0 4px 12px rgba(64,224,208,0.3);
-  }
-  
-  .field{margin-bottom:20px}
-  .field input,.field textarea,.field select{
-    width:100%;
-    background:rgba(20,28,40,0.8);
-    border:1px solid rgba(155,77,255,0.3);
-    border-radius:20px;
-    padding:14px 18px;
-    color:#fff;
-    font-size:15px;
-  }
-  .field input:focus,.field textarea:focus{
-    outline:none;
-    border-color:#40E0D0;
-  }
-  .field label{
-    font-size:12px;
-    color:#b07cff;
-    margin-bottom:6px;
-    display:block;
-  }
-  
-  .hero-btn{
-    width:100%;
-    background:linear-gradient(135deg,#40E0D0,#9b4dff);
-    border:none;
-    border-radius:60px;
-    padding:18px;
-    font-size:18px;
-    font-weight:600;
-    color:#fff;
-    cursor:pointer;
-    margin:16px 0;
-    position:relative;
-    overflow:hidden;
-    transition:transform 0.2s;
-    box-shadow:0 0 20px rgba(64,224,208,0.4);
-  }
-  .hero-btn:hover{transform:scale(1.02)}
-  .hero-btn::before{
-    content:'';
-    position:absolute;
-    top:0;
-    left:-100%;
-    width:100%;
-    height:100%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
-    transition:left 0.5s;
-  }
-  .hero-btn:hover::before{left:100%}
-  
-  .improve-btn{
-    background:linear-gradient(135deg,#ffaa33,#ff6600);
-    box-shadow:0 0 15px rgba(255,102,0,0.3);
-  }
-  
-  .additional-toggle{
-    text-align:center;
-    margin:12px;
-    color:#8a9ac0;
-    cursor:pointer;
-    font-size:13px;
-  }
-  .additional-options{display:none;margin-bottom:20px}
-  .additional-options.open{display:block}
-  
-  .limits{
-    background:rgba(0,0,0,0.35);
-    backdrop-filter:blur(10px);
-    border-radius:40px;
-    padding:12px 16px;
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
-    font-size:12px;
-    margin:20px 0;
-  }
-  .limit-free{color:#22c55e;font-weight:bold}
-  .pro-buy-btn{
-    background:linear-gradient(135deg,#ffd700,#ffb347);
-    color:#1a1a2e;
-    border:none;
-    padding:6px 16px;
-    border-radius:40px;
-    cursor:pointer;
-    font-weight:bold;
-  }
-  
-  .result-section{display:none;margin-top:32px}
-  .preview-frame{
-    width:100%;
-    height:500px;
-    border:none;
-    border-radius:28px;
-    background:#05070c;
-  }
-  .action-buttons{
-    display:flex;
-    gap:10px;
-    margin:20px 0;
-    flex-wrap:wrap;
-  }
-  .action-buttons button{
-    flex:1;
-    background:rgba(30,40,58,0.7);
-    border:1px solid rgba(155,77,255,0.4);
-    padding:10px;
-    border-radius:40px;
-    color:#fff;
-    cursor:pointer;
-  }
-  .ai-loading{
-    text-align:center;
-    padding:14px;
-    background:rgba(155,77,255,0.1);
-    border-radius:40px;
-    margin:16px 0;
-    color:#40E0D0;
-    display:none;
-  }
-  .victory-message{
-    background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));
-    border:0.5px solid #22c55e;
-    border-radius:24px;
-    padding:16px;
-    text-align:center;
-    margin-bottom:20px;
-    display:none;
-  }
-  .status{
-    position:fixed;
-    bottom:20px;
-    right:20px;
-    background:#40E0D0;
-    padding:8px 16px;
-    border-radius:40px;
-    color:#000;
-    font-size:12px;
-    z-index:1000;
-  }
-  footer{
-    margin-top:40px;
-    text-align:center;
-    font-size:11px;
-    color:#6a7a9a;
-    display:flex;
-    justify-content:center;
-    gap:20px;
-    flex-wrap:wrap;
-  }
-  footer a{color:#b07cff;text-decoration:none}
-  
-  .lang-select{
-    background:rgba(20,28,40,0.7);
-    backdrop-filter:blur(10px);
-    color:#fff;
-    padding:6px 12px;
-    border-radius:20px;
-    border:1px solid rgba(155,77,255,0.3);
-    cursor:pointer;
-    font-size:12px;
-  }
-  
-  @media(max-width:600px){
-    .hero-btn{font-size:16px;padding:14px}
-    .mode-btn{font-size:13px}
-  }
+:root {
+  --teal: #40E0D0;
+  --purple: #9b4dff;
+  --dark: #030510;
+  --card: rgba(15,20,38,0.7);
+  --border: rgba(155,77,255,0.25);
+  --text: #c8d4f0;
+  --muted: #6a7a9a;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background: var(--dark);
+  font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+.bg {
+  position: fixed; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(155,77,255,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(64,224,208,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 80% at 50% 50%, rgba(3,5,16,1) 0%, #020308 100%);
+  animation: bgPulse 12s ease-in-out infinite alternate;
+}
+@keyframes bgPulse {
+  from { opacity: 0.8; }
+  to   { opacity: 1; }
+}
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0;
+  background-image:
+    linear-gradient(rgba(155,77,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(155,77,255,0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+}
+.edge-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  box-shadow: inset 0 0 100px rgba(64,224,208,0.08), inset 0 0 200px rgba(155,77,255,0.06);
+}
+
+.wrap {
+  position: relative; z-index: 10;
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.logo {
+  display: flex; align-items: center; gap: 10px;
+  padding: 28px 0 10px;
+}
+.logo-mark {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--teal), var(--purple));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 20px rgba(64,224,208,0.3);
+}
+.logo-text {
+  font-size: 22px; font-weight: 700; letter-spacing: -0.5px;
+  background: linear-gradient(135deg, var(--teal), var(--purple));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.logo-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+.lang-switch {
+  display: flex;
+  gap: 4px;
+  background: var(--card);
+  padding: 5px 8px;
+  border-radius: 40px;
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.lang-btn {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 30px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.2s;
+}
+.lang-btn.active {
+  background: linear-gradient(135deg, var(--teal), var(--purple));
+  color: #030510;
+  box-shadow: 0 0 8px rgba(64,224,208,0.3);
+}
+.lang-btn:hover:not(.active) {
+  color: white;
+  background: rgba(155,77,255,0.2);
+}
+
+.headline {
+  text-align: center;
+  padding: 16px 0 32px;
+}
+.headline h1 {
+  font-size: 30px; font-weight: 800; letter-spacing: -1px; line-height: 1.1;
+  background: linear-gradient(135deg, #fff 30%, var(--teal) 70%, var(--purple));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 10px;
+}
+.headline p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+
+.section-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  color: var(--purple); text-transform: uppercase; margin-bottom: 10px;
+}
+.template-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; margin-bottom: 28px;
+}
+.tpl-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.tpl-card.active { border-color: var(--teal); }
+.tpl-card:hover { transform: translateY(-2px); border-color: rgba(155,77,255,0.5); }
+.tpl-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.tpl-desc { font-size: 11px; color: var(--muted); }
+.tpl-preview {
+  height: 44px; border-radius: 8px; margin-bottom: 10px; overflow: hidden;
+  display: flex; align-items: flex-end; padding: 6px;
+}
+.tpl-card[data-id="nexus"] .tpl-preview { background: linear-gradient(135deg, #060a1a, #0f1635); border: 1px solid rgba(64,224,208,0.3); }
+.tpl-card[data-id="nexus"] .tpl-name { color: #40E0D0; }
+.tpl-card[data-id="nexus"].active { border-color: #40E0D0; box-shadow: 0 0 20px rgba(64,224,208,0.15); }
+.tpl-card[data-id="forge"] .tpl-preview { background: linear-gradient(135deg, #1a1008, #2a1a04); border: 1px solid rgba(251,191,36,0.3); }
+.tpl-card[data-id="forge"] .tpl-name { color: #fbbf24; }
+.tpl-card[data-id="forge"].active { border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.15); }
+.tpl-card[data-id="pulse"] .tpl-preview { background: linear-gradient(135deg, #04080f, #060f16); border: 1px solid rgba(0,255,136,0.3); }
+.tpl-card[data-id="pulse"] .tpl-name { color: #00ff88; }
+.tpl-card[data-id="pulse"].active { border-color: #00ff88; box-shadow: 0 0 20px rgba(0,255,136,0.15); }
+.tpl-card[data-id="slate"] .tpl-preview { background: linear-gradient(135deg, #f8fafc, #e8edf5); border: 1px solid rgba(0,0,0,0.1); }
+.tpl-card[data-id="slate"] .tpl-name { color: #1a1a2e; }
+.tpl-card[data-id="slate"].active { border-color: #334155; box-shadow: 0 0 20px rgba(51,65,85,0.2); }
+.preview-dots { display:flex; gap:4px; }
+.dot { width:6px; height:6px; border-radius:50%; opacity:0.7; }
+
+.form-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(12px);
+}
+.form-card h3 {
+  font-size: 12px; font-weight: 700; letter-spacing: 1px;
+  color: var(--purple); text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.field { margin-bottom: 16px; }
+.field:last-child { margin-bottom: 0; }
+.field label {
+  display: block; font-size: 11px; font-weight: 600;
+  color: var(--muted); letter-spacing: 0.3px; margin-bottom: 6px;
+}
+.field input, .field textarea {
+  width: 100%;
+  background: rgba(8,12,28,0.8);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: white;
+  font-size: 15px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.field input:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(64,224,208,0.08);
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(106,122,154,0.6); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.photo-area {
+  border: 1px dashed rgba(155,77,255,0.35);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px; color: var(--muted);
+}
+.photo-area:hover { border-color: var(--purple); color: var(--text); }
+.photo-preview { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; justify-content:center; }
+.photo-preview img { width:72px; height:72px; object-fit:cover; border-radius:10px; }
+
+.features-grid { display: grid; gap: 10px; }
+.feature-item {
+  display: grid; grid-template-columns: 36px 1fr; gap: 8px; align-items: center;
+}
+.feature-emoji {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: rgba(155,77,255,0.12);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+
+.gen-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--teal) 0%, var(--purple) 60%, #2c6eff 100%);
+  background-size: 200% 200%;
+  border: none; border-radius: 20px;
+  padding: 18px;
+  font-size: 18px; font-weight: 700; color: white;
+  cursor: pointer;
+  margin: 24px 0 0;
+  position: relative; overflow: hidden;
+  animation: gradShift 6s ease infinite;
+  box-shadow: 0 8px 32px rgba(64,224,208,0.2), 0 0 60px rgba(155,77,255,0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+@keyframes gradShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.gen-btn::after {
+  content: '';
+  position: absolute; top:0; left:-100%; width:100%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  animation: shine 3s infinite;
+}
+@keyframes shine { 0%{left:-100%} 100%{left:100%} }
+.gen-btn:active { transform: scale(0.98); }
+
+.result { display:none; margin-top:32px; }
+.result-header {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(34,197,94,0.08);
+  border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 16px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.result-icon { font-size: 28px; }
+.result-title { font-size: 17px; font-weight: 700; color: #4ade80; }
+.result-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+.preview-wrap {
+  border-radius: 20px; overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+.preview-bar {
+  background: rgba(15,20,38,0.9);
+  padding: 8px 14px;
+  display: flex; align-items: center; gap: 6px;
+}
+.bar-dot { width:8px; height:8px; border-radius:50%; }
+.preview-frame { width:100%; height:420px; border:none; display:block; background:#05070c; }
+
+.action-row {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
+  margin-bottom: 16px;
+}
+.action-btn {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 11px 6px;
+  color: var(--text);
+  font-size: 11px; font-weight: 600;
+  cursor: pointer; text-align: center;
+  transition: all 0.2s;
+}
+.action-btn:hover { border-color: var(--purple); color: white; }
+.action-btn span { display:block; font-size:18px; margin-bottom:3px; }
+
+.upsell {
+  background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(251,191,36,0.03));
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 16px;
+}
+.upsell-text { font-size: 13px; color: #fbbf24; font-weight: 600; }
+.upsell-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.upsell-btn {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1008; border:none; border-radius: 40px;
+  padding: 10px 18px; font-size: 12px; font-weight: 800;
+  cursor: pointer; white-space: nowrap;
+}
+
+.site-footer {
+  text-align: center;
+  padding: 32px 0 0;
+  font-size: 11px; color: var(--muted);
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+}
+.site-footer a { color: var(--purple); text-decoration: none; }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: rgba(64,224,208,0.95);
+  color: #010101; font-size: 13px; font-weight: 600;
+  padding: 10px 22px; border-radius: 40px;
+  z-index: 9999; pointer-events: none;
+  white-space: nowrap;
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn { from { opacity:0; transform: translateX(-50%) translateY(10px); } }
+
+@media (max-width:480px) {
+  .template-grid { grid-template-columns: 1fr 1fr; }
+  .action-row { grid-template-columns: repeat(2,1fr); }
+  .headline h1 { font-size: 24px; }
+  .lang-switch { padding: 4px 6px; }
+  .lang-btn { font-size: 10px; padding: 3px 6px; }
+}
 </style>
 </head>
 <body>
 
-<div class="cosmic-bg"></div>
-<div class="stars" id="stars"></div>
+<div class="bg"></div>
+<div class="bg-grid"></div>
 <div class="edge-glow"></div>
-<div class="glitch-logo">⚡ iField AI</div>
 
-<div class="container">
-  <div style="text-align:right;margin-bottom:10px;">
-    <select id="langSelect" class="lang-select">
-      <option value="en">🌍 English</option>
-      <option value="ua">🇺🇦 Українська</option>
-      <option value="ru">🇷🇺 Русский</option>
-    </select>
-  </div>
+<div class="wrap">
 
-  <div class="mode-tabs">
-    <button class="mode-btn active" data-mode="auto">🚀 AUTO</button>
-    <button class="mode-btn" data-mode="idea">✍️ IDEA</button>
-    <button class="mode-btn" data-mode="manual">⚙️ MANUAL</button>
-  </div>
-
-  <div id="autoPanel" class="mode-panel">
-    <button class="hero-btn" id="autoGenBtn">✨ Generate Site Instantly ✨</button>
-    <div style="text-align:center;font-size:13px;color:#8a9ac0;">AI creates premium landing for random niche</div>
-  </div>
-
-  <div id="ideaPanel" class="mode-panel" style="display:none;">
-    <div class="field"><label id="ideaLabel">🧠 Describe your idea (one line)</label><input id="ideaInput" placeholder="I sell organic coffee online"></div>
-    <button class="hero-btn" id="ideaGenBtn">🎯 Generate from Idea</button>
-  </div>
-
-  <div id="manualPanel" class="mode-panel" style="display:none;">
-    <div class="field"><label id="brandLabel">🏷️ Brand / Company</label><input id="brand" placeholder="Your brand" value="LumiSkin"></div>
-    <div class="field"><label id="nicheLabel">🎯 Niche</label><input id="niche" placeholder="beauty, coffee, fitness..." value="beauty"></div>
-    <div class="field"><label id="productLabel">✨ Main product</label><input id="product" value="Crystal Glow Serum"></div>
-    <div class="field"><label id="platformLabel">📱 Platform</label>
-      <select id="platform">
-        <option value="ig">📸 Instagram Bio</option>
-        <option value="tt">🎵 TikTok Landing</option>
-        <option value="tg">💬 Telegram Funnel</option>
-      </select>
+  <div class="header-row">
+    <div class="logo">
+      <div class="logo-mark">⚡</div>
+      <div>
+        <div class="logo-text">iField Studio</div>
+        <div class="logo-sub" data-i18n="subtitle">Instant Landing Builder</div>
+      </div>
     </div>
-    <div class="additional-toggle" onclick="toggleAdditional()" id="additionalToggle">▼ Additional options ▼</div>
-    <div id="additionalOptions" class="additional-options">
-      <div class="field"><label id="descLabel">📝 Description</label><textarea id="description" rows="2">Luxury skincare that transforms your skin in 7 days.</textarea></div>
-      <div class="field"><label id="imageLabel">🖼️ Image URL</label><input id="imageUrl" placeholder="https://..."></div>
-      <div class="field"><label id="contactLabel">📡 Contacts</label><input id="contact" placeholder="@lumiskin"></div>
-    </div>
-    <button class="hero-btn" id="manualGenBtn">🚀 Create Landing</button>
-  </div>
-
-  <div class="limits">
-    <span>🎁 <span class="limit-free" id="limitCount">3</span> <span id="freeText">free generations left</span></span>
-    <span>💎 <span id="proText">PRO: unlimited + no watermark + AI improve</span></span>
-    <button class="pro-buy-btn" id="proBuyBtn">⭐ Get PRO</button>
-  </div>
-
-  <div id="aiLoading" class="ai-loading">🤖 AI thinking...</div>
-
-  <div class="result-section" id="resultSection">
-    <div id="victoryMessage" class="victory-message"><div>🎉</div><div><strong id="victoryTitle">Site is ready!</strong></div></div>
-    <iframe class="preview-frame" id="previewFrame"></iframe>
-    <div class="action-buttons">
-      <button id="btnDownload">📥 Download</button>
-      <button id="btnCopy">📋 Copy code</button>
-      <button id="btnImprove" class="improve-btn">🧠 AI Improve (+32% conversion)</button>
-      <button id="btnShare">🔥 Share & Earn</button>
-      <button id="btnPublish">🌐 Publish to Web</button>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="en">🇺🇸 EN</button>
+      <button class="lang-btn" data-lang="ru">🇷🇺 RU</button>
+      <button class="lang-btn" data-lang="ua">🇺🇦 UA</button>
+      <button class="lang-btn" data-lang="pl">🇵🇱 PL</button>
+      <button class="lang-btn" data-lang="de">🇩🇪 DE</button>
+      <button class="lang-btn" data-lang="fr">🇫🇷 FR</button>
     </div>
   </div>
 
-  <footer><a href="#">💬 Telegram</a><a href="#">📸 Instagram</a><a href="#">🐙 GitHub</a></footer>
+  <div class="headline">
+    <h1 data-i18n="headline_title">Mini-site in 60 seconds</h1>
+    <p data-i18n="headline_desc">Fill the form → pick a style → download your ready landing page.<br>No code. No subscriptions. No limits on downloads.</p>
+  </div>
+
+  <div class="section-label" data-i18n="style_label">Choose your style</div>
+  <div class="template-grid">
+    <div class="tpl-card active" data-id="nexus" onclick="selectTemplate('nexus')">
+      <div class="tpl-preview"><div class="preview-dots"><div class="dot" style="background:#40E0D0"></div><div class="dot" style="background:#9b4dff"></div><div class="dot" style="background:#2c6eff"></div></div></div>
+      <div class="tpl-name">NEXUS</div>
+      <div class="tpl-desc" data-i18n="style_nexus">Dark glass · Premium</div>
+    </div>
+    <div class="tpl-card" data-id="forge" onclick="selectTemplate('forge')">
+      <div class="tpl-preview"><div class="preview-dots"><div class="dot" style="background:#fbbf24"></div><div class="dot" style="background:#f59e0b"></div><div class="dot" style="background:#92400e"></div></div></div>
+      <div class="tpl-name">FORGE</div>
+      <div class="tpl-desc" data-i18n="style_forge">Bold split · Strong</div>
+    </div>
+    <div class="tpl-card" data-id="pulse" onclick="selectTemplate('pulse')">
+      <div class="tpl-preview"><div class="preview-dots"><div class="dot" style="background:#00ff88"></div><div class="dot" style="background:#00ccff"></div><div class="dot" style="background:#ff44aa"></div></div></div>
+      <div class="tpl-name">PULSE</div>
+      <div class="tpl-desc" data-i18n="style_pulse">Neon · Electric</div>
+    </div>
+    <div class="tpl-card" data-id="slate" onclick="selectTemplate('slate')">
+      <div class="tpl-preview" style="background:linear-gradient(135deg,#f8fafc,#e8edf5)"><div class="preview-dots"><div class="dot" style="background:#1a1a2e"></div><div class="dot" style="background:#334155"></div><div class="dot" style="background:#64748b"></div></div></div>
+      <div class="tpl-name">SLATE</div>
+      <div class="tpl-desc" data-i18n="style_slate">Clean white · Pro</div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3 data-i18n="form_identity">🏷️ Identity</h3>
+    <div class="field"><label data-i18n="label_brand">BRAND NAME</label><input id="f-brand" placeholder="e.g. Crystal Studio"></div>
+    <div class="field"><label data-i18n="label_tagline">TAGLINE (one strong sentence)</label><input id="f-tagline" placeholder="e.g. Nail art that speaks for itself"></div>
+    <div class="field"><label data-i18n="label_niche">CATEGORY / NICHE</label><input id="f-niche" placeholder="e.g. beauty, tech, coaching, food"></div>
+  </div>
+
+  <div class="form-card">
+    <h3 data-i18n="form_offer">✨ Your Offer</h3>
+    <div class="field"><label data-i18n="label_product">MAIN SERVICE OR PRODUCT</label><input id="f-product" placeholder="e.g. Premium nail extensions"></div>
+    <div class="field"><label data-i18n="label_desc">SHORT DESCRIPTION (2-3 sentences)</label><textarea id="f-desc" rows="3" placeholder="What makes you different? What result does the client get?"></textarea></div>
+    <div class="features-grid">
+      <div class="feature-item"><div class="feature-emoji">1</div><div class="field" style="margin:0"><input id="f-feat1" placeholder="Benefit or feature #1" style="border-radius:12px"></div></div>
+      <div class="feature-item"><div class="feature-emoji">2</div><div class="field" style="margin:0"><input id="f-feat2" placeholder="Benefit or feature #2" style="border-radius:12px"></div></div>
+      <div class="feature-item"><div class="feature-emoji">3</div><div class="field" style="margin:0"><input id="f-feat3" placeholder="Benefit or feature #3" style="border-radius:12px"></div></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label data-i18n="label_price">PRICE</label><input id="f-price" placeholder="e.g. from $30"></div>
+      <div class="field"><label data-i18n="label_pay">PAYMENT LINK</label><input id="f-pay" placeholder="PayPal, mono, etc."></div>
+    </div>
+  </div>
+
+  <div class="form-card">
+    <h3 data-i18n="form_contacts">📡 Contacts & Photo</h3>
+    <div class="field-row">
+      <div class="field"><label data-i18n="label_contact">TELEGRAM / INSTAGRAM</label><input id="f-contact" placeholder="@username"></div>
+      <div class="field"><label data-i18n="label_phone">PHONE / WHATSAPP</label><input id="f-phone" placeholder="+380..."></div>
+    </div>
+    <div class="field"><label data-i18n="label_img">PHOTO URL (optional)</label><input id="f-img" placeholder="https://... (your photo/product)"></div>
+    <div class="photo-area" onclick="document.getElementById('f-file').click()">
+      <span data-i18n="upload_photo">📸 Or tap to upload photo from phone</span>
+      <input type="file" id="f-file" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+    </div>
+    <div class="photo-preview" id="photoPreview"></div>
+  </div>
+
+  <button class="gen-btn" onclick="generate()" data-i18n="build_btn">⚡ BUILD MY SITE</button>
+
+  <div class="result" id="result">
+    <div class="result-header">
+      <div class="result-icon">🎉</div>
+      <div><div class="result-title" data-i18n="ready_title">Your site is ready!</div><div class="result-sub" data-i18n="ready_sub">Download and share — it works on any device</div></div>
+    </div>
+    <div class="preview-wrap"><div class="preview-bar"><div class="bar-dot" style="background:#ff5f57"></div><div class="bar-dot" style="background:#febc2e"></div><div class="bar-dot" style="background:#28c840"></div></div><iframe class="preview-frame" id="previewFrame"></iframe></div>
+    <div class="action-row">
+      <button class="action-btn" onclick="doDownload()"><span>📥</span><span data-i18n="btn_download">Download</span></button>
+      <button class="action-btn" onclick="doEdit()"><span>✏️</span><span data-i18n="btn_edit">Edit</span></button>
+      <button class="action-btn" onclick="doCopy()"><span>📋</span><span data-i18n="btn_copy">Copy code</span></button>
+      <button class="action-btn" onclick="doShare()"><span>📱</span><span data-i18n="btn_share">Share</span></button>
+    </div>
+    <div class="upsell"><div><div class="upsell-text" data-i18n="upsell_title">⭐ Get public link</div><div class="upsell-sub" data-i18n="upsell_sub">Instant URL you share in bio · 50 Stars</div></div><button class="upsell-btn" onclick="doPublicLink()" data-i18n="upsell_btn">GET LINK →</button></div>
+  </div>
+
+  <div class="site-footer">
+    <a href="https://t.me/ifield_lab">💬 Telegram</a>
+    <a href="https://fiverr.com/s/2KRdzKN">🎯 Fiverr</a>
+    <a href="https://i-field.github.io/ifield-studio">🌐 Portfolio</a>
+    <span>© iField Studio 2025</span>
+  </div>
 </div>
 
 <script>
-// ====================== ЖИВОЙ КОСМОС (движение + параллакс) ======================
-function initStarfield() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 300; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = Math.random() * 3 + 0.5;
-    star.style.width = star.style.height = `${size}px`;
-    star.style.top = `${Math.random() * 100}%`;
-    star.style.left = `${Math.random() * 100}%`;
-    star.style.animationDelay = `${Math.random() * 5}s`;
-    star.style.animationDuration = `${3 + Math.random() * 4}s`;
-    star.style.opacity = 0.3 + Math.random() * 0.5;
-    container.appendChild(star);
+// ==================== MULTI-LANGUAGE ====================
+const translations = {
+  en: {
+    subtitle: "Instant Landing Builder",
+    headline_title: "Mini-site in 60 seconds",
+    headline_desc: "Fill the form → pick a style → download your ready landing page.<br>No code. No subscriptions. No limits on downloads.",
+    style_label: "Choose your style",
+    style_nexus: "Dark glass · Premium",
+    style_forge: "Bold split · Strong",
+    style_pulse: "Neon · Electric",
+    style_slate: "Clean white · Pro",
+    form_identity: "🏷️ Identity",
+    label_brand: "BRAND NAME",
+    label_tagline: "TAGLINE (one strong sentence)",
+    label_niche: "CATEGORY / NICHE",
+    form_offer: "✨ Your Offer",
+    label_product: "MAIN SERVICE OR PRODUCT",
+    label_desc: "SHORT DESCRIPTION (2-3 sentences)",
+    label_price: "PRICE",
+    label_pay: "PAYMENT LINK",
+    form_contacts: "📡 Contacts & Photo",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "PHONE / WHATSAPP",
+    label_img: "PHOTO URL (optional)",
+    upload_photo: "📸 Or tap to upload photo from phone",
+    build_btn: "⚡ BUILD MY SITE",
+    ready_title: "Your site is ready!",
+    ready_sub: "Download and share — it works on any device",
+    btn_download: "Download",
+    btn_edit: "Edit",
+    btn_copy: "Copy code",
+    btn_share: "Share",
+    upsell_title: "⭐ Get public link",
+    upsell_sub: "Instant URL you share in bio · 50 Stars",
+    upsell_btn: "GET LINK →"
+  },
+  ru: {
+    subtitle: "Мгновенный конструктор лендингов",
+    headline_title: "Мини-сайт за 60 секунд",
+    headline_desc: "Заполните форму → выберите стиль → скачайте готовый лендинг.<br>Без кода. Без подписок. Без ограничений.",
+    style_label: "Выберите стиль",
+    style_nexus: "Тёмное стекло · Премиум",
+    style_forge: "Смелый сплит · Сильный",
+    style_pulse: "Неон · Электрический",
+    style_slate: "Чистый белый · Про",
+    form_identity: "🏷️ Идентичность",
+    label_brand: "НАЗВАНИЕ БРЕНДА",
+    label_tagline: "СЛОГАН",
+    label_niche: "КАТЕГОРИЯ / НИША",
+    form_offer: "✨ Ваше предложение",
+    label_product: "УСЛУГА ИЛИ ТОВАР",
+    label_desc: "ОПИСАНИЕ",
+    label_price: "ЦЕНА",
+    label_pay: "ССЫЛКА НА ОПЛАТУ",
+    form_contacts: "📡 Контакты и фото",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "ТЕЛЕФОН / WHATSAPP",
+    label_img: "ССЫЛКА НА ФОТО",
+    upload_photo: "📸 Или нажмите, чтобы загрузить фото",
+    build_btn: "⚡ СОЗДАТЬ САЙТ",
+    ready_title: "Ваш сайт готов!",
+    ready_sub: "Скачайте и поделитесь — работает везде",
+    btn_download: "Скачать",
+    btn_edit: "Править",
+    btn_copy: "Копировать код",
+    btn_share: "Поделиться",
+    upsell_title: "⭐ Получить ссылку",
+    upsell_sub: "Мгновенная ссылка для bio · 50 Stars",
+    upsell_btn: "ПОЛУЧИТЬ ССЫЛКУ →"
+  },
+  ua: {
+    subtitle: "Миттєвий конструктор лендінгів",
+    headline_title: "Міні-сайт за 60 секунд",
+    headline_desc: "Заповніть форму → оберіть стиль → завантажте готовий лендінг.<br>Без коду. Без підписок. Без обмежень.",
+    style_label: "Оберіть стиль",
+    style_nexus: "Темне скло · Преміум",
+    style_forge: "Сміливий спліт · Сильний",
+    style_pulse: "Неон · Електричний",
+    style_slate: "Чистий білий · Про",
+    form_identity: "🏷️ Ідентичність",
+    label_brand: "НАЗВА БРЕНДУ",
+    label_tagline: "СЛОГАН",
+    label_niche: "КАТЕГОРІЯ / НІША",
+    form_offer: "✨ Ваша пропозиція",
+    label_product: "ПОСЛУГА АБО ТОВАР",
+    label_desc: "ОПИС",
+    label_price: "ЦІНА",
+    label_pay: "ПОСИЛАННЯ НА ОПЛАТУ",
+    form_contacts: "📡 Контакти та фото",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "ТЕЛЕФОН / WHATSAPP",
+    label_img: "ПОСИЛАННЯ НА ФОТО",
+    upload_photo: "📸 Або натисніть, щоб завантажити фото",
+    build_btn: "⚡ СТВОРИТИ САЙТ",
+    ready_title: "Ваш сайт готовий!",
+    ready_sub: "Завантажте та поділіться — працює скрізь",
+    btn_download: "Завантажити",
+    btn_edit: "Редагувати",
+    btn_copy: "Копіювати код",
+    btn_share: "Поділитися",
+    upsell_title: "⭐ Отримати публічне посилання",
+    upsell_sub: "Миттєве посилання для bio · 50 Stars",
+    upsell_btn: "ОТРИМАТИ ПОСИЛАННЯ →"
+  },
+  pl: {
+    subtitle: "Natychmiastowy kreator landing page",
+    headline_title: "Mini-strona w 60 sekund",
+    headline_desc: "Wypełnij formularz → wybierz styl → pobierz gotową stronę.<br>Bez kodu. Bez subskrypcji. Bez limitów.",
+    style_label: "Wybierz styl",
+    style_nexus: "Ciemne szkło · Premium",
+    style_forge: "Odważny podział · Mocny",
+    style_pulse: "Neon · Elektryczny",
+    style_slate: "Czysta biel · Pro",
+    form_identity: "🏷️ Tożsamość",
+    label_brand: "NAZWA MARKI",
+    label_tagline: "HASŁO",
+    label_niche: "KATEGORIA / NISZA",
+    form_offer: "✨ Twoja oferta",
+    label_product: "GŁÓWNA USŁUGA LUB PRODUKT",
+    label_desc: "KRÓTKI OPIS",
+    label_price: "CENA",
+    label_pay: "LINK PŁATNOŚCI",
+    form_contacts: "📡 Kontakty i zdjęcie",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "TELEFON / WHATSAPP",
+    label_img: "LINK DO ZDJĘCIA",
+    upload_photo: "📸 Lub dotknij, aby przesłać zdjęcie",
+    build_btn: "⚡ UTWÓRZ STRONĘ",
+    ready_title: "Twoja strona jest gotowa!",
+    ready_sub: "Pobierz i udostępnij — działa wszędzie",
+    btn_download: "Pobierz",
+    btn_edit: "Edytuj",
+    btn_copy: "Kopiuj kod",
+    btn_share: "Udostępnij",
+    upsell_title: "⭐ Uzyskaj publiczny link",
+    upsell_sub: "Natychmiastowy URL do bio · 50 Stars",
+    upsell_btn: "ZDOBĄDŹ LINK →"
+  },
+  de: {
+    subtitle: "Sofortiger Landing-Builder",
+    headline_title: "Mini-Website in 60 Sekunden",
+    headline_desc: "Formular ausfüllen → Stil wählen → fertige Landingpage herunterladen.<br>Kein Code. Keine Abos. Keine Limits.",
+    style_label: "Wählen Sie Ihren Stil",
+    style_nexus: "Dunkles Glas · Premium",
+    style_forge: "Kühner Split · Stark",
+    style_pulse: "Neon · Elektrisch",
+    style_slate: "Reines Weiß · Pro",
+    form_identity: "🏷️ Identität",
+    label_brand: "MARKENNAME",
+    label_tagline: "SLOGAN",
+    label_niche: "KATEGORIE / NICHE",
+    form_offer: "✨ Ihr Angebot",
+    label_product: "HAUPTDIENSTLEISTUNG",
+    label_desc: "KURZBESCHREIBUNG",
+    label_price: "PREIS",
+    label_pay: "ZAHLUNGSLINK",
+    form_contacts: "📡 Kontakte & Foto",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "TELEFON / WHATSAPP",
+    label_img: "FOTO-URL",
+    upload_photo: "📸 Oder tippen, um ein Foto hochzuladen",
+    build_btn: "⚡ SEITE ERSTELLEN",
+    ready_title: "Ihre Seite ist fertig!",
+    ready_sub: "Herunterladen und teilen — funktioniert überall",
+    btn_download: "Herunterladen",
+    btn_edit: "Bearbeiten",
+    btn_copy: "Code kopieren",
+    btn_share: "Teilen",
+    upsell_title: "⭐ Öffentlichen Link erhalten",
+    upsell_sub: "Sofortige URL für Bio · 50 Stars",
+    upsell_btn: "LINK ERHALTEN →"
+  },
+  fr: {
+    subtitle: "Constructeur instantané de landing page",
+    headline_title: "Mini-site en 60 secondes",
+    headline_desc: "Remplissez le formulaire → choisissez un style → téléchargez votre page.<br>Sans code. Sans abonnement. Pas de limites.",
+    style_label: "Choisissez votre style",
+    style_nexus: "Verre foncé · Premium",
+    style_forge: "Split audacieux · Fort",
+    style_pulse: "Néon · Électrique",
+    style_slate: "Blanc pur · Pro",
+    form_identity: "🏷️ Identité",
+    label_brand: "NOM DE LA MARQUE",
+    label_tagline: "SLOGAN",
+    label_niche: "CATÉGORIE / NICHE",
+    form_offer: "✨ Votre offre",
+    label_product: "SERVICE OU PRODUIT PRINCIPAL",
+    label_desc: "BRÈVE DESCRIPTION",
+    label_price: "PRIX",
+    label_pay: "LIEN DE PAIEMENT",
+    form_contacts: "📡 Contacts & Photo",
+    label_contact: "TELEGRAM / INSTAGRAM",
+    label_phone: "TÉLÉPHONE / WHATSAPP",
+    label_img: "URL DE LA PHOTO",
+    upload_photo: "📸 Ou appuyez pour télécharger une photo",
+    build_btn: "⚡ CRÉER MON SITE",
+    ready_title: "Votre site est prêt !",
+    ready_sub: "Téléchargez et partagez — ça fonctionne partout",
+    btn_download: "Télécharger",
+    btn_edit: "Modifier",
+    btn_copy: "Copier le code",
+    btn_share: "Partager",
+    upsell_title: "⭐ Obtenir un lien public",
+    upsell_sub: "URL instantanée pour bio · 50 Stars",
+    upsell_btn: "OBTENIR LE LIEN →"
   }
-}
+};
 
-// Анимация движения звёзд (медленное плавание)
-let starAnimationId = null;
-function animateStars() {
-  const stars = document.querySelectorAll('.star');
-  stars.forEach((s, i) => {
-    const dx = Math.sin(Date.now() * 0.0003 + i) * 0.03;
-    const dy = Math.cos(Date.now() * 0.00025 + i * 0.7) * 0.03;
-    let top = parseFloat(s.style.top);
-    let left = parseFloat(s.style.left);
-    top = (top + dy + 100) % 100;
-    left = (left + dx + 100) % 100;
-    s.style.top = top + '%';
-    s.style.left = left + '%';
-  });
-  starAnimationId = requestAnimationFrame(animateStars);
-}
+let currentLang = localStorage.getItem('iFieldLang') || 'en';
 
-// Параллакс при движении мыши / касания
-function initParallax() {
-  const starsContainer = document.getElementById('stars');
-  let targetX = 0, targetY = 0;
-  let currentX = 0, currentY = 0;
+function setLanguage(lang) {
+  if (!translations[lang]) lang = 'en';
+  currentLang = lang;
+  localStorage.setItem('iFieldLang', lang);
   
-  function updateParallax() {
-    currentX += (targetX - currentX) * 0.05;
-    currentY += (targetY - currentY) * 0.05;
-    starsContainer.style.transform = `translate(${currentX}px, ${currentY}px)`;
-    requestAnimationFrame(updateParallax);
-  }
-  
-  document.addEventListener('mousemove', (e) => {
-    targetX = (e.clientX / window.innerWidth - 0.5) * 20;
-    targetY = (e.clientY / window.innerHeight - 0.5) * 20;
-  });
-  
-  // Для touch-устройств (iPhone)
-  document.addEventListener('touchmove', (e) => {
-    if (e.touches.length) {
-      targetX = (e.touches[0].clientX / window.innerWidth - 0.5) * 20;
-      targetY = (e.touches[0].clientY / window.innerHeight - 0.5) * 20;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (translations[lang][key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = translations[lang][key];
+      } else {
+        el.innerHTML = translations[lang][key];
+      }
     }
   });
   
-  updateParallax();
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    if (btn.getAttribute('data-lang') === lang) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
 }
 
-// Запуск космоса
-initStarfield();
-animateStars();
-initParallax();
-
-// ====================== MULTI-LANGUAGE ======================
-const translations = {
-  en: {
-    generate: "✨ Generate Site Instantly ✨",
-    ideaLabel: "🧠 Describe your idea (one line)",
-    brandLabel: "🏷️ Brand / Company",
-    nicheLabel: "🎯 Niche",
-    productLabel: "✨ Main product",
-    platformLabel: "📱 Platform",
-    descLabel: "📝 Description",
-    imageLabel: "🖼️ Image URL",
-    contactLabel: "📡 Contacts",
-    additionalToggle: "▼ Additional options ▼",
-    freeText: "free generations left",
-    proText: "PRO: unlimited + no watermark + AI improve",
-    victoryTitle: "Site is ready! Share & get +3 free",
-    improveBtn: "🧠 AI Improve (+32% conversion)",
-    shareBtn: "🔥 Share & Earn",
-    publishBtn: "🌐 Publish to Web"
-  },
-  ua: {
-    generate: "✨ Створити сайт миттєво ✨",
-    ideaLabel: "🧠 Опишіть ідею (один рядок)",
-    brandLabel: "🏷️ Бренд / Компанія",
-    nicheLabel: "🎯 Ніша",
-    productLabel: "✨ Головний продукт",
-    platformLabel: "📱 Платформа",
-    descLabel: "📝 Опис",
-    imageLabel: "🖼️ URL зображення",
-    contactLabel: "📡 Контакти",
-    additionalToggle: "▼ Додаткові опції ▼",
-    freeText: "безкоштовних генерацій",
-    proText: "PRO: безліміт + без водяного знаку + AI покращення",
-    victoryTitle: "Сайт готовий! Поділіться та отримайте +3",
-    improveBtn: "🧠 AI Покращення (+32% конверсії)",
-    shareBtn: "🔥 Поділитися та отримати",
-    publishBtn: "🌐 Опублікувати"
-  },
-  ru: {
-    generate: "✨ Создать сайт мгновенно ✨",
-    ideaLabel: "🧠 Опишите идею (одна строка)",
-    brandLabel: "🏷️ Бренд / Компания",
-    nicheLabel: "🎯 Ниша",
-    productLabel: "✨ Главный продукт",
-    platformLabel: "📱 Платформа",
-    descLabel: "📝 Описание",
-    imageLabel: "🖼️ URL изображения",
-    contactLabel: "📡 Контакты",
-    additionalToggle: "▼ Дополнительные опции ▼",
-    freeText: "бесплатных генераций",
-    proText: "PRO: безлимит + без водяного знака + AI улучшение",
-    victoryTitle: "Сайт готов! Поделитесь и получите +3",
-    improveBtn: "🧠 AI Улучшение (+32% конверсии)",
-    shareBtn: "🔥 Поделиться и получить",
-    publishBtn: "🌐 Опубликовать"
-  }
-};
-
-let currentLang = localStorage.getItem('lang') || 'en';
-function setLanguage(lang) {
-  currentLang = lang;
-  localStorage.setItem('lang', lang);
-  const t = translations[lang];
-  document.getElementById('autoGenBtn').innerText = t.generate;
-  document.getElementById('ideaLabel').innerText = t.ideaLabel;
-  document.getElementById('brandLabel').innerText = t.brandLabel;
-  document.getElementById('nicheLabel').innerText = t.nicheLabel;
-  document.getElementById('productLabel').innerText = t.productLabel;
-  document.getElementById('platformLabel').innerText = t.platformLabel;
-  document.getElementById('descLabel').innerText = t.descLabel;
-  document.getElementById('imageLabel').innerText = t.imageLabel;
-  document.getElementById('contactLabel').innerText = t.contactLabel;
-  document.getElementById('additionalToggle').innerText = t.additionalToggle;
-  document.getElementById('freeText').innerText = t.freeText;
-  document.getElementById('proText').innerText = t.proText;
-  document.getElementById('victoryTitle').innerText = t.victoryTitle;
-  document.getElementById('btnImprove').innerHTML = t.improveBtn;
-  document.getElementById('btnShare').innerHTML = t.shareBtn;
-  document.getElementById('btnPublish').innerHTML = t.publishBtn;
-}
-document.getElementById('langSelect').addEventListener('change', (e) => setLanguage(e.target.value));
-setLanguage(currentLang);
-
-// ====================== AI CORE ======================
-function detectNiche(text) {
-  const t = text.toLowerCase();
-  if (t.includes('coffee')) return 'coffee';
-  if (t.includes('beauty') || t.includes('skin')) return 'beauty';
-  if (t.includes('fitness')) return 'fitness';
-  if (t.includes('crypto')) return 'crypto';
-  if (t.includes('tech') || t.includes('ai')) return 'tech';
-  return 'universal';
-}
-
-function getDesign(niche) {
-  const designs = {
-    coffee: { bg: '#2a1a0a', accent: '#c8a96e', gradient: 'linear-gradient(135deg,#FFD700,#FFA500)' },
-    beauty: { bg: '#1a0a1a', accent: '#ff77aa', gradient: 'linear-gradient(135deg,#ff77aa,#9b4dff)' },
-    fitness: { bg: '#0a1a0a', accent: '#44ff44', gradient: 'linear-gradient(135deg,#44ff44,#00ccff)' },
-    universal: { bg: '#0a0c1a', accent: '#2c6eff', gradient: 'linear-gradient(135deg,#40E0D0,#9b4dff)' }
-  };
-  return designs[niche] || designs.universal;
-}
-
-function generateSmartContent(niche, platform = 'ig') {
-  const map = {
-    coffee: { brand: "BrewCraft", product: "Specialty Coffee", desc: "Fresh roasted beans delivered to your door.", cta: "Order Now", pain: "Tired of stale coffee?", solution: "Fresh roasted weekly", proof: "2,000+ subscribers" },
-    beauty: { brand: "Lumi Skin", product: "Crystal Glow Serum", desc: "Luxury skincare that transforms your skin.", cta: "Book Consultation", pain: "Struggling with dull skin?", solution: "Visible results in 7 days", proof: "98% saw improvement" },
-    fitness: { brand: "IronCore", product: "30-Day Transformation", desc: "Get visible results in 30 days.", cta: "Start Journey", pain: "Not seeing progress?", solution: "Science-backed workouts", proof: "10,000+ transformations" },
-    crypto: { brand: "ChainFlow", product: "Web3 Dashboard", desc: "Manage your crypto portfolio easily.", cta: "Join Waitlist", pain: "Losing money?", solution: "All-in-one management", proof: "$50M+ secured" },
-    tech: { brand: "NeuroTech", product: "AI Suite", desc: "Automate your business with AI.", cta: "Get Demo", pain: "Repetitive tasks?", solution: "AI does the work", proof: "500+ startups" },
-    universal: { brand: "YourBrand", product: "Smart Solution", desc: "We help you grow faster.", cta: "Get Started", pain: "Not reaching goals?", solution: "Streamlined system", proof: "1,500+ clients" }
-  };
-  let data = map[niche] || map.universal;
-  if (platform === 'ig') data.cta = "📱 Follow on IG";
-  if (platform === 'tt') data.cta = "🎵 Watch on TikTok";
-  if (platform === 'tg') data.cta = "💬 Write to TG";
-  return data;
-}
-
-let freeGenerations = localStorage.getItem('freeGenerations') ? parseInt(localStorage.getItem('freeGenerations')) : 3;
-let isPro = localStorage.getItem('pro') === 'true';
-let currentHTML = '';
-
-function updateBadge() {
-  document.getElementById('limitCount').innerText = freeGenerations;
-}
-updateBadge();
-
-function showStatus(msg, isError = false) {
-  const s = document.createElement('div');
-  s.className = 'status';
-  s.textContent = msg;
-  s.style.background = isError ? '#ff4d4d' : '#40E0D0';
-  document.body.appendChild(s);
-  setTimeout(() => s.remove(), 3000);
-}
-
-function toggleAdditional() {
-  document.getElementById('additionalOptions').classList.toggle('open');
-}
-
-function simulateAILoading(callback) {
-  const loader = document.getElementById('aiLoading');
-  loader.style.display = 'block';
-  const steps = ["🔭 Scanning cosmos...", "🤖 AI analyzing niche...", "✨ Generating premium design...", "🚀 Building your landing..."];
-  let i = 0;
-  const interval = setInterval(() => {
-    if (i < steps.length) loader.innerHTML = steps[i++];
-    else { clearInterval(interval); loader.style.display = 'none'; callback(); }
-  }, 600);
-}
-
-function buildLandingHTML(brand, niche, product, desc, cta, imageUrl, contact, pain, solution, proof, platform) {
-  const design = getDesign(niche);
-  const img = imageUrl || 'https://placehold.co/800x500/1a1f2a/7bb2ff?text=Product';
-  const contactLink = contact?.startsWith('@') ? `https://t.me/${contact.slice(1)}` : (contact || '#');
-  const watermark = isPro ? '' : '<div style="font-size:11px;opacity:0.5;text-align:center;margin-top:20px;">⚡ Built with iField AI</div>';
-  
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${brand} | ${product}</title><style>
-*{margin:0;padding:0;box-sizing:border-box}body{background:${design.bg};font-family:-apple-system,system-ui;padding:20px}
-.container{max-width:720px;margin:0 auto;background:rgba(0,0,0,0.65);backdrop-filter:blur(20px);border-radius:48px;padding:40px 28px;border:0.5px solid ${design.accent}}
-h1{font-size:44px;background:${design.gradient};-webkit-background-clip:text;background-clip:text;color:transparent}
-.pain{background:#ff444410;border-left:4px solid #ff4444;padding:16px;border-radius:20px;margin:24px 0}
-.solution{background:#44ff4410;border-left:4px solid #44ff44;padding:16px;border-radius:20px}
-.proof{background:#ffaa3310;border-left:4px solid #ffaa33;padding:12px;border-radius:20px;margin:20px 0}
-.cta-btn{display:block;background:${design.gradient};text-align:center;padding:16px;border-radius:60px;color:#fff;text-decoration:none;font-weight:700;margin:24px 0}
-.limited{color:#ffaa66;font-size:12px;text-align:center}
-</style></head>
-<body><div class="container"><div class="pain">😫 ${pain}</div><h1>${brand}</h1><div style="font-size:22px;margin:8px 0">${product}</div><div class="solution">✅ ${solution}</div><div class="description">${desc}</div><div class="proof">📊 ${proof}</div><a href="${contactLink}" class="cta-btn">${cta}</a><div class="limited">⚠️ Limited spots — only 5 left</div>${watermark}</div></body></html>`;
-}
-
-function generateLanding(brand, niche, product, desc, imageUrl, contact, platform) {
-  if (freeGenerations <= 0 && !isPro) {
-    alert("⚠️ No free tries left! Get PRO for unlimited.");
-    return false;
-  }
-  const smart = generateSmartContent(niche, platform);
-  currentHTML = buildLandingHTML(brand || smart.brand, niche, product || smart.product, desc || smart.desc, smart.cta, imageUrl, contact || '@ifield', smart.pain, smart.solution, smart.proof, platform);
-  document.getElementById('resultSection').style.display = 'block';
-  document.getElementById('previewFrame').srcdoc = currentHTML;
-  document.getElementById('victoryMessage').style.display = 'block';
-  if (!isPro) {
-    freeGenerations--;
-    localStorage.setItem('freeGenerations', freeGenerations);
-    updateBadge();
-  }
-  showStatus(`✅ Site generated! ${freeGenerations} free left`);
-  return true;
-}
-
-function improveLanding() {
-  if (!currentHTML) return;
-  if (!isPro) {
-    const upgrade = confirm("⚠️ Your site may be losing clients.\n\nAI found weak points.\n\n🧠 Fix it with AI Improve (PRO)?");
-    if (upgrade) buyPro();
-    return;
-  }
-  document.getElementById('aiLoading').style.display = 'block';
-  document.getElementById('aiLoading').innerHTML = "🧠 AI improving your page...";
-  setTimeout(() => {
-    let improved = currentHTML;
-    improved = improved.replace(/<h1>(.*?)<\/h1>/, `<h1>🔥 ${RegExp.$1} — Premium Quality</h1>`);
-    improved = improved.replace(/Limited/g, "⚠️ ONLY 3 SPOTS LEFT");
-    improved = improved.replace(/Get Started/g, "🚀 Get Instant Access");
-    currentHTML = improved;
-    document.getElementById('previewFrame').srcdoc = currentHTML;
-    document.getElementById('aiLoading').style.display = 'none';
-    showStatus("✅ Improved! +32% conversion estimated");
-  }, 1500);
-}
-
-function downloadLanding() {
-  if (!currentHTML) return;
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(new Blob([currentHTML], {type: 'text/html'}));
-  a.download = `landing-${Date.now()}.html`;
-  a.click();
-  showStatus("📥 Downloaded!");
-}
-
-async function copyHTML() {
-  if (!currentHTML) return;
-  await navigator.clipboard.writeText(currentHTML);
-  showStatus("📋 Copied!");
-}
-
-function viralShare() {
-  freeGenerations += 3;
-  localStorage.setItem('freeGenerations', freeGenerations);
-  updateBadge();
-  showStatus("🔥 +3 free generations! Share your site with clients.");
-  if (navigator.share) {
-    navigator.share({ title: 'My AI Landing', text: 'Check out my site!', url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(window.location.href);
-    alert("Link copied! Share with friends.");
-  }
-}
-
-async function publishToGist() {
-  if (!currentHTML) { alert("Generate first!"); return; }
-  let token = localStorage.getItem('github_token');
-  if (!token) {
-    token = prompt("🔑 GitHub token (gist only):\nhttps://github.com/settings/tokens/new");
-    if (!token) return;
-    localStorage.setItem('github_token', token);
-  }
-  const brand = document.getElementById('brand')?.value || 'landing';
-  const slug = brand.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now();
-  try {
-    const res = await fetch('https://api.github.com/gists', {
-      method: 'POST',
-      headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ description: `Landing: ${brand}`, public: true, files: { [slug+'.html']: { content: currentHTML } } })
-    });
-    const data = await res.json();
-    const rawUrl = `https://htmlpreview.github.io/?${data.files[slug+'.html'].raw_url}`;
-    await navigator.clipboard.writeText(rawUrl);
-    alert(`🚀 Your site is LIVE!\n\n${rawUrl}\n\nLink copied!`);
-  } catch(e) { alert("Publish failed. Check token."); }
-}
-
-function buyPro() {
-  window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
-  alert("💰 After payment, click the link from the bot.\n\nThen refresh with ?pro=true");
-}
-
-// Check PRO from URL
-if (window.location.search.includes('pro=true')) {
-  localStorage.setItem('pro', 'true');
-  isPro = true;
-  showStatus("🔥 PRO activated! Unlimited improvements.");
-}
-
-// Event listeners
-document.getElementById('autoGenBtn').onclick = () => {
-  const niches = ['coffee', 'beauty', 'fitness', 'tech'];
-  const random = niches[Math.floor(Math.random() * niches.length)];
-  const smart = generateSmartContent(random);
-  simulateAILoading(() => generateLanding(smart.brand, random, smart.product, smart.desc, '', '@' + smart.brand, 'ig'));
-};
-document.getElementById('ideaGenBtn').onclick = () => {
-  const idea = document.getElementById('ideaInput').value.trim();
-  if (!idea) { alert("Enter your idea!"); return; }
-  const niche = detectNiche(idea);
-  const smart = generateSmartContent(niche);
-  simulateAILoading(() => generateLanding(smart.brand, niche, smart.product, smart.desc, '', '@' + smart.brand, 'ig'));
-};
-document.getElementById('manualGenBtn').onclick = () => {
-  const brand = document.getElementById('brand').value;
-  const niche = document.getElementById('niche').value;
-  const product = document.getElementById('product').value;
-  const desc = document.getElementById('description').value;
-  const imageUrl = document.getElementById('imageUrl').value;
-  const contact = document.getElementById('contact').value;
-  const platform = document.getElementById('platform').value;
-  if (!brand || !product) { alert("Brand and product required!"); return; }
-  simulateAILoading(() => generateLanding(brand, niche || 'universal', product, desc, imageUrl, contact, platform));
-};
-document.getElementById('btnDownload').onclick = downloadLanding;
-document.getElementById('btnCopy').onclick = copyHTML;
-document.getElementById('btnImprove').onclick = improveLanding;
-document.getElementById('btnShare').onclick = viralShare;
-document.getElementById('btnPublish').onclick = publishToGist;
-document.getElementById('proBuyBtn').onclick = buyPro;
-
-// Mode switching
-document.querySelectorAll('.mode-btn').forEach(btn => {
-  btn.onclick = () => {
-    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
-    document.getElementById(btn.dataset.mode + 'Panel').style.display = 'block';
-  };
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    setLanguage(btn.getAttribute('data-lang'));
+  });
 });
 
-updateBadge();
+// ==================== APP LOGIC ====================
+let activeTemplate = 'nexus';
+let generatedHTML = '';
+let uploadedPhoto = '';
+
+function selectTemplate(id) {
+  activeTemplate = id;
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.tpl-card[data-id="${id}"]`).classList.add('active');
+}
+
+function handlePhoto(input) {
+  if (!input.files?.[0]) return;
+  const r = new FileReader();
+  r.onload = e => {
+    uploadedPhoto = e.target.result;
+    document.getElementById('photoPreview').innerHTML = `<img src="${uploadedPhoto}">`;
+    document.getElementById('f-img').value = '';
+    toast('✅ Photo ready');
+  };
+  r.readAsDataURL(input.files[0]);
+}
+
+function val(id, fallback='') {
+  return document.getElementById(id).value.trim() || fallback;
+}
+
+// ==================== FULL TEMPLATE BUILDERS (ORIGINAL) ====================
+function buildNexus(d) {
+  const payLink = d.pay ? `<a href="${d.pay}" class="pay-btn" target="_blank">💳 ${d.price ? d.price + ' — Pay now' : 'Pay now'}</a>` : '';
+  const imgBlock = d.img ? `<div class="hero-img"><img src="${d.img}" alt="${d.product}"></div>` : '';
+  const contactLink = d.contact.startsWith('@') ? `https://t.me/${d.contact.slice(1)}` : d.contact;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.brand} — ${d.product}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:radial-gradient(ellipse 80% 60% at 30% 20%,rgba(64,224,208,0.12),transparent 60%),radial-gradient(ellipse 70% 50% at 80% 80%,rgba(155,77,255,0.10),transparent 60%),#04060f;font-family:'Inter',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px;color:#e2eeff}
+.card{max-width:640px;width:100%;background:rgba(12,18,36,0.75);backdrop-filter:blur(32px);border:1px solid rgba(64,224,208,0.2);border-radius:40px;padding:48px 40px;text-align:center;box-shadow:0 0 80px rgba(64,224,208,0.06),0 32px 64px rgba(0,0,0,0.6)}
+.badge{display:inline-block;background:rgba(64,224,208,0.1);border:1px solid rgba(64,224,208,0.25);color:#40E0D0;font-size:11px;font-weight:700;letter-spacing:1.5px;padding:6px 16px;border-radius:40px;margin-bottom:28px;text-transform:uppercase}
+h1{font-size:52px;font-weight:800;letter-spacing:-2px;line-height:1;background:linear-gradient(135deg,#fff 40%,#40E0D0 75%,#9b4dff);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:10px}
+.tagline{font-size:17px;color:rgba(200,212,240,0.75);margin-bottom:32px;line-height:1.5}
+.hero-img{margin:0 auto 32px;max-width:420px;border-radius:28px;overflow:hidden;border:1px solid rgba(64,224,208,0.15);box-shadow:0 24px 48px rgba(0,0,0,0.5)}
+.hero-img img{width:100%;display:block}
+.desc{font-size:15px;line-height:1.7;color:rgba(200,212,240,0.85);max-width:480px;margin:0 auto 32px}
+.features{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:36px}
+.feat{background:rgba(255,255,255,0.04);border:1px solid rgba(64,224,208,0.18);border-radius:40px;padding:8px 18px;font-size:13px;color:#a8c4e0}
+.price-row{margin-bottom:28px}
+.price{font-size:36px;font-weight:800;background:linear-gradient(135deg,#40E0D0,#9b4dff);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block}
+.btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.cta{display:inline-block;background:linear-gradient(135deg,#40E0D0,#9b4dff,#2c6eff);padding:16px 36px;border-radius:44px;font-size:17px;font-weight:700;color:white;text-decoration:none;box-shadow:0 8px 32px rgba(64,224,208,0.25)}
+.pay-btn{display:inline-block;background:rgba(255,255,255,0.07);border:1px solid rgba(64,224,208,0.3);padding:16px 28px;border-radius:44px;font-size:16px;font-weight:600;color:#40E0D0;text-decoration:none}
+.contact-row{margin-top:32px;font-size:13px;color:rgba(200,212,240,0.45)}
+.contact-row a{color:#9b4dff;text-decoration:none}
+@media(max-width:520px){.card{padding:32px 24px;border-radius:28px}h1{font-size:36px}.cta,.pay-btn{padding:14px 22px;font-size:15px}}
+</style></head><body>
+<div class="card">
+  <div class="badge">${d.niche || 'iField Studio'}</div>
+  <h1>${d.brand}</h1>
+  <div class="tagline">${d.tagline}</div>
+  ${imgBlock}
+  <div class="desc">${d.desc}</div>
+  <div class="features">
+    ${d.feat1 ? `<div class="feat">✓ ${d.feat1}</div>`:''}
+    ${d.feat2 ? `<div class="feat">✓ ${d.feat2}</div>`:''}
+    ${d.feat3 ? `<div class="feat">✓ ${d.feat3}</div>`:''}
+  </div>
+  ${d.price ? `<div class="price-row"><div class="price">${d.price}</div></div>` : ''}
+  <div class="btns">
+    <a href="${contactLink}" class="cta" target="_blank">📩 Contact</a>
+    ${payLink}
+  </div>
+  <div class="contact-row">${d.contact}${d.phone ? ' · <a href="tel:'+d.phone+'">'+d.phone+'</a>' : ''}</div>
+</div>
+</body></html>`;
+}
+
+function buildForge(d) {
+  const contactLink = d.contact.startsWith('@') ? `https://t.me/${d.contact.slice(1)}` : d.contact;
+  const payLink = d.pay ? `<a href="${d.pay}" class="pay-btn" target="_blank">Pay now →</a>` : '';
+  const imgSection = d.img ? `<div class="hero-visual"><img src="${d.img}" alt="${d.product}"></div>` : `<div class="hero-visual placeholder"><div class="pl-icon">⚡</div></div>`;
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.brand}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#0f0c07;font-family:'DM Sans',system-ui,sans-serif;color:#f0e8d8}
+.page{min-height:100vh;display:flex;flex-direction:column}
+.hero{flex:1;display:grid;grid-template-columns:1fr 1fr;min-height:75vh}
+.hero-left{padding:60px 48px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid rgba(251,191,36,0.15)}
+.niche-tag{font-size:11px;font-weight:700;letter-spacing:2px;color:#fbbf24;text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;gap:8px}
+.niche-tag::before{content:'';display:block;width:24px;height:2px;background:#fbbf24}
+h1{font-family:'Syne',system-ui;font-size:58px;font-weight:800;line-height:1;letter-spacing:-2px;color:#f0e8d8;margin-bottom:18px}
+h1 em{font-style:normal;color:#fbbf24}
+.tagline{font-size:16px;line-height:1.65;color:rgba(240,232,216,0.65);margin-bottom:36px;max-width:380px}
+.btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px}
+.cta{display:inline-block;background:#fbbf24;color:#0f0c07;padding:15px 32px;border-radius:8px;font-size:16px;font-weight:700;text-decoration:none;font-family:'Syne',system-ui}
+.pay-btn{display:inline-block;border:2px solid rgba(251,191,36,0.4);color:#fbbf24;padding:14px 28px;border-radius:8px;font-size:15px;font-weight:600;text-decoration:none}
+.feats{display:grid;gap:12px}
+.feat-row{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:rgba(240,232,216,0.7)}
+.feat-row::before{content:'—';color:#fbbf24;flex-shrink:0;margin-top:1px}
+.hero-visual{display:flex;align-items:center;justify-content:center;padding:40px;background:rgba(251,191,36,0.03)}
+.hero-visual img{width:100%;max-width:400px;border-radius:24px;object-fit:cover;box-shadow:0 32px 80px rgba(0,0,0,0.7)}
+.placeholder{background:rgba(251,191,36,0.04);border:1px dashed rgba(251,191,36,0.15)}
+.pl-icon{font-size:72px;opacity:0.3}
+.bottom{padding:32px 48px;border-top:1px solid rgba(251,191,36,0.1);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.brand-row{font-family:'Syne',system-ui;font-size:20px;font-weight:800;letter-spacing:-0.5px}
+.brand-row span{color:#fbbf24}
+.contact-links{display:flex;gap:20px;flex-wrap:wrap}
+.contact-links a{color:rgba(240,232,216,0.5);text-decoration:none;font-size:13px;transition:color 0.2s}
+.contact-links a:hover{color:#fbbf24}
+.price-badge{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#0f0c07;padding:4px 14px;border-radius:40px;font-size:13px;font-weight:700;display:inline-block;margin-bottom:20px}
+@media(max-width:640px){.hero{grid-template-columns:1fr}.hero-visual{display:none}.hero-left{padding:40px 24px}.h1{font-size:40px}.bottom{padding:24px}}
+</style></head><body>
+<div class="page">
+<div class="hero">
+  <div class="hero-left">
+    <div class="niche-tag">${d.niche || 'Professional Service'}</div>
+    <h1>${d.brand.split(' ').map((w,i)=>i===1?`<em>${w}</em>`:w).join(' ')}</h1>
+    <div class="tagline">${d.tagline || d.desc}</div>
+    ${d.price ? `<div class="price-badge">${d.price}</div>` : ''}
+    <div class="btns">
+      <a href="${contactLink}" class="cta" target="_blank">Book now</a>
+      ${payLink}
+    </div>
+    <div class="feats">
+      ${d.feat1?`<div class="feat-row">${d.feat1}</div>`:''}
+      ${d.feat2?`<div class="feat-row">${d.feat2}</div>`:''}
+      ${d.feat3?`<div class="feat-row">${d.feat3}</div>`:''}
+    </div>
+  </div>
+  ${imgSection}
+</div>
+<div class="bottom">
+  <div class="brand-row">${d.brand.split(' ').map((w,i)=>i===0?`<span>${w}</span>`:w).join(' ')}</div>
+  <div class="contact-links">
+    ${d.contact?`<a href="${contactLink}" target="_blank">${d.contact}</a>`:''}
+    ${d.phone?`<a href="tel:${d.phone}">${d.phone}</a>`:''}
+  </div>
+</div>
+</div>
+</body></html>`;
+}
+
+function buildPulse(d) {
+  const contactLink = d.contact.startsWith('@') ? `https://t.me/${d.contact.slice(1)}` : d.contact;
+  const payLink = d.pay ? `<a href="${d.pay}" class="pay-btn" target="_blank">⚡ Pay ${d.price||'now'}</a>` : '';
+  const imgBlock = d.img ? `<div class="product-visual"><img src="${d.img}" alt="${d.product}"></div>` : '';
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.brand}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;background:#030508;font-family:'Outfit',system-ui,sans-serif;color:#e8f4ff;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 0%,rgba(0,255,136,0.08),transparent 60%),radial-gradient(ellipse 40% 30% at 80% 100%,rgba(255,68,170,0.07),transparent);pointer-events:none}
+.page{max-width:720px;margin:0 auto;padding:48px 24px}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:64px;flex-wrap:wrap;gap:12px}
+.brand-mark{font-family:'Space Mono',monospace;font-size:16px;color:#00ff88;letter-spacing:2px}
+.status-dot{display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(232,244,255,0.45);font-family:'Space Mono',monospace}
+.dot-live{width:6px;height:6px;border-radius:50%;background:#00ff88;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+.hero-section{margin-bottom:60px}
+.niche-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:rgba(0,255,136,0.6);text-transform:uppercase;margin-bottom:20px}
+h1{font-size:62px;font-weight:900;letter-spacing:-2px;line-height:0.95;margin-bottom:24px}
+h1 .line1{display:block;color:#e8f4ff}
+h1 .line2{display:block;-webkit-text-stroke:1.5px #00ff88;color:transparent}
+.tagline{font-size:16px;color:rgba(232,244,255,0.55);line-height:1.6;max-width:520px;margin-bottom:40px}
+${imgBlock ? '.product-visual{margin:40px 0;border-radius:24px;overflow:hidden;border:1px solid rgba(0,255,136,0.15);box-shadow:0 0 60px rgba(0,255,136,0.08)}.product-visual img{width:100%;display:block}' : ''}
+.feats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:48px}
+.feat{background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.15);border-radius:16px;padding:18px 14px;font-size:13px;color:rgba(232,244,255,0.8);line-height:1.5}
+.feat .num{font-family:'Space Mono',monospace;font-size:10px;color:#00ff88;letter-spacing:2px;margin-bottom:8px}
+.price-section{margin-bottom:40px;padding:24px;background:rgba(0,255,136,0.05);border:1px solid rgba(0,255,136,0.2);border-radius:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.price-num{font-family:'Space Mono',monospace;font-size:42px;font-weight:700;color:#00ff88;letter-spacing:-1px}
+.price-label{font-size:12px;color:rgba(232,244,255,0.4);margin-top:4px;font-family:'Space Mono',monospace}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.cta{display:inline-block;background:linear-gradient(135deg,#00ff88,#00ccff);color:#020408;padding:16px 32px;border-radius:12px;font-size:16px;font-weight:800;text-decoration:none;font-family:'Outfit',system-ui}
+.pay-btn{display:inline-block;border:1.5px solid #00ff88;color:#00ff88;padding:15px 24px;border-radius:12px;font-size:15px;font-weight:700;text-decoration:none}
+.footer-bar{margin-top:64px;padding-top:24px;border-top:1px solid rgba(0,255,136,0.1);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-family:'Space Mono',monospace;font-size:11px;color:rgba(232,244,255,0.3)}
+.footer-bar a{color:rgba(0,255,136,0.6);text-decoration:none}
+@media(max-width:520px){h1{font-size:40px}.feats-grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="page">
+<div class="top-bar">
+  <div class="brand-mark">${d.brand.toUpperCase()}</div>
+  <div class="status-dot"><div class="dot-live"></div>ONLINE</div>
+</div>
+<div class="hero-section">
+  <div class="niche-label">${d.niche||'Service'}</div>
+  <h1>
+    <span class="line1">${d.brand.split(' ')[0]||d.brand}</span>
+    <span class="line2">${d.product||d.brand.split(' ').slice(1).join(' ')||'Studio'}</span>
+  </h1>
+  <div class="tagline">${d.tagline||d.desc}</div>
+  ${imgBlock}
+</div>
+<div class="feats-grid">
+  ${d.feat1?`<div class="feat"><div class="num">01</div>${d.feat1}</div>`:''}
+  ${d.feat2?`<div class="feat"><div class="num">02</div>${d.feat2}</div>`:''}
+  ${d.feat3?`<div class="feat"><div class="num">03</div>${d.feat3}</div>`:''}
+</div>
+${d.price?`<div class="price-section"><div><div class="price-num">${d.price}</div><div class="price-label">// STARTING PRICE</div></div><div class="btns"><a href="${contactLink}" class="cta" target="_blank">Book →</a>${payLink}</div></div>`:`<div class="btns"><a href="${contactLink}" class="cta" target="_blank">Get in touch →</a>${payLink}</div>`}
+<div class="footer-bar">
+  <span>${d.brand} · ${new Date().getFullYear()}</span>
+  <div style="display:flex;gap:16px">
+    ${d.contact?`<a href="${contactLink}" target="_blank">${d.contact}</a>`:''}
+    ${d.phone?`<a href="tel:${d.phone}">${d.phone}</a>`:''}
+  </div>
+</div>
+</div>
+</body></html>`;
+}
+
+function buildSlate(d) {
+  const contactLink = d.contact.startsWith('@') ? `https://t.me/${d.contact.slice(1)}` : d.contact;
+  const payLink = d.pay ? `<a href="${d.pay}" class="btn-pay" target="_blank">💳 ${d.price ? d.price : 'Pay online'}</a>` : '';
+  const imgBlock = d.img ? `<img src="${d.img}" alt="${d.product}" class="product-img">` : '';
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${d.brand}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--ink:#1a1a2e;--accent:#2563eb;--bg:#f9fafb;--soft:#f1f5f9;--border:#e2e8f0;--muted:#64748b}
+body{background:var(--bg);font-family:'Lato',system-ui;color:var(--ink);min-height:100vh}
+nav{background:white;border-bottom:1px solid var(--border);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.nav-brand{font-family:'Playfair Display',serif;font-size:22px;letter-spacing:-0.5px}
+.nav-cta{background:var(--accent);color:white;padding:10px 22px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none}
+.hero{padding:80px 40px;max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-text{}
+.hero-tag{font-size:12px;font-weight:700;letter-spacing:2px;color:var(--accent);text-transform:uppercase;margin-bottom:20px}
+h1{font-family:'Playfair Display',serif;font-size:52px;line-height:1.1;letter-spacing:-1px;margin-bottom:20px}
+.tagline{font-size:17px;color:var(--muted);line-height:1.65;margin-bottom:36px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px}
+.btn-main{display:inline-block;background:var(--accent);color:white;padding:15px 32px;border-radius:8px;font-size:16px;font-weight:700;text-decoration:none}
+.btn-pay{display:inline-block;border:2px solid var(--border);color:var(--ink);padding:14px 24px;border-radius:8px;font-size:15px;font-weight:700;text-decoration:none}
+.product-img{width:100%;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,0.12)}
+.hero-placeholder{background:var(--soft);border-radius:20px;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;color:var(--border);font-size:48px;border:2px dashed var(--border)}
+.features{background:white;padding:60px 40px;border-top:1px solid var(--border)}
+.features-inner{max-width:900px;margin:0 auto}
+.section-title{font-family:'Playfair Display',serif;font-size:30px;margin-bottom:40px;text-align:center}
+.feats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.feat{padding:28px;border:1px solid var(--border);border-radius:16px;transition:box-shadow 0.2s}
+.feat:hover{box-shadow:0 8px 24px rgba(0,0,0,0.07)}
+.feat-num{font-size:32px;font-weight:700;color:var(--accent);margin-bottom:12px;font-family:'Playfair Display',serif}
+.feat-text{font-size:14px;color:var(--muted);line-height:1.65}
+.pricing{background:var(--soft);padding:60px 40px;text-align:center;border-top:1px solid var(--border)}
+.price-card{background:white;display:inline-block;padding:40px 56px;border-radius:24px;border:1px solid var(--border);box-shadow:0 8px 32px rgba(0,0,0,0.06)}
+.price-value{font-family:'Playfair Display',serif;font-size:56px;color:var(--ink);margin-bottom:6px}
+.price-note{font-size:14px;color:var(--muted);margin-bottom:28px}
+.footer{padding:32px 40px;background:var(--ink);color:rgba(255,255,255,0.7);text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.footer-brand{font-family:'Playfair Display',serif;font-size:20px;color:white}
+.footer-links{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
+.footer-links a{color:rgba(255,255,255,0.5);text-decoration:none;font-size:13px}
+.footer-links a:hover{color:white}
+@media(max-width:640px){.hero{grid-template-columns:1fr;padding:48px 24px;gap:40px}h1{font-size:38px}.feats-grid{grid-template-columns:1fr}.hero-placeholder{display:none}}
+</style></head><body>
+<nav>
+  <div class="nav-brand">${d.brand}</div>
+  <a href="${contactLink}" class="nav-cta" target="_blank">Contact →</a>
+</nav>
+<div class="hero">
+  <div class="hero-text">
+    <div class="hero-tag">${d.niche||'Professional'}</div>
+    <h1>${d.product||d.brand}</h1>
+    <div class="tagline">${d.tagline||d.desc}</div>
+    <div class="hero-btns">
+      <a href="${contactLink}" class="btn-main" target="_blank">Get in touch</a>
+      ${payLink}
+    </div>
+  </div>
+  ${imgBlock ? `<div>${imgBlock}</div>` : `<div class="hero-placeholder">✦</div>`}
+</div>
+${(d.feat1||d.feat2||d.feat3) ? `<div class="features"><div class="features-inner"><div class="section-title">Why choose us</div><div class="feats-grid">${d.feat1?`<div class="feat"><div class="feat-num">01</div><div class="feat-text">${d.feat1}</div></div>`:''} ${d.feat2?`<div class="feat"><div class="feat-num">02</div><div class="feat-text">${d.feat2}</div></div>`:''} ${d.feat3?`<div class="feat"><div class="feat-num">03</div><div class="feat-text">${d.feat3}</div></div>`:''}</div></div></div>`:''}
+${d.price ? `<div class="pricing"><div class="price-card"><div class="price-value">${d.price}</div><div class="price-note">${d.desc||'Starting price'}</div><a href="${contactLink}" class="btn-main" target="_blank" style="display:inline-block">Book now</a></div></div>` : ''}
+<div class="footer">
+  <div class="footer-brand">${d.brand}</div>
+  <div class="footer-links">
+    ${d.contact?`<a href="${contactLink}" target="_blank">${d.contact}</a>`:''}
+    ${d.phone?`<a href="tel:${d.phone}">${d.phone}</a>`:''}
+  </div>
+  <div style="font-size:12px;color:rgba(255,255,255,0.3)">© ${new Date().getFullYear()} ${d.brand}. Built with iField Studio.</div>
+</div>
+</body></html>`;
+}
+
+// ==================== MAIN GENERATE ====================
+function generate() {
+  const d = {
+    brand:   val('f-brand',   'My Brand'),
+    tagline: val('f-tagline', ''),
+    niche:   val('f-niche',   'service'),
+    product: val('f-product', 'Our Service'),
+    desc:    val('f-desc',    'Quality service that delivers results.'),
+    feat1:   val('f-feat1'),
+    feat2:   val('f-feat2'),
+    feat3:   val('f-feat3'),
+    price:   val('f-price'),
+    pay:     val('f-pay'),
+    contact: val('f-contact', '@yourhandle'),
+    phone:   val('f-phone'),
+    img:     uploadedPhoto || val('f-img')
+  };
+
+  const builders = { nexus: buildNexus, forge: buildForge, pulse: buildPulse, slate: buildSlate };
+  generatedHTML = builders[activeTemplate](d);
+
+  const frame = document.getElementById('previewFrame');
+  frame.srcdoc = generatedHTML;
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('result').scrollIntoView({ behavior:'smooth', block:'start' });
+  toast('✅ Site built!');
+}
+
+function doDownload() {
+  if (!generatedHTML) return;
+  const brand = val('f-brand','landing').toLowerCase().replace(/[^a-z0-9]/g,'-');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([generatedHTML],{type:'text/html'}));
+  a.download = `${brand}-${activeTemplate}.html`;
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('📥 Downloaded!');
+}
+
+function doEdit() {
+  const frame = document.getElementById('previewFrame');
+  try { frame.contentDocument.body.contentEditable = 'true'; toast('✏️ Click any text to edit'); }
+  catch(e) { toast('⚠️ Click download first, then open in browser to edit', true); }
+}
+
+async function doCopy() {
+  if (!generatedHTML) return;
+  await navigator.clipboard.writeText(generatedHTML);
+  toast('📋 Code copied!');
+}
+
+function doShare() {
+  if (!generatedHTML) return;
+  const file = new File([generatedHTML], 'my-site.html', {type:'text/html'});
+  if (navigator.share && navigator.canShare?.({files:[file]})) {
+    navigator.share({ title: val('f-brand','My site'), files:[file] });
+  } else {
+    doDownload();
+  }
+}
+
+async function doPublicLink() {
+  let token = localStorage.getItem('gh_tok');
+  if (!token) {
+    token = prompt('Enter GitHub token to publish:\nhttps://github.com/settings/tokens/new\n(check: gist only)');
+    if (!token) return;
+    localStorage.setItem('gh_tok', token);
+  }
+  const brand = val('f-brand','landing').toLowerCase().replace(/[^a-z0-9]/g,'-');
+  const fname = `${brand}-${Date.now()}.html`;
+  try {
+    const res = await fetch('https://api.github.com/gists',{
+      method:'POST',
+      headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
+      body: JSON.stringify({description:`${brand} landing`,public:true,files:{[fname]:{content:generatedHTML}}})
+    });
+    const data = await res.json();
+    if (!data.id) throw new Error();
+    const url = `https://htmlpreview.github.io/?https://gist.githubusercontent.com/${data.owner.login}/${data.id}/raw/${fname}`;
+    await navigator.clipboard.writeText(url);
+    alert(`🎉 Your public link:\n${url}\n\nCopied to clipboard!`);
+    toast('✅ Link copied!');
+  } catch(e) {
+    localStorage.removeItem('gh_tok');
+    window.open('https://t.me/ifield_lab','_blank');
+    toast('❌ Failed. Opening Telegram for help.');
+  }
+}
+
+function toast(msg, isErr=false) {
+  document.querySelectorAll('.toast').forEach(t=>t.remove());
+  const t = document.createElement('div'); t.className='toast'; t.textContent=msg;
+  if(isErr) t.style.background='rgba(239,68,68,0.95)';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3500);
+}
+
+setLanguage(currentLang);
 </script>
 </body>
 </html>

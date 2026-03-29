@@ -2,423 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>iField AI — Космический генератор</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iField AI — Landing Builder v2.5</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  body {
-    background: #03050c;
-    font-family: -apple-system, "SF Pro Text", system-ui, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    position: relative;
-  }
-  
-  /* ЖИВОЙ КОСМОС (Canvas) */
-  #spaceCanvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    display: block;
-  }
-  
-  /* КОНТЕНТ ПОВЕРХ */
-  .container {
-    max-width: 720px;
-    margin: 0 auto;
-    position: relative;
-    z-index: 2;
-    padding: 20px;
-  }
-  
-  /* ПУЛЬСИРУЮЩИЕ КНОПКИ */
-  .hero-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #40E0D0, #9b4dff);
-    border: none;
-    border-radius: 60px;
-    padding: 18px;
-    font-size: 18px;
-    font-weight: 600;
-    color: white;
-    cursor: pointer;
-    margin: 16px 0;
-    position: relative;
-    animation: pulseGlow 2s infinite;
-    transition: transform 0.2s;
-    box-shadow: 0 0 20px rgba(64,224,208,0.3);
-  }
-  
-  .hero-btn:hover {
-    transform: scale(1.02);
-  }
-  
-  @keyframes pulseGlow {
-    0% { box-shadow: 0 0 5px rgba(64,224,208,0.3), 0 0 10px rgba(155,77,255,0.2); }
-    50% { box-shadow: 0 0 25px rgba(64,224,208,0.8), 0 0 35px rgba(155,77,255,0.5); }
-    100% { box-shadow: 0 0 5px rgba(64,224,208,0.3), 0 0 10px rgba(155,77,255,0.2); }
-  }
-  
-  .improve-btn {
-    background: linear-gradient(135deg, #ffaa33, #ff6600);
-    animation: pulseGlowOrange 2s infinite;
-  }
-  
-  @keyframes pulseGlowOrange {
-    0% { box-shadow: 0 0 5px rgba(255,102,0,0.3); }
-    50% { box-shadow: 0 0 25px rgba(255,102,0,0.7); }
-    100% { box-shadow: 0 0 5px rgba(255,102,0,0.3); }
-  }
-  
-  /* ОСТАЛЬНЫЕ СТИЛИ */
-  .lang-switcher { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 20px; }
-  .lang-btn {
-    background: rgba(30,40,58,0.6);
-    backdrop-filter: blur(10px);
-    border: 0.5px solid rgba(155,77,255,0.4);
-    color: #b07cff;
-    padding: 6px 14px;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  .lang-btn.active { background: linear-gradient(135deg, #40E0D0, #9b4dff); color: white; }
-  
-  .mode-tabs {
-    display: flex;
-    gap: 8px;
-    margin: 20px 0;
-    background: rgba(20,28,40,0.5);
-    backdrop-filter: blur(12px);
-    border-radius: 60px;
-    padding: 6px;
-  }
-  .mode-btn {
-    flex: 1;
-    text-align: center;
-    padding: 12px 0;
-    border-radius: 50px;
-    background: transparent;
-    border: none;
-    color: #a0b0d0;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .mode-btn.active {
-    background: linear-gradient(135deg, #40E0D0, #9b4dff);
-    color: white;
-  }
-  
-  .field { margin-bottom: 20px; }
-  .field input, .field textarea, .field select {
-    width: 100%;
-    background: rgba(20,28,40,0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(155,77,255,0.3);
-    border-radius: 20px;
-    padding: 14px 18px;
-    color: white;
-    font-size: 15px;
-  }
-  .field label { font-size: 12px; color: #b07cff; margin-bottom: 6px; display: block; }
-  
-  .result-section { display: none; margin-top: 32px; }
-  .preview-frame {
-    width: 100%;
-    height: 500px;
-    border: none;
-    border-radius: 28px;
-    background: #05070c;
-  }
-  .action-buttons { display: flex; gap: 10px; margin: 20px 0; flex-wrap: wrap; }
-  .action-buttons button {
-    flex: 1;
-    background: rgba(30,40,58,0.7);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(155,77,255,0.4);
-    padding: 10px;
-    border-radius: 40px;
-    color: white;
-    cursor: pointer;
-  }
-  .ai-loading { text-align: center; padding: 14px; background: rgba(155,77,255,0.15); border-radius: 40px; margin: 16px 0; color: #40E0D0; display: none; }
-  .limits { background: rgba(0,0,0,0.5); border-radius: 40px; padding: 12px 16px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; font-size: 12px; margin: 20px 0; }
-  .limit-free { color: #22c55e; font-weight: bold; }
-  .pro-buy-btn { background: linear-gradient(135deg, #ffd700, #ffb347); color: #1a1a2e; border: none; padding: 6px 16px; border-radius: 40px; cursor: pointer; }
-  footer { margin-top: 40px; text-align: center; font-size: 11px; color: #6a7a9a; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,system-ui,sans-serif;overflow:hidden;background:#03050c;color:white}
+  canvas#bgCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1}
+  .container{position:relative;z-index:2;max-width:720px;margin:20px auto;padding:20px;background:rgba(0,0,0,0.6);border-radius:28px;backdrop-filter:blur(12px)}
+  h1{font-size:36px;text-align:center;margin-bottom:16px;color:#40E0D0}
+  .field{margin-bottom:12px}
+  .field label{font-size:13px;color:#b07cff;display:block;margin-bottom:4px}
+  .field input,.field textarea,.field select{width:100%;padding:12px 14px;border-radius:20px;background:rgba(20,28,40,0.8);border:1px solid rgba(155,77,255,0.3);color:white;font-size:14px}
+  .hero-btn{width:100%;padding:16px;border:none;border-radius:60px;font-size:18px;font-weight:600;color:white;cursor:pointer;background:linear-gradient(135deg,#40E0D0,#9b4dff);position:relative;overflow:hidden;transition:0.3s}
+  .hero-btn::after{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border:2px solid #fff;opacity:0;border-radius:60px;transition:0.3s}
+  .hero-btn:hover::after{opacity:1;transform:scale(1.05)}
+  .result-section{display:none;margin-top:20px}
+  .preview-frame{width:100%;height:400px;border:none;border-radius:28px;background:#05070c;margin-top:12px}
+  .action-buttons{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .action-buttons button{flex:1;padding:10px;border-radius:40px;border:none;cursor:pointer;color:white;background:linear-gradient(135deg,#ffaa33,#ff6600);transition:0.3s}
+  .action-buttons button:hover{transform:scale(1.05)}
+  footer{text-align:center;font-size:12px;color:#6a7a9a;margin-top:24px}
 </style>
 </head>
 <body>
 
-<canvas id="spaceCanvas"></canvas>
+<canvas id="bgCanvas"></canvas>
 
 <div class="container">
-  <div class="lang-switcher">
-    <button class="lang-btn active" data-lang="en">EN</button>
-    <button class="lang-btn" data-lang="ua">UA</button>
-    <button class="lang-btn" data-lang="ru">RU</button>
+  <h1>iField AI Landing Builder</h1>
+
+  <div class="field">
+    <label>Brand / Company</label>
+    <input id="brand" value="LumiSkin">
+  </div>
+  <div class="field">
+    <label>Niche</label>
+    <input id="niche" value="beauty">
+  </div>
+  <div class="field">
+    <label>Main Product</label>
+    <input id="product" value="Crystal Glow Serum">
+  </div>
+  <div class="field">
+    <label>Description</label>
+    <textarea id="description" rows="2">Luxury skincare that transforms your skin in 7 days.</textarea>
+  </div>
+  <div class="field">
+    <label>Platform</label>
+    <select id="platform">
+      <option value="ig">Instagram</option>
+      <option value="tt">TikTok</option>
+      <option value="tg">Telegram</option>
+    </select>
   </div>
 
-  <div class="mode-tabs">
-    <button class="mode-btn active" data-mode="auto">🚀 AUTO</button>
-    <button class="mode-btn" data-mode="idea">✍️ IDEA</button>
-    <button class="mode-btn" data-mode="manual">⚙️ MANUAL</button>
-  </div>
-
-  <div id="autoPanel" class="mode-panel">
-    <button class="hero-btn" id="autoGenBtn">✨ Generate Site Instantly ✨</button>
-  </div>
-
-  <div id="ideaPanel" class="mode-panel" style="display:none;">
-    <div class="field"><label>🧠 Describe your idea</label><input id="ideaInput" placeholder="I sell organic coffee online"></div>
-    <button class="hero-btn" id="ideaGenBtn">🎯 Generate from Idea</button>
-  </div>
-
-  <div id="manualPanel" class="mode-panel" style="display:none;">
-    <div class="field"><label>🏷️ Brand</label><input id="brand" value="LumiSkin"></div>
-    <div class="field"><label>🎯 Niche</label><input id="niche" value="beauty"></div>
-    <div class="field"><label>✨ Product</label><input id="product" value="Crystal Glow Serum"></div>
-    <div class="field"><label>📝 Description</label><textarea id="description">Luxury skincare that transforms your skin in 7 days.</textarea></div>
-    <button class="hero-btn" id="manualGenBtn">Create Landing</button>
-  </div>
-
-  <div class="limits">
-    <span>🎁 <span class="limit-free" id="limitCount">3</span> free left</span>
-    <button class="pro-buy-btn" id="proBuyBtn">⭐ Get PRO (200 Stars)</button>
-  </div>
-
-  <div id="aiLoading" class="ai-loading">🤖 AI thinking...</div>
+  <button class="hero-btn" id="generateBtn">✨ Generate Landing ✨</button>
 
   <div class="result-section" id="resultSection">
     <iframe class="preview-frame" id="previewFrame"></iframe>
     <div class="action-buttons">
-      <button id="btnDownload">📥 Download</button>
-      <button id="btnCopy">📋 Copy code</button>
-      <button id="btnImprove" class="improve-btn">🧠 Improve +32%</button>
-      <button id="btnSendClient">📤 Send to client</button>
+      <button onclick="downloadLanding()">📥 Download</button>
+      <button onclick="copyHTML()">📋 Copy code</button>
+      <button onclick="improveLanding()">🧠 Improve +32% conversion</button>
     </div>
   </div>
-  <footer>⚡ iField AI — from idea to client page in 30 seconds</footer>
 </div>
 
-<script>
-  // ========== ЖИВОЙ КОСМОС (ЧИСТЫЙ JS, БЕЗ THREE.JS) ==========
-  const canvas = document.getElementById('spaceCanvas');
-  const ctx = canvas.getContext('2d');
-  
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
-  
-  // Звёзды
-  const stars = [];
-  const starCount = 800;
-  for (let i = 0; i < starCount; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 2 + 1,
-      alpha: Math.random() * 0.5 + 0.3,
-      speed: Math.random() * 0.5 + 0.1,
-      twinkle: Math.random() * Math.PI * 2
-    });
-  }
-  
-  // Спутники
-  const satellites = [];
-  for (let i = 0; i < 8; i++) {
-    satellites.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      radius: Math.random() * 3 + 2,
-      angle: Math.random() * Math.PI * 2,
-      speed: Math.random() * 0.01 + 0.005,
-      orbitRadius: Math.random() * 100 + 50,
-      centerX: Math.random() * canvas.width,
-      centerY: Math.random() * canvas.height
-    });
-  }
-  
-  let time = 0;
-  
-  function drawSpace() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Градиент фона
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#03050c');
-    gradient.addColorStop(1, '#0a0a1a');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Звёзды с мерцанием
-    stars.forEach(star => {
-      const twinkleAlpha = star.alpha + Math.sin(time * star.speed + star.twinkle) * 0.2;
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.2, Math.min(0.8, twinkleAlpha))})`;
-      ctx.fill();
-    });
-    
-    // Спутники (движутся)
-    satellites.forEach(sat => {
-      const x = sat.centerX + Math.cos(time * sat.speed + sat.angle) * sat.orbitRadius;
-      const y = sat.centerY + Math.sin(time * sat.speed + sat.angle) * sat.orbitRadius * 0.5;
-      
-      ctx.beginPath();
-      ctx.arc(x, y, sat.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(64, 224, 208, 0.8)`;
-      ctx.fill();
-      
-      // Свечение
-      ctx.beginPath();
-      ctx.arc(x, y, sat.radius * 2, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(64, 224, 208, 0.2)`;
-      ctx.fill();
-    });
-    
-    time += 0.02;
-    requestAnimationFrame(drawSpace);
-  }
-  
-  drawSpace();
-  
-  // ========== ОСТАЛЬНАЯ ЛОГИКА ==========
-  let currentHTML = '';
-  let freeGenerations = localStorage.getItem('freeGenerations') ? parseInt(localStorage.getItem('freeGenerations')) : 3;
-  const isPro = localStorage.getItem('pro') === 'true';
-  
-  function generateLanding(brand, product, desc) {
-    if (freeGenerations <= 0 && !isPro) {
-      alert("Get PRO for unlimited generations!");
-      return;
-    }
-    
-    currentHTML = `<!DOCTYPE html>
-    <html>
-    <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${brand} | ${product}</title>
-    <style>
-      *{margin:0;padding:0;box-sizing:border-box}
-      body{background:#0a0c15;font-family:-apple-system,system-ui;padding:20px}
-      .container{max-width:720px;margin:0 auto;background:rgba(0,0,0,0.6);backdrop-filter:blur(20px);border-radius:48px;padding:40px;border:1px solid rgba(100,150,255,0.3)}
-      h1{font-size:44px;background:linear-gradient(135deg,#40E0D0,#9b4dff);-webkit-background-clip:text;background-clip:text;color:transparent}
-      .cta-btn{display:block;background:linear-gradient(135deg,#40E0D0,#9b4dff);text-align:center;padding:16px;border-radius:60px;color:white;text-decoration:none;font-weight:700;margin:24px 0}
-      .built{font-size:11px;opacity:0.6;text-align:center;margin-top:20px}
-    </style>
-    </head>
-    <body>
-    <div class="container">
-      <h1>${brand}</h1>
-      <p style="font-size:22px;margin:16px 0">${product}</p>
-      <p>${desc}</p>
-      <a href="#" class="cta-btn">Get Started</a>
-      <div class="built">Built with ⚡ iField AI</div>
-    </div>
-    </body>
-    </html>`;
-    
-    document.getElementById('resultSection').style.display = 'block';
-    document.getElementById('previewFrame').srcdoc = currentHTML;
-    
-    if (!isPro) {
-      freeGenerations--;
-      localStorage.setItem('freeGenerations', freeGenerations);
-      document.getElementById('limitCount').innerText = freeGenerations;
-    }
-  }
-  
-  function improveLanding() {
-    if (!currentHTML) return;
-    if (!isPro) {
-      if (confirm("⚠️ Your site may be losing clients.\n\nFix it with AI Improve (PRO)\n\nUpgrade now?")) {
-        buyProNow();
-      }
-      return;
-    }
-    
-    document.getElementById('aiLoading').style.display = 'block';
-    setTimeout(() => {
-      let improved = currentHTML;
-      improved = improved.replace(/Get Started/g, "🔥 BUY NOW — Limited Offer");
-      improved = improved.replace(/Built with/g, "🔥 Premium by");
-      currentHTML = improved;
-      document.getElementById('previewFrame').srcdoc = currentHTML;
-      document.getElementById('aiLoading').style.display = 'none';
-      alert("✅ Site improved! +32% conversion estimated.");
-    }, 1000);
-  }
-  
-  function downloadLanding() {
-    if (!currentHTML) return;
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([currentHTML], {type: 'text/html'}));
-    a.download = `landing-${Date.now()}.html`;
-    a.click();
-  }
-  
-  function copyHTML() {
-    if (!currentHTML) return;
-    navigator.clipboard.writeText(currentHTML);
-    alert("Copied!");
-  }
-  
-  function sendToClient() {
-    if (!currentHTML) return;
-    window.open(`https://t.me/share/url?url=${window.location.href}&text=Here's your landing page from iField AI`);
-  }
-  
-  function buyProNow() {
-    window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
-    alert("💰 After payment, click the link from the bot to activate PRO.\n\nThen refresh this page with ?pro=true");
-  }
-  
-  // UI события
-  document.getElementById('autoGenBtn').onclick = () => generateLanding('BrewCraft', 'Specialty Coffee', 'Fresh roasted beans delivered to your door.');
-  document.getElementById('ideaGenBtn').onclick = () => {
-    const idea = document.getElementById('ideaInput').value;
-    generateLanding(idea.split(' ').slice(0,2).join(' '), idea, 'Premium quality solution for your business.');
-  };
-  document.getElementById('manualGenBtn').onclick = () => {
-    const brand = document.getElementById('brand').value;
-    const product = document.getElementById('product').value;
-    const desc = document.getElementById('description').value;
-    generateLanding(brand, product, desc);
-  };
-  document.getElementById('btnImprove').onclick = improveLanding;
-  document.getElementById('btnDownload').onclick = downloadLanding;
-  document.getElementById('btnCopy').onclick = copyHTML;
-  document.getElementById('btnSendClient').onclick = sendToClient;
-  document.getElementById('proBuyBtn').onclick = buyProNow;
-  
-  // Переключение режимов
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
-      document.getElementById(btn.dataset.mode + 'Panel').style.display = 'block';
-    };
+<footer>⚡ iField AI — from idea to client page in seconds</footer>
+
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.155.0/build/three.module.js';
+
+const canvas = document.getElementById('bgCanvas');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 2000);
+const renderer = new THREE.WebGLRenderer({canvas, antialias:true});
+renderer.setSize(window.innerWidth, window.innerHeight);
+
+camera.position.z = 600;
+
+// starfield
+const starsGeometry = new THREE.BufferGeometry();
+const starCount = 2000;
+const positions = new Float32Array(starCount*3);
+for(let i=0;i<starCount*3;i++){positions[i]=(Math.random()-0.5)*4000}
+starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions,3));
+const starMaterial = new THREE.PointsMaterial({color:0xffffff,size:1});
+const starField = new THREE.Points(starsGeometry,starMaterial);
+scene.add(starField);
+
+// satellites (simplified cubes)
+const satellites = [];
+for(let i=0;i<30;i++){
+  const geo = new THREE.BoxGeometry(8,4,4);
+  const mat = new THREE.MeshStandardMaterial({color:0x44ffff});
+  const sat = new THREE.Mesh(geo,mat);
+  sat.position.set((Math.random()-0.5)*1200,(Math.random()-0.5)*800,(Math.random()-0.5)*1200);
+  scene.add(sat);
+  satellites.push(sat);
+}
+
+// light
+const ambient = new THREE.AmbientLight(0xffffff,0.7);
+scene.add(ambient);
+const pointLight = new THREE.PointLight(0xffffff,0.8);
+pointLight.position.set(200,300,500);
+scene.add(pointLight);
+
+// animation
+function animate(){
+  requestAnimationFrame(animate);
+  starField.rotation.y+=0.0005;
+  satellites.forEach((sat,i)=>{
+    sat.rotation.x+=0.01;
+    sat.rotation.y+=0.02;
+    sat.position.x+=Math.sin(Date.now()*0.001+i)*0.1;
+    sat.position.y+=Math.cos(Date.now()*0.001+i)*0.1;
   });
-  
-  // Языки
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.onclick = () => {
-      document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      // Здесь можно добавить переводы, но для простоты оставим
-    };
-  });
-  
-  document.getElementById('limitCount').innerText = freeGenerations;
-  if (isPro) alert("🔥 PRO mode active!");
+  renderer.render(scene,camera);
+}
+animate();
+
+// ======================= LANDING BUILDER =======================
+let currentHTML = '';
+
+function generateLanding(){
+  const brand = document.getElementById('brand').value;
+  const niche = document.getElementById('niche').value;
+  const product = document.getElementById('product').value;
+  const desc = document.getElementById('description').value;
+  const platform = document.getElementById('platform').value;
+
+  const cta = platform==='ig'?"📱 Follow on Instagram":platform==='tt'?"🎵 Watch on TikTok":"💬 Write to Telegram";
+  const pain = niche==="beauty"?"😫 Struggling with dull skin?":"😫 Not reaching your goals?";
+  const solution = niche==="beauty"?"✅ Visible results in 7 days":"✅ Streamlined system for growth";
+  const proof = niche==="beauty"?"📊 98% saw improvement":"📊 1,500+ clients";
+
+  currentHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${brand} | ${product}</title><style>
+  body{font-family:-apple-system,system-ui;padding:20px;background:#05070c;color:white}
+  .container{max-width:720px;margin:0 auto;background:rgba(0,0,0,0.6);border-radius:28px;padding:40px 28px;backdrop-filter:blur(12px)}
+  h1{font-size:44px;color:#40E0D0;text-align:center;margin-bottom:16px}
+  .pain{background:#ff444410;border-left:4px solid #ff4444;padding:16px;border-radius:20px;margin:24px 0}
+  .solution{background:#44ff4410;border-left:4px solid #44ff44;padding:16px;border-radius:20px}
+  .proof{background:#ffaa3310;border-left:4px solid #ffaa33;padding:12px;border-radius:20px}
+  .cta-btn{display:block;text-align:center;padding:16px;border-radius:60px;color:white;text-decoration:none;font-weight:700;margin:24px 0;background:linear-gradient(135deg,#40E0D0,#9b4dff)}
+  </style></head><body>
+  <div class="container">
+  <div class="pain">${pain}</div>
+  <h1>${brand}</h1>
+  <div style="font-size:22px;margin:8px 0">${product}</div>
+  <div class="solution">${solution}</div>
+  <div class="description">${desc}</div>
+  <div class="proof">${proof}</div>
+  <a href="#" class="cta-btn">${cta}</a>
+  </div>
+  </body></html>`;
+
+  document.getElementById('resultSection').style.display='block';
+  document.getElementById('previewFrame').srcdoc=currentHTML;
+}
+
+function improveLanding(){
+  if(!currentHTML)return;
+  currentHTML = currentHTML.replace(/cta-btn/g,"cta-btn pulse").replace(/Follow on Instagram|Watch on TikTok|Write to Telegram/g,"🔥 BUY NOW — Limited");
+  document.getElementById('previewFrame').srcdoc=currentHTML;
+}
+
+function downloadLanding(){
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([currentHTML],{type:'text/html'}));
+  a.download=`landing-${Date.now()}.html`;
+  a.click();
+}
+
+async function copyHTML(){
+  await navigator.clipboard.writeText(currentHTML);
+  alert("Copied!");
+}
+
+document.getElementById('generateBtn').addEventListener('click',generateLanding);
 </script>
+
 </body>
 </html>

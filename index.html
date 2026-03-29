@@ -3,102 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>iField AI — Cosmic Landing Generator</title>
+<title>iField AI — Premium Cosmic Landing Generator</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%239b4dff'>⚡</text></svg>">
 <style>
-/* =================== RESET & COSMOS =================== */
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,system-ui,sans-serif;background:#03050c;color:#fff;overflow-x:hidden;min-height:100vh;padding:0 10px;}
-
-/* ЖИВОЙ КОСМОС */
-#spaceCanvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;display:block}
-.edge-glow{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;box-shadow:inset 0 0 80px rgba(64,224,208,0.2),inset 0 0 120px rgba(155,77,255,0.15);animation:edgePulse 8s ease-in-out infinite}
-@keyframes edgePulse{0%,100%{opacity:0.5}50%{opacity:1}}
-.rainbow-glow{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-.rainbow-glow::before{content:'';position:absolute;inset:0;background:conic-gradient(from 0deg,#ff0066,#ff6600,#ffcc00,#33ff33,#00ccff,#6600ff,#ff0066);filter:blur(70px);opacity:0.2;animation:rainbowSpin 20s linear infinite}
-@keyframes rainbowSpin{0%{transform:rotate(0deg) scale(1.2);opacity:0.2}100%{transform:rotate(360deg) scale(1.3);opacity:0.4}}
-
-/* КОНТЕЙНЕР */
-.container{max-width:720px;margin:0 auto;position:relative;z-index:10;padding:20px}
-.glitch-logo{position:fixed;top:20px;left:20px;font-size:24px;font-weight:700;background:linear-gradient(135deg,#40E0D0,#9b4dff);-webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none;z-index:100}
-
-/* ТАБЫ */
-.mode-tabs{display:flex;gap:8px;margin:60px 0 20px;background:rgba(20,28,40,0.6);backdrop-filter:blur(12px);border-radius:60px;padding:6px}
-.mode-btn{flex:1;text-align:center;padding:12px 0;border-radius:50px;background:transparent;border:none;color:#a0b0d0;font-weight:600;font-size:16px;cursor:pointer;transition:all 0.2s}
-.mode-btn.active{background:linear-gradient(135deg,#40E0D0,#9b4dff);color:#fff;box-shadow:0 4px 12px rgba(64,224,208,0.3)}
-
-/* ПОЛЯ */
-.field{margin-bottom:20px}
-.field input,.field textarea,.field select{width:100%;background:rgba(20,28,40,0.8);border:1px solid rgba(155,77,255,0.3);border-radius:20px;padding:14px 18px;color:#fff;font-size:15px}
-.field input:focus,.field textarea:focus{outline:none;border-color:#40E0D0}
-.field label{font-size:12px;color:#b07cff;margin-bottom:6px;display:block}
-
-/* ПУЛЬСИРУЮЩИЕ КНОПКИ */
-.hero-btn{width:100%;background:linear-gradient(135deg,#40E0D0,#9b4dff);border:none;border-radius:60px;padding:18px;font-size:20px;font-weight:600;color:#fff;cursor:pointer;margin:16px 0;box-shadow:0 0 20px rgba(64,224,208,0.4);transition:0.2s;position:relative;animation:pulseGlow 2s infinite}
-.hero-btn:hover{transform:scale(1.02)}
-@keyframes pulseGlow{0%{box-shadow:0 0 5px rgba(64,224,208,0.3)}50%{box-shadow:0 0 25px rgba(64,224,208,0.8)}100%{box-shadow:0 0 5px rgba(64,224,208,0.3)}}
-.improve-btn{background:linear-gradient(135deg,#ffaa33,#ff6600);animation:pulseGlowOrange 2s infinite}
-@keyframes pulseGlowOrange{0%{box-shadow:0 0 5px rgba(255,102,0,0.3)}50%{box-shadow:0 0 25px rgba(255,102,0,0.7)}100%{box-shadow:0 0 5px rgba(255,102,0,0.3)}}
-
-.additional-toggle{text-align:center;margin:12px;color:#8a9ac0;cursor:pointer;font-size:13px}
-.additional-options{display:none;margin-bottom:20px}
-.additional-options.open{display:block}
-.limits{background:rgba(0,0,0,0.35);border-radius:40px;padding:12px 16px;display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:12px;margin:20px 0}
-.limit-free{color:#22c55e;font-weight:bold}
-.pro-buy-btn{background:linear-gradient(135deg,#ffd700,#ffb347);color:#1a1a2e;border:none;padding:6px 16px;border-radius:40px;cursor:pointer;font-weight:bold}
-
-/* РЕЗУЛЬТАТЫ */
-.result-section{display:none;margin-top:32px}
-.preview-frame{width:100%;height:500px;border:none;border-radius:28px;background:#05070c}
-.action-buttons{display:flex;gap:10px;margin:20px 0;flex-wrap:wrap}
-.action-buttons button{flex:1;background:rgba(30,40,58,0.7);border:1px solid rgba(155,77,255,0.4);padding:10px;border-radius:40px;color:#fff;cursor:pointer}
-.ai-loading{text-align:center;padding:14px;background:rgba(155,77,255,0.1);border-radius:40px;margin:16px 0;color:#40E0D0;display:none}
-.victory-message{background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));border:0.5px solid #22c55e;border-radius:24px;padding:16px;text-align:center;margin-bottom:20px;display:none}
-.next-step{margin-top:20px;padding:16px;background:rgba(155,77,255,0.08);border-radius:24px;text-align:center;display:none}
-.status{position:fixed;bottom:20px;right:20px;background:#40E0D0;padding:8px 16px;border-radius:40px;color:#000;font-size:12px;z-index:1000}
-footer{margin-top:40px;text-align:center;font-size:11px;color:#6a7a9a;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}
-footer a{color:#b07cff;text-decoration:none}
-
-@media(max-width:600px){.hero-btn{font-size:18px}.mode-btn{font-size:14px}}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,"SF Pro Text",system-ui,sans-serif;background:#000;color:#fff;overflow-x:hidden;min-height:100vh}
+  
+  /* PREMIUM COSMOS CANVAS */
+  #spaceCanvas{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    z-index:0;
+    display:block;
+    background:radial-gradient(ellipse at center,#050510,#000000);
+  }
+  
+  /* GLOW EFFECTS */
+  .edge-glow{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    pointer-events:none;
+    z-index:1;
+    box-shadow:inset 0 0 120px rgba(64,224,208,0.15),inset 0 0 180px rgba(155,77,255,0.1);
+  }
+  
+  /* MAIN CONTAINER */
+  .container{
+    max-width:720px;
+    margin:0 auto;
+    position:relative;
+    z-index:10;
+    padding:20px;
+  }
+  
+  .glitch-logo{
+    position:fixed;
+    top:20px;
+    left:20px;
+    font-size:26px;
+    font-weight:700;
+    background:linear-gradient(135deg,#40E0D0,#9b4dff,#ff44aa);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    pointer-events:none;
+    z-index:100;
+    letter-spacing:-0.5px;
+  }
+  
+  /* TABS */
+  .mode-tabs{
+    display:flex;
+    gap:8px;
+    margin:60px 0 20px;
+    background:rgba(20,28,40,0.5);
+    backdrop-filter:blur(20px);
+    border-radius:60px;
+    padding:6px;
+    border:0.5px solid rgba(155,77,255,0.2);
+  }
+  .mode-btn{
+    flex:1;
+    text-align:center;
+    padding:12px 0;
+    border-radius:50px;
+    background:transparent;
+    border:none;
+    color:#a0b0d0;
+    font-weight:600;
+    font-size:16px;
+    cursor:pointer;
+    transition:all 0.3s cubic-bezier(0.2,0.9,0.4,1.1);
+  }
+  .mode-btn.active{
+    background:linear-gradient(135deg,#40E0D0,#9b4dff);
+    color:#fff;
+    box-shadow:0 4px 20px rgba(64,224,208,0.4);
+  }
+  
+  /* FIELDS */
+  .field{margin-bottom:20px}
+  .field input,.field textarea,.field select{
+    width:100%;
+    background:rgba(20,28,40,0.7);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(155,77,255,0.3);
+    border-radius:20px;
+    padding:14px 18px;
+    color:#fff;
+    font-size:15px;
+    transition:all 0.2s;
+  }
+  .field input:focus,.field textarea:focus{
+    outline:none;
+    border-color:#40E0D0;
+    box-shadow:0 0 20px rgba(64,224,208,0.3);
+  }
+  .field label{
+    font-size:12px;
+    color:#b07cff;
+    margin-bottom:6px;
+    display:block;
+    letter-spacing:0.3px;
+  }
+  
+  /* PREMIUM BUTTONS */
+  .hero-btn{
+    width:100%;
+    background:linear-gradient(135deg,#40E0D0,#9b4dff);
+    border:none;
+    border-radius:60px;
+    padding:18px;
+    font-size:18px;
+    font-weight:600;
+    color:#fff;
+    cursor:pointer;
+    margin:16px 0;
+    position:relative;
+    overflow:hidden;
+    transition:all 0.3s cubic-bezier(0.2,0.9,0.4,1.1);
+    box-shadow:0 0 30px rgba(64,224,208,0.3);
+  }
+  .hero-btn::before{
+    content:'';
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:100%;
+    height:100%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent);
+    transition:left 0.5s;
+  }
+  .hero-btn:hover::before{left:100%}
+  .hero-btn:hover{transform:scale(1.02);box-shadow:0 0 40px rgba(64,224,208,0.6)}
+  
+  .improve-btn{
+    background:linear-gradient(135deg,#ffaa33,#ff6600);
+    box-shadow:0 0 20px rgba(255,102,0,0.3);
+  }
+  
+  .additional-toggle{
+    text-align:center;
+    margin:12px;
+    color:#8a9ac0;
+    cursor:pointer;
+    font-size:13px;
+  }
+  .additional-options{display:none;margin-bottom:20px}
+  .additional-options.open{display:block}
+  
+  .limits{
+    background:rgba(0,0,0,0.4);
+    backdrop-filter:blur(20px);
+    border-radius:40px;
+    padding:12px 16px;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    font-size:12px;
+    margin:20px 0;
+    border:0.5px solid rgba(155,77,255,0.2);
+  }
+  .limit-free{color:#22c55e;font-weight:bold}
+  .pro-buy-btn{
+    background:linear-gradient(135deg,#ffd700,#ffb347);
+    color:#1a1a2e;
+    border:none;
+    padding:6px 16px;
+    border-radius:40px;
+    cursor:pointer;
+    font-weight:bold;
+  }
+  
+  /* RESULT */
+  .result-section{display:none;margin-top:32px}
+  .preview-frame{
+    width:100%;
+    height:500px;
+    border:none;
+    border-radius:28px;
+    background:#05070c;
+    box-shadow:0 20px 40px rgba(0,0,0,0.5);
+  }
+  .action-buttons{
+    display:flex;
+    gap:10px;
+    margin:20px 0;
+    flex-wrap:wrap;
+  }
+  .action-buttons button{
+    flex:1;
+    background:rgba(30,40,58,0.7);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(155,77,255,0.4);
+    padding:10px;
+    border-radius:40px;
+    color:#fff;
+    cursor:pointer;
+    transition:all 0.2s;
+  }
+  .action-buttons button:hover{
+    border-color:#40E0D0;
+    transform:translateY(-2px);
+  }
+  .ai-loading{
+    text-align:center;
+    padding:14px;
+    background:rgba(155,77,255,0.15);
+    backdrop-filter:blur(20px);
+    border-radius:40px;
+    margin:16px 0;
+    color:#40E0D0;
+    display:none;
+  }
+  .victory-message{
+    background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04));
+    border:0.5px solid #22c55e;
+    border-radius:24px;
+    padding:16px;
+    text-align:center;
+    margin-bottom:20px;
+    display:none;
+  }
+  .status{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:rgba(64,224,208,0.95);
+    backdrop-filter:blur(10px);
+    padding:8px 16px;
+    border-radius:40px;
+    color:#000;
+    font-size:12px;
+    font-weight:500;
+    z-index:1000;
+  }
+  footer{
+    margin-top:40px;
+    text-align:center;
+    font-size:11px;
+    color:#6a7a9a;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+  }
+  footer a{color:#b07cff;text-decoration:none}
+  
+  .lang-select{
+    background:rgba(20,28,40,0.7);
+    backdrop-filter:blur(20px);
+    color:#fff;
+    padding:6px 12px;
+    border-radius:20px;
+    border:1px solid rgba(155,77,255,0.3);
+    cursor:pointer;
+    font-size:12px;
+  }
+  
+  @media(max-width:600px){
+    .hero-btn{font-size:16px;padding:14px}
+    .mode-btn{font-size:13px}
+    .glitch-logo{font-size:20px;top:15px;left:15px}
+  }
 </style>
 </head>
 <body>
 
 <canvas id="spaceCanvas"></canvas>
-<div class="rainbow-glow"></div>
 <div class="edge-glow"></div>
-<div class="glitch-logo">⚡ iField AI v3</div>
+<div class="glitch-logo">⚡ iField AI</div>
 
-<div class="container" id="app">
-  <!-- Language Switcher -->
+<div class="container">
   <div style="text-align:right;margin-bottom:10px;">
-    <select id="langSelect" style="background:#20232a;color:#fff;padding:6px 12px;border-radius:20px;border:none;cursor:pointer;">
+    <select id="langSelect" class="lang-select">
       <option value="en">🌍 English</option>
       <option value="ua">🇺🇦 Українська</option>
       <option value="ru">🇷🇺 Русский</option>
     </select>
   </div>
 
-  <!-- Mode Tabs -->
   <div class="mode-tabs">
     <button class="mode-btn active" data-mode="auto">🚀 AUTO</button>
     <button class="mode-btn" data-mode="idea">✍️ IDEA</button>
     <button class="mode-btn" data-mode="manual">⚙️ MANUAL</button>
   </div>
 
-  <!-- AUTO Mode -->
   <div id="autoPanel" class="mode-panel">
     <button class="hero-btn" id="autoGenBtn">✨ Generate Site Instantly ✨</button>
-    <div style="text-align:center;font-size:13px;color:#8a9ac0;">AI creates a full landing for random business niche</div>
+    <div style="text-align:center;font-size:13px;color:#8a9ac0;">AI creates premium landing for random niche</div>
   </div>
 
-  <!-- IDEA Mode -->
   <div id="ideaPanel" class="mode-panel" style="display:none;">
-    <div class="field"><label id="ideaLabel">🧠 Describe your idea (one line)</label><input id="ideaInput" placeholder="I sell organic coffee online"></div>
+    <div class="field"><label id="ideaLabel">🧠 Describe your idea</label><input id="ideaInput" placeholder="I sell organic coffee online"></div>
     <button class="hero-btn" id="ideaGenBtn">🎯 Generate from Idea</button>
   </div>
 
-  <!-- MANUAL Mode -->
   <div id="manualPanel" class="mode-panel" style="display:none;">
     <div class="field"><label id="brandLabel">🏷️ Brand / Company</label><input id="brand" placeholder="Your brand" value="LumiSkin"></div>
     <div class="field"><label id="nicheLabel">🎯 Niche</label><input id="niche" placeholder="beauty, coffee, fitness..." value="beauty"></div>
@@ -119,30 +324,23 @@ footer a{color:#b07cff;text-decoration:none}
     <button class="hero-btn" id="manualGenBtn">🚀 Create Landing</button>
   </div>
 
-  <!-- Limits & PRO -->
   <div class="limits">
-    <span>🎁 <span class="limit-free" id="limitCount">3</span> <span id="freeText">free generations left</span></span>
-    <span>💎 <span id="proText">PRO: unlimited + no watermark + AI improve</span></span>
+    <span>🎁 <span class="limit-free" id="limitCount">3</span> <span id="freeText">free left</span></span>
+    <span>💎 <span id="proText">PRO: unlimited + AI improve</span></span>
     <button class="pro-buy-btn" id="proBuyBtn">⭐ Get PRO</button>
   </div>
 
-  <!-- AI Loading -->
   <div id="aiLoading" class="ai-loading">🤖 AI thinking...</div>
 
-  <!-- Result Section -->
   <div class="result-section" id="resultSection">
     <div id="victoryMessage" class="victory-message"><div>🎉</div><div><strong id="victoryTitle">Site is ready!</strong></div></div>
     <iframe class="preview-frame" id="previewFrame"></iframe>
     <div class="action-buttons">
       <button id="btnDownload">📥 Download</button>
       <button id="btnCopy">📋 Copy code</button>
-      <button id="btnImprove" class="improve-btn">🧠 AI Improve (+32% conversion)</button>
+      <button id="btnImprove" class="improve-btn">🧠 AI Improve (+32%)</button>
       <button id="btnShare">🔥 Share & Earn</button>
-      <button id="btnPublish">🌐 Publish to Web</button>
-    </div>
-    <div id="nextStep" class="next-step">
-      <div>🚀 Your business page is ready</div>
-      <button id="viralShareBtn" style="margin-top:12px;background:#ffd700;border:none;padding:10px 20px;border-radius:40px;">🔥 Share → +3 free generations</button>
+      <button id="btnPublish">🌐 Publish</button>
     </div>
   </div>
 
@@ -150,142 +348,226 @@ footer a{color:#b07cff;text-decoration:none}
 </div>
 
 <script>
-// ====================== 1. ЖИВОЙ КОСМОС (Canvas 2D) ======================
+// ====================== PREMIUM 3D COSMOS ======================
 const canvas = document.getElementById('spaceCanvas');
 const ctx = canvas.getContext('2d');
+let width, height;
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+function resize() {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
 }
-window.addEventListener('resize', resizeCanvas);
-resizeCanvas();
+window.addEventListener('resize', resize);
+resize();
 
-// Звёзды
-const stars = [];
-for (let i = 0; i < 1200; i++) {
-  stars.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    radius: Math.random() * 2 + 0.5,
-    alpha: Math.random() * 0.5 + 0.2,
-    speed: Math.random() * 0.3 + 0.1,
-    twinkle: Math.random() * Math.PI * 2
+// Звёздные слои для глубины
+const starLayers = [
+  { count: 800, size: [0.8, 1.5], speed: 0.1, alpha: [0.3, 0.7], color: '#ffffff' },
+  { count: 400, size: [1.5, 2.5], speed: 0.2, alpha: [0.5, 0.9], color: '#aaccff' },
+  { count: 150, size: [2, 4], speed: 0.05, alpha: [0.6, 1], color: '#ffddaa' }
+];
+
+let stars = [];
+starLayers.forEach((layer, layerIdx) => {
+  for (let i = 0; i < layer.count; i++) {
+    stars.push({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      radius: layer.size[0] + Math.random() * (layer.size[1] - layer.size[0]),
+      alpha: layer.alpha[0] + Math.random() * (layer.alpha[1] - layer.alpha[0]),
+      speed: layer.speed + Math.random() * 0.1,
+      twinkleSpeed: 0.5 + Math.random() * 1.5,
+      phase: Math.random() * Math.PI * 2,
+      color: layer.color,
+      layer: layerIdx
+    });
+  }
+});
+
+// Кометы
+const comets = [];
+for (let i = 0; i < 5; i++) {
+  comets.push({
+    x: Math.random() * width,
+    y: Math.random() * height,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: (Math.random() - 0.5) * 1,
+    length: 40 + Math.random() * 60,
+    alpha: 0.3 + Math.random() * 0.5,
+    active: Math.random() > 0.7
   });
 }
 
-// Спутники
+// Туманности (большие цветные пятна)
+const nebulae = [
+  { x: 0.2, y: 0.3, radius: 250, color: 'rgba(100,50,150,0.08)' },
+  { x: 0.7, y: 0.6, radius: 300, color: 'rgba(50,100,150,0.06)' },
+  { x: 0.5, y: 0.8, radius: 200, color: 'rgba(150,50,100,0.05)' },
+  { x: 0.1, y: 0.7, radius: 180, color: 'rgba(64,224,208,0.04)' }
+];
+
+// Спутники с орбитами
 const satellites = [];
 for (let i = 0; i < 12; i++) {
   satellites.push({
-    x: Math.random() * canvas.width,
-    y: Math.random() * canvas.height,
-    radius: Math.random() * 4 + 2,
+    x: Math.random() * width,
+    y: Math.random() * height,
+    radius: 3 + Math.random() * 4,
+    orbitX: Math.random() * width,
+    orbitY: Math.random() * height,
+    orbitRadius: 60 + Math.random() * 100,
     angle: Math.random() * Math.PI * 2,
-    speed: Math.random() * 0.008 + 0.003,
-    orbitRadius: Math.random() * 120 + 40,
-    centerX: Math.random() * canvas.width,
-    centerY: Math.random() * canvas.height,
-    color: `hsl(${Math.random() * 60 + 160}, 70%, 60%)`
+    speed: 0.002 + Math.random() * 0.005,
+    color: `hsla(${160 + Math.random() * 60}, 80%, 65%, 0.7)`
   });
 }
 
 let time = 0;
+let mouseX = width/2, mouseY = height/2;
+
+document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
 function drawSpace() {
   if (!ctx) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // Градиент
-  const grad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-  grad.addColorStop(0, '#03050c');
-  grad.addColorStop(1, '#0a0a1a');
+  // Чистый глубокий фон
+  const grad = ctx.createLinearGradient(0, 0, width, height);
+  grad.addColorStop(0, '#020210');
+  grad.addColorStop(0.5, '#040418');
+  grad.addColorStop(1, '#000000');
   ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillRect(0, 0, width, height);
   
-  // Звёзды
-  stars.forEach(star => {
-    const twinkle = star.alpha + Math.sin(time * star.speed + star.twinkle) * 0.25;
+  // Туманности
+  nebulae.forEach(n => {
     ctx.beginPath();
-    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.15, Math.min(0.8, twinkle))})`;
+    ctx.arc(n.x * width, n.y * height, n.radius, 0, Math.PI * 2);
+    ctx.fillStyle = n.color;
     ctx.fill();
+  });
+  
+  // Параллакс-звёзды (двигаются с мышью)
+  const parallaxX = (mouseX - width/2) * 0.0005;
+  const parallaxY = (mouseY - height/2) * 0.0005;
+  
+  // Звёзды с мерцанием и параллаксом
+  stars.forEach(star => {
+    const twinkle = star.alpha + Math.sin(time * star.twinkleSpeed + star.phase) * 0.2;
+    const px = star.x + parallaxX * (star.layer + 1) * 10;
+    const py = star.y + parallaxY * (star.layer + 1) * 10;
+    
+    ctx.beginPath();
+    ctx.arc(px, py, star.radius, 0, Math.PI * 2);
+    ctx.fillStyle = star.color;
+    ctx.globalAlpha = Math.max(0.2, Math.min(0.9, twinkle));
+    ctx.fill();
+    
+    // Glow для крупных звёзд
+    if (star.radius > 2) {
+      ctx.beginPath();
+      ctx.arc(px, py, star.radius * 2, 0, Math.PI * 2);
+      ctx.fillStyle = star.color;
+      ctx.globalAlpha = twinkle * 0.15;
+      ctx.fill();
+    }
+  });
+  
+  // Кометы
+  comets.forEach(comet => {
+    if (comet.active && Math.random() > 0.99) {
+      comet.x = Math.random() * width;
+      comet.y = Math.random() * height;
+      comet.vx = (Math.random() - 0.5) * 2;
+      comet.vy = (Math.random() - 0.5) * 1.5;
+      comet.active = true;
+    }
+    
+    if (comet.active) {
+      comet.x += comet.vx;
+      comet.y += comet.vy;
+      
+      if (comet.x < -100 || comet.x > width + 100 || comet.y < -100 || comet.y > height + 100) {
+        comet.active = false;
+        setTimeout(() => { comet.active = true; }, 2000 + Math.random() * 5000);
+      }
+      
+      // Хвост кометы
+      ctx.beginPath();
+      ctx.moveTo(comet.x, comet.y);
+      ctx.lineTo(comet.x - comet.vx * comet.length, comet.y - comet.vy * comet.length);
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = `rgba(255,200,100,${comet.alpha * 0.6})`;
+      ctx.stroke();
+      
+      // Ядро
+      ctx.beginPath();
+      ctx.arc(comet.x, comet.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,220,150,${comet.alpha})`;
+      ctx.fill();
+    }
   });
   
   // Спутники
   satellites.forEach(sat => {
-    const x = sat.centerX + Math.cos(time * sat.speed + sat.angle) * sat.orbitRadius;
-    const y = sat.centerY + Math.sin(time * sat.speed + sat.angle) * sat.orbitRadius * 0.6;
+    const angle = time * sat.speed + sat.angle;
+    const x = sat.orbitX + Math.cos(angle) * sat.orbitRadius;
+    const y = sat.orbitY + Math.sin(angle) * sat.orbitRadius * 0.7;
+    
+    // Свечение
+    ctx.beginPath();
+    ctx.arc(x, y, sat.radius * 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = sat.color;
+    ctx.globalAlpha = 0.3;
+    ctx.fill();
+    
+    // Тело
     ctx.beginPath();
     ctx.arc(x, y, sat.radius, 0, Math.PI * 2);
     ctx.fillStyle = sat.color;
+    ctx.globalAlpha = 0.9;
     ctx.fill();
+    
+    // Солнечные панели (маленькие крылья)
     ctx.beginPath();
-    ctx.arc(x, y, sat.radius * 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(64, 224, 208, 0.15)`;
+    ctx.moveTo(x - sat.radius * 1.5, y - sat.radius * 0.5);
+    ctx.lineTo(x - sat.radius * 3, y);
+    ctx.lineTo(x - sat.radius * 1.5, y + sat.radius * 0.5);
+    ctx.fillStyle = `rgba(100,200,255,0.6)`;
+    ctx.fill();
+    
+    ctx.beginPath();
+    ctx.moveTo(x + sat.radius * 1.5, y - sat.radius * 0.5);
+    ctx.lineTo(x + sat.radius * 3, y);
+    ctx.lineTo(x + sat.radius * 1.5, y + sat.radius * 0.5);
     ctx.fill();
   });
+  
+  ctx.globalAlpha = 1;
+  
+  // Млечный путь (полупрозрачная полоса)
+  const milkyWay = ctx.createLinearGradient(width * 0.2, height * 0.3, width * 0.8, height * 0.7);
+  milkyWay.addColorStop(0, 'rgba(100,80,150,0.03)');
+  milkyWay.addColorStop(0.5, 'rgba(150,120,200,0.06)');
+  milkyWay.addColorStop(1, 'rgba(80,60,120,0.02)');
+  ctx.fillStyle = milkyWay;
+  ctx.fillRect(0, 0, width, height);
   
   time += 0.02;
   requestAnimationFrame(drawSpace);
 }
+
 drawSpace();
 
-// ====================== 2. MULTI-LANGUAGE ======================
+// ====================== AI CORE ======================
 const translations = {
-  en: {
-    generate: "✨ Generate Site Instantly ✨",
-    ideaLabel: "🧠 Describe your idea (one line)",
-    brandLabel: "🏷️ Brand / Company",
-    nicheLabel: "🎯 Niche",
-    productLabel: "✨ Main product",
-    platformLabel: "📱 Platform",
-    descLabel: "📝 Description",
-    imageLabel: "🖼️ Image URL",
-    contactLabel: "📡 Contacts",
-    additionalToggle: "▼ Additional options ▼",
-    freeText: "free generations left",
-    proText: "PRO: unlimited + no watermark + AI improve",
-    victoryTitle: "Site is ready! Share & get +3 free tries",
-    improveBtn: "🧠 AI Improve (+32% conversion)",
-    shareBtn: "🔥 Share & Earn",
-    publishBtn: "🌐 Publish to Web"
-  },
-  ua: {
-    generate: "✨ Створити сайт миттєво ✨",
-    ideaLabel: "🧠 Опишіть ідею (один рядок)",
-    brandLabel: "🏷️ Бренд / Компанія",
-    nicheLabel: "🎯 Ніша",
-    productLabel: "✨ Головний продукт",
-    platformLabel: "📱 Платформа",
-    descLabel: "📝 Опис",
-    imageLabel: "🖼️ URL зображення",
-    contactLabel: "📡 Контакти",
-    additionalToggle: "▼ Додаткові опції ▼",
-    freeText: "безкоштовних генерацій",
-    proText: "PRO: безліміт + без водяного знаку + AI покращення",
-    victoryTitle: "Сайт готовий! Поділіться та отримайте +3 спроби",
-    improveBtn: "🧠 AI Покращення (+32% конверсії)",
-    shareBtn: "🔥 Поділитися та отримати",
-    publishBtn: "🌐 Опублікувати"
-  },
-  ru: {
-    generate: "✨ Создать сайт мгновенно ✨",
-    ideaLabel: "🧠 Опишите идею (одна строка)",
-    brandLabel: "🏷️ Бренд / Компания",
-    nicheLabel: "🎯 Ниша",
-    productLabel: "✨ Главный продукт",
-    platformLabel: "📱 Платформа",
-    descLabel: "📝 Описание",
-    imageLabel: "🖼️ URL изображения",
-    contactLabel: "📡 Контакты",
-    additionalToggle: "▼ Дополнительные опции ▼",
-    freeText: "бесплатных генераций",
-    proText: "PRO: безлимит + без водяного знака + AI улучшение",
-    victoryTitle: "Сайт готов! Поделитесь и получите +3 попытки",
-    improveBtn: "🧠 AI Улучшение (+32% конверсии)",
-    shareBtn: "🔥 Поделиться и получить",
-    publishBtn: "🌐 Опубликовать"
-  }
+  en: { generate: "✨ Generate Site Instantly ✨", ideaLabel: "🧠 Describe your idea", brandLabel: "🏷️ Brand / Company", nicheLabel: "🎯 Niche", productLabel: "✨ Main product", platformLabel: "📱 Platform", descLabel: "📝 Description", imageLabel: "🖼️ Image URL", contactLabel: "📡 Contacts", additionalToggle: "▼ Additional options ▼", freeText: "free left", proText: "PRO: unlimited + AI improve", victoryTitle: "Site is ready! Share & get +3 free", improveBtn: "🧠 AI Improve (+32%)", shareBtn: "🔥 Share & Earn", publishBtn: "🌐 Publish" },
+  ua: { generate: "✨ Створити сайт ✨", ideaLabel: "🧠 Опишіть ідею", brandLabel: "🏷️ Бренд / Компанія", nicheLabel: "🎯 Ніша", productLabel: "✨ Головний продукт", platformLabel: "📱 Платформа", descLabel: "📝 Опис", imageLabel: "🖼️ URL фото", contactLabel: "📡 Контакти", additionalToggle: "▼ Додаткові опції ▼", freeText: "безкоштовно", proText: "PRO: безліміт + AI", victoryTitle: "Сайт готовий! Поділіться", improveBtn: "🧠 AI Покращення (+32%)", shareBtn: "🔥 Поділитися", publishBtn: "🌐 Опублікувати" },
+  ru: { generate: "✨ Создать сайт ✨", ideaLabel: "🧠 Опишите идею", brandLabel: "🏷️ Бренд / Компания", nicheLabel: "🎯 Ниша", productLabel: "✨ Главный продукт", platformLabel: "📱 Платформа", descLabel: "📝 Описание", imageLabel: "🖼️ URL фото", contactLabel: "📡 Контакты", additionalToggle: "▼ Дополнительные опции ▼", freeText: "бесплатно", proText: "PRO: безлимит + AI", victoryTitle: "Сайт готов! Поделитесь", improveBtn: "🧠 AI Улучшение (+32%)", shareBtn: "🔥 Поделиться", publishBtn: "🌐 Опубликовать" }
 };
 
 let currentLang = localStorage.getItem('lang') || 'en';
@@ -313,32 +595,14 @@ function setLanguage(lang) {
 document.getElementById('langSelect').addEventListener('change', (e) => setLanguage(e.target.value));
 setLanguage(currentLang);
 
-// ====================== 3. AI CORE ======================
 function detectNiche(text) {
   const t = text.toLowerCase();
-  if (t.includes('coffee') || t.includes('brew')) return 'coffee';
+  if (t.includes('coffee')) return 'coffee';
   if (t.includes('beauty') || t.includes('skin')) return 'beauty';
-  if (t.includes('fitness') || t.includes('gym')) return 'fitness';
-  if (t.includes('crypto') || t.includes('web3')) return 'crypto';
-  if (t.includes('ai') || t.includes('tech')) return 'tech';
+  if (t.includes('fitness')) return 'fitness';
+  if (t.includes('crypto')) return 'crypto';
+  if (t.includes('tech') || t.includes('ai')) return 'tech';
   return 'universal';
-}
-
-function generateSmartContent(niche, platform = 'ig', salesMode = false) {
-  const map = {
-    coffee: { brand: "BrewCraft", product: "Specialty Coffee", desc: "Fresh roasted beans delivered to your door.", cta: "Order Now", pain: "Tired of stale coffee?", solution: "Fresh roasted weekly", proof: "2,000+ subscribers" },
-    beauty: { brand: "Lumi Skin", product: "Crystal Glow Serum", desc: "Luxury skincare that transforms your skin.", cta: "Book Consultation", pain: "Struggling with dull skin?", solution: "Visible results in 7 days", proof: "98% saw improvement" },
-    fitness: { brand: "IronCore", product: "30-Day Transformation", desc: "Get visible results in 30 days.", cta: "Start Journey", pain: "Not seeing progress?", solution: "Science-backed workouts", proof: "10,000+ transformations" },
-    crypto: { brand: "ChainFlow", product: "Web3 Dashboard", desc: "Manage your crypto portfolio easily.", cta: "Join Waitlist", pain: "Losing money on complicated platforms?", solution: "All-in-one management", proof: "$50M+ secured" },
-    tech: { brand: "NeuroTech", product: "AI Suite", desc: "Automate your business with AI.", cta: "Get Demo", pain: "Repetitive tasks killing productivity?", solution: "AI does the work", proof: "500+ startups" },
-    universal: { brand: "YourBrand", product: "Smart Solution", desc: "We help you grow faster.", cta: "Get Started", pain: "Not reaching your goals?", solution: "Streamlined system", proof: "1,500+ clients" }
-  };
-  let data = map[niche] || map.universal;
-  if (platform === 'ig') data.cta = "📱 Follow on IG";
-  if (platform === 'tt') data.cta = "🎵 Watch on TikTok";
-  if (platform === 'tg') data.cta = "💬 Write to TG";
-  if (salesMode) { data.desc += " ⚡ 20% off today!"; data.cta = "🔥 BUY NOW"; }
-  return data;
 }
 
 function getDesign(niche) {
@@ -351,17 +615,28 @@ function getDesign(niche) {
   return designs[niche] || designs.universal;
 }
 
-// ====================== 4. STATE ======================
+function generateSmartContent(niche, platform = 'ig') {
+  const map = {
+    coffee: { brand: "BrewCraft", product: "Specialty Coffee", desc: "Fresh roasted beans delivered to your door.", cta: "Order Now", pain: "Tired of stale coffee?", solution: "Fresh roasted weekly", proof: "2,000+ subscribers" },
+    beauty: { brand: "Lumi Skin", product: "Crystal Glow Serum", desc: "Luxury skincare that transforms your skin.", cta: "Book Consultation", pain: "Struggling with dull skin?", solution: "Visible results in 7 days", proof: "98% saw improvement" },
+    fitness: { brand: "IronCore", product: "30-Day Transformation", desc: "Get visible results in 30 days.", cta: "Start Journey", pain: "Not seeing progress?", solution: "Science-backed workouts", proof: "10,000+ transformations" },
+    crypto: { brand: "ChainFlow", product: "Web3 Dashboard", desc: "Manage your crypto portfolio easily.", cta: "Join Waitlist", pain: "Losing money?", solution: "All-in-one management", proof: "$50M+ secured" },
+    tech: { brand: "NeuroTech", product: "AI Suite", desc: "Automate your business with AI.", cta: "Get Demo", pain: "Repetitive tasks?", solution: "AI does the work", proof: "500+ startups" },
+    universal: { brand: "YourBrand", product: "Smart Solution", desc: "We help you grow faster.", cta: "Get Started", pain: "Not reaching goals?", solution: "Streamlined system", proof: "1,500+ clients" }
+  };
+  let data = map[niche] || map.universal;
+  if (platform === 'ig') data.cta = "📱 Follow on IG";
+  if (platform === 'tt') data.cta = "🎵 Watch on TikTok";
+  if (platform === 'tg') data.cta = "💬 Write to TG";
+  return data;
+}
+
 let freeGenerations = localStorage.getItem('freeGenerations') ? parseInt(localStorage.getItem('freeGenerations')) : 3;
 let isPro = localStorage.getItem('pro') === 'true';
 let currentHTML = '';
-let currentNiche = 'universal';
 
 function updateBadge() {
   document.getElementById('limitCount').innerText = freeGenerations;
-  if (freeGenerations <= 0 && !isPro) {
-    document.querySelectorAll('.hero-btn').forEach(btn => btn.disabled = true);
-  }
 }
 updateBadge();
 
@@ -381,7 +656,7 @@ function toggleAdditional() {
 function simulateAILoading(callback) {
   const loader = document.getElementById('aiLoading');
   loader.style.display = 'block';
-  const steps = ["🤖 Analyzing niche...", "🧠 Generating sales copy...", "🎯 Optimizing for conversion...", "✨ Building your landing..."];
+  const steps = ["🔭 Scanning cosmos...", "🤖 AI analyzing niche...", "✨ Generating premium design...", "🚀 Building your landing..."];
   let i = 0;
   const interval = setInterval(() => {
     if (i < steps.length) loader.innerHTML = steps[i++];
@@ -389,7 +664,6 @@ function simulateAILoading(callback) {
   }, 600);
 }
 
-// ====================== 5. BUILD HTML ======================
 function buildLandingHTML(brand, niche, product, desc, cta, imageUrl, contact, pain, solution, proof, platform) {
   const design = getDesign(niche);
   const img = imageUrl || 'https://placehold.co/800x500/1a1f2a/7bb2ff?text=Product';
@@ -409,61 +683,47 @@ h1{font-size:44px;background:${design.gradient};-webkit-background-clip:text;bac
 <body><div class="container"><div class="pain">😫 ${pain}</div><h1>${brand}</h1><div style="font-size:22px;margin:8px 0">${product}</div><div class="solution">✅ ${solution}</div><div class="description">${desc}</div><div class="proof">📊 ${proof}</div><a href="${contactLink}" class="cta-btn">${cta}</a><div class="limited">⚠️ Limited spots — only 5 left</div>${watermark}</div></body></html>`;
 }
 
-// ====================== 6. GENERATE ======================
 function generateLanding(brand, niche, product, desc, imageUrl, contact, platform) {
   if (freeGenerations <= 0 && !isPro) {
-    alert("⚠️ No free tries left! Get PRO for unlimited.");
+    alert("⚠️ No free tries! Get PRO.");
     return false;
   }
-  
-  const salesMode = localStorage.getItem('salesMode') === 'on';
-  const smart = generateSmartContent(niche, platform, salesMode);
-  currentNiche = niche;
-  
-  currentHTML = buildLandingHTML(
-    brand || smart.brand, niche, product || smart.product, desc || smart.desc,
-    smart.cta, imageUrl, contact || '@ifield', smart.pain, smart.solution, smart.proof, platform
-  );
-  
+  const smart = generateSmartContent(niche, platform);
+  currentHTML = buildLandingHTML(brand || smart.brand, niche, product || smart.product, desc || smart.desc, smart.cta, imageUrl, contact || '@ifield', smart.pain, smart.solution, smart.proof, platform);
   document.getElementById('resultSection').style.display = 'block';
   document.getElementById('previewFrame').srcdoc = currentHTML;
   document.getElementById('victoryMessage').style.display = 'block';
-  
   if (!isPro) {
     freeGenerations--;
     localStorage.setItem('freeGenerations', freeGenerations);
     updateBadge();
   }
-  
-  showStatus(`✅ Site generated! ${freeGenerations} free left`);
+  showStatus(`✅ Site ready! ${freeGenerations} free left`);
   return true;
 }
 
-// ====================== 7. AI IMPROVE (продаёт PRO) ======================
 function improveLanding() {
   if (!currentHTML) return;
   if (!isPro) {
-    const upgrade = confirm("⚠️ Your site may be losing clients.\n\nAI found weak points:\n• weak headline\n• low urgency\n• weak CTA\n\n🧠 Fix it with AI Improve (PRO)\n\nUpgrade now?");
-    if (upgrade) buyPro();
+    if (confirm("⚠️ Your site may be losing clients.\n\nAI found weak points.\n\n🧠 Fix with AI Improve (PRO)?")) {
+      window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
+    }
     return;
   }
-  
   document.getElementById('aiLoading').style.display = 'block';
-  document.getElementById('aiLoading').innerHTML = "🧠 AI rewriting your page...";
+  document.getElementById('aiLoading').innerHTML = "🧠 AI improving your page...";
   setTimeout(() => {
     let improved = currentHTML;
-    improved = improved.replace(/<h1>(.*?)<\/h1>/, `<h1>🔥 ${RegExp.$1} — Transform your results</h1>`);
+    improved = improved.replace(/<h1>(.*?)<\/h1>/, `<h1>🔥 ${RegExp.$1} — Premium Quality</h1>`);
     improved = improved.replace(/Limited/g, "⚠️ ONLY 3 SPOTS LEFT");
     improved = improved.replace(/Get Started/g, "🚀 Get Instant Access");
-    improved = improved.replace(/Order Now/g, "🔥 BUY NOW");
     currentHTML = improved;
     document.getElementById('previewFrame').srcdoc = currentHTML;
     document.getElementById('aiLoading').style.display = 'none';
-    showStatus("✅ Site improved! +32% conversion estimated");
+    showStatus("✅ Improved! +32% conversion estimated");
   }, 1500);
 }
 
-// ====================== 8. ACTIONS ======================
 function downloadLanding() {
   if (!currentHTML) return;
   const a = document.createElement('a');
@@ -480,17 +740,12 @@ async function copyHTML() {
 }
 
 function viralShare() {
-  if (!currentHTML) { alert("Generate first!"); return; }
   freeGenerations += 3;
   localStorage.setItem('freeGenerations', freeGenerations);
   updateBadge();
-  showStatus("🔥 +3 free generations! Share your site with clients.");
-  if (navigator.share) {
-    navigator.share({ title: 'My AI Landing', text: 'Check out my site!', url: window.location.href });
-  } else {
-    navigator.clipboard.writeText(window.location.href);
-    alert("Link copied! Share with friends.");
-  }
+  showStatus("🔥 +3 free generations! Share your site.");
+  if (navigator.share) navigator.share({ title: 'My AI Landing', url: window.location.href });
+  else navigator.clipboard.writeText(window.location.href);
 }
 
 async function publishToGist() {
@@ -518,17 +773,22 @@ async function publishToGist() {
 
 function buyPro() {
   window.open('https://t.me/ifield_studio_bot?start=pro', '_blank');
-  alert("💰 After payment, click the link from bot.\n\nThen refresh with ?pro=true");
+  alert("💰 After payment, refresh with ?pro=true");
 }
 
-// ====================== 9. INIT & EVENT LISTENERS ======================
-document.getElementById('autoGenBtn').onclick = () => {
-  const niches = ['coffee', 'beauty', 'fitness', 'crypto', 'tech'];
-  const randomNiche = niches[Math.floor(Math.random() * niches.length)];
-  const smart = generateSmartContent(randomNiche);
-  simulateAILoading(() => generateLanding(smart.brand, randomNiche, smart.product, smart.desc, '', '@' + smart.brand, 'ig'));
-};
+if (window.location.search.includes('pro=true')) {
+  localStorage.setItem('pro', 'true');
+  isPro = true;
+  showStatus("🔥 PRO activated!");
+}
 
+// Event listeners
+document.getElementById('autoGenBtn').onclick = () => {
+  const niches = ['coffee', 'beauty', 'fitness', 'tech'];
+  const random = niches[Math.floor(Math.random() * niches.length)];
+  const smart = generateSmartContent(random);
+  simulateAILoading(() => generateLanding(smart.brand, random, smart.product, smart.desc, '', '@' + smart.brand, 'ig'));
+};
 document.getElementById('ideaGenBtn').onclick = () => {
   const idea = document.getElementById('ideaInput').value.trim();
   if (!idea) { alert("Enter your idea!"); return; }
@@ -536,7 +796,6 @@ document.getElementById('ideaGenBtn').onclick = () => {
   const smart = generateSmartContent(niche);
   simulateAILoading(() => generateLanding(smart.brand, niche, smart.product, smart.desc, '', '@' + smart.brand, 'ig'));
 };
-
 document.getElementById('manualGenBtn').onclick = () => {
   const brand = document.getElementById('brand').value;
   const niche = document.getElementById('niche').value;
@@ -548,16 +807,13 @@ document.getElementById('manualGenBtn').onclick = () => {
   if (!brand || !product) { alert("Brand and product required!"); return; }
   simulateAILoading(() => generateLanding(brand, niche || 'universal', product, desc, imageUrl, contact, platform));
 };
-
 document.getElementById('btnDownload').onclick = downloadLanding;
 document.getElementById('btnCopy').onclick = copyHTML;
 document.getElementById('btnImprove').onclick = improveLanding;
 document.getElementById('btnShare').onclick = viralShare;
 document.getElementById('btnPublish').onclick = publishToGist;
-document.getElementById('viralShareBtn').onclick = viralShare;
 document.getElementById('proBuyBtn').onclick = buyPro;
 
-// Mode switching
 document.querySelectorAll('.mode-btn').forEach(btn => {
   btn.onclick = () => {
     document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
@@ -566,16 +822,6 @@ document.querySelectorAll('.mode-btn').forEach(btn => {
     document.getElementById(btn.dataset.mode + 'Panel').style.display = 'block';
   };
 });
-
-// Check PRO from URL
-if (window.location.search.includes('pro=true')) {
-  localStorage.setItem('pro', 'true');
-  isPro = true;
-  showStatus("🔥 PRO activated! Unlimited improvements.");
-}
-
-// Initial update
-updateBadge();
 </script>
 </body>
 </html>

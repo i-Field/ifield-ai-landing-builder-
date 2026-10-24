@@ -189,7 +189,7 @@ header{display:flex;justify-content:space-between;align-items:center;gap:12px;pa
 small{color:var(--ac);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
 h1{font:800 clamp(34px,8vw,64px)/1.04 var(--hf);letter-spacing:-.03em;margin:12px 0 16px;text-wrap:balance;overflow-wrap:anywhere${t.up?";text-transform:uppercase":""}}
 .lead{opacity:.78;font-size:19px;max-width:520px;text-wrap:pretty}.btns{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0}
-img{max-width:100%;display:block;border-radius:var(--r);margin-top:8px}.hero{padding-bottom:28px}
+img{max-width:100%;display:block;border-radius:var(--r);margin-top:8px}.hero{padding-bottom:28px}.art{aspect-ratio:4/3;border-radius:var(--r);border:1px solid var(--line);background:radial-gradient(circle at 28% 32%,var(--ac) 0,transparent 55%),radial-gradient(circle at 74% 70%,var(--ac2) 0,transparent 55%),var(--card);opacity:.9;margin-top:8px}.card .art{max-width:420px;margin:24px auto 0}.split .art{margin:0}
 .box{background:var(--card);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(128,128,128,.3);border:1px solid color-mix(in srgb,var(--fg) 13%,transparent);border-radius:var(--r);padding:28px;margin-bottom:18px}
 ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:18px}li{padding:12px 14px;border:1px solid var(--line);border-radius:calc(var(--r)/2);font-size:15px}li::before{content:"✓ ";color:var(--ac);font-weight:700}
 h2{font:700 14px var(--hf);letter-spacing:.08em;text-transform:uppercase;color:var(--ac);margin-bottom:12px}.price{font:800 44px var(--hf);color:var(--ac);margin-bottom:6px}
@@ -201,7 +201,7 @@ footer{padding:30px 0 10px;opacity:.7;font-size:14px;display:flex;flex-wrap:wrap
   const odesc = e(v("desc").slice(0,200)||v("tag")), su = url(v("URL")), tc = (t.bg.match(/#[0-9a-f]{6}/i)||["#000000"])[0], loc = {en:"en_US",ru:"ru_RU",uk:"uk_UA",pl:"pl_PL",de:"de_DE",fr:"fr_FR"}[slang];
   return `<!DOCTYPE html><html lang="${slang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${e(v("brand"))}${v("product")?" — "+e(v("product")):""}</title><meta name="description" content="${desc}"><meta name="theme-color" content="${tc}"><meta property="og:type" content="website"><meta property="og:site_name" content="${e(v("brand"))}"><meta property="og:locale" content="${loc}"><meta name="twitter:card" content="${img&&!img.startsWith("data:")?"summary_large_image":"summary"}"><meta property="og:title" content="${e(v("brand"))}"><meta property="og:description" content="${odesc}">${su?`<meta property="og:url" content="${e(su)}"><link rel="canonical" href="${e(su)}">`:""}${img&&!img.startsWith("data:")?`<meta property="og:image" content="${e(img)}">`:""}<style>${css}${t.x||""}${t.fx?FX:""}</style></head><body class="${t.l} ${cur}">${t.fx?SPACE:""}<main id="top">
 <header><a class="logo" href="#top">${e(v("brand"))}</a><a class="btn o" href="${e(main)}" target="_blank" rel="noopener">${e(T("contact",slang))}</a></header>
-<section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener">${e(v("price")||"💳")}</a>`:""}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}">`:""}</section>
+<section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener">${e(v("price")||"💳")}</a>`:""}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}">`:`<div class="art" aria-hidden="true"></div>`}</section>
 <section class="box" aria-labelledby="s-about"><h2 id="s-about">${e(T("about",slang))}</h2><p>${e(v("desc"))}</p>${feats?`<ul>${feats}</ul>`:""}</section>
 ${v("price")?`<section class="box" aria-labelledby="s-price"><h2 id="s-price">${e(T("pricing",slang))}</h2><div class="price">${e(v("price"))}</div><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a></section>`:""}
 <footer><div>${links}</div><div>${mark}${hosted?`<a href="https://t.me/ifield_lab?text=Report%20__SLUG__" target="_blank" rel="noopener">⚑ Report</a>`:""}</div></footer></main></body></html>`;
@@ -242,7 +242,7 @@ function openModal(k){
   const h=k==="host";
   $("mt").dataset.i=h?"hostt":"mt"; $("mtext").dataset.i=h?"hostp":"mp";
   $("mt").textContent=T($("mt").dataset.i); $("mtext").textContent=T($("mtext").dataset.i);
-  $("mprice").textContent=h?"300 ⭐":"500 ⭐"; $("pay").href=h?HOST_URL:PAY_URL;
+  $("mprice").textContent=(h?PRICES.host:PRICES.pro)+" ⭐"; $("pay").href=h?HOST_URL:PAY_URL;
   $("modal").classList.add("on"); $("code").focus();
 }
 async function publish(){
@@ -276,10 +276,10 @@ async function refresh(){ const c=store.get("if_code",""); if(c && API){ await v
 function handlePhoto(file){
   if(!file || !file.type.startsWith("image/")) return;
   const im=new Image(), u=URL.createObjectURL(file);
-  im.onload=()=>{ const s=Math.min(1,900/Math.max(im.width,im.height)), c=document.createElement("canvas"); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s); c.getContext("2d").drawImage(im,0,0,c.width,c.height); photo=c.toDataURL("image/jpeg",.82); URL.revokeObjectURL(u); thumb(); preview(); };
+  im.onload=()=>{ const s=Math.min(1,900/Math.max(im.width,im.height)), c=document.createElement("canvas"); c.width=Math.round(im.width*s); c.height=Math.round(im.height*s); c.getContext("2d").drawImage(im,0,0,c.width,c.height); photo=c.toDataURL("image/jpeg",.82); store.set("if_photo",photo); URL.revokeObjectURL(u); thumb(); preview(); };
   im.src=u;
 }
-function thumb(){ $("thumb").innerHTML = photo ? `<img src="${photo}" alt=""><button class="btn" id="rm" aria-label="Remove">×</button>` : ""; if(photo) $("rm").onclick=()=>{ photo=""; thumb(); preview(); }; }
+function thumb(){ $("thumb").innerHTML = photo ? `<img src="${photo}" alt=""><button class="btn" id="rm" aria-label="Remove">×</button>` : ""; if(photo) $("rm").onclick=()=>{ photo=""; store.set("if_photo",""); thumb(); preview(); }; }
 
 /* ===== ИНТЕРФЕЙС ===== */
 function renderStyles(){
@@ -298,7 +298,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el=>el.textContent=T(el.dataset.i));
   renderBadge(); preview();
 }
-buildForm(); renderStyles(); applyLang();
+buildForm(); renderStyles(); photo=store.get("if_photo",""); thumb(); applyLang();
 $("yr").textContent=new Date().getFullYear();
 $("lang").onchange=e=>{ lang=e.target.value; store.set("if_lang",lang); applyLang(); };
 $("dl").onclick=dl; $("cp").onclick=cp; $("sh").onclick=sh; $("act").onclick=unlock; $("close").onclick=()=>$("modal").classList.remove("on");
@@ -307,6 +307,7 @@ $("dm").onclick=()=>$("fw").classList.add("m"); $("dd").onclick=()=>$("fw").clas
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("modal").classList.remove("on"); });
 function setFx(on){ document.documentElement.classList.toggle("nofx",!on); $("fx").setAttribute("aria-pressed",on); store.set("if_fx",on); }
 setFx(store.get("if_fx",true)); $("fx").onclick=()=>setFx(document.documentElement.classList.contains("nofx"));
+let PRICES={pro:500,host:300}; if(API){ fetch(API+"/prices").then(r=>r.json()).then(p=>{ if(p.pro&&p.host) PRICES=p; }).catch(()=>{}); }
 $("aibox").hidden=!AI_ON; $("aib").onclick=aiFill; $("pb").onclick=publish; refresh();
 if(API){ $("lt").href=API+"/terms"; $("lp").href=API+"/privacy"; } else { $("lt").hidden=true; $("lp").hidden=true; }
 (function(){ const c=new URLSearchParams(location.search).get("code"); if(c){ $("code").value=c; history.replaceState(null,"",location.pathname); unlock().then(()=>{ if(isPro()) toast("✓ Pro"); }); } })();

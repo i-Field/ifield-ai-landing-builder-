@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<title>iField Studio — Landing Builder</title>
+<title>iField Studio — Landing Builder</title><meta name="description" content="Make a one-page website for your business in a minute: 10 designs, 6 languages, a live link. Free to try."><meta name="theme-color" content="#060810"><meta property="og:type" content="website"><meta property="og:title" content="iField Studio — Landing Builder"><meta property="og:description" content="A one-page website for your business in a minute. 10 designs, 6 languages."><link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <style>
 :root{--bg:#060810;--tx:#eef1fa;--mut:#8a93ad;--gl:rgba(255,255,255,.055);--ln:rgba(255,255,255,.11);--a:#40e0d0;--b:#9b4dff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark}
 *{box-sizing:border-box}html,body{margin:0}
@@ -91,7 +91,7 @@ footer{text-align:center;margin-top:34px;font-size:13px;color:var(--mut)}footer 
       <div class="acts"><button class="btn p" id="pb" data-i="publish"></button><button class="btn" id="dl" data-i="dl"></button><button class="btn" id="cp" data-i="copy"></button><button class="btn" id="sh" data-i="share"></button></div><p class="small" id="pubinfo"></p>
     </section>
   </div>
-  <footer><a href="https://t.me/ifield_lab">Telegram</a><a href="https://fiverr.com/s/2KRdzKN">Fiverr</a><a href="https://i-field.github.io/ifield-studio">Portfolio</a><br>© <span id="yr"></span> iField Studio</footer>
+  <footer><a href="https://t.me/ifield_lab">Telegram</a><a href="https://fiverr.com/s/2KRdzKN">Fiverr</a><a href="https://i-field.github.io/ifield-studio">Portfolio</a><a id="lt" href="#" target="_blank" rel="noopener">Terms</a><a id="lp" href="#" target="_blank" rel="noopener">Privacy</a><br>© <span id="yr"></span> iField Studio</footer>
 </main>
 
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
@@ -153,6 +153,8 @@ TH.pulse.x='.pulse ul{counter-reset:n}.pulse li{counter-increment:n}.pulse li::b
 TH.slate.x='.slate header{position:sticky;top:0;z-index:2;background:#fff;padding:14px 0;margin-bottom:32px}.slate footer{background:#1a1a2e;color:#fff;opacity:1;padding:26px 24px;border-radius:var(--r);margin-top:20px}';
 TH.noir.x='.noir h1{font-weight:400}.noir .box{border-left:2px solid var(--ac);border-radius:0}';
 TH.mint.x='.mint .box{border-left:4px solid var(--ac)}';
+TH.turq={n:"Turquoise",l:"split",bg:"radial-gradient(60% 40% at 90% 0,rgba(6,182,212,.14),transparent),#f0fdfa",fg:"#073b3a",ac:"#0d9488",ac2:"#06b6d4",card:"#fff",r:"24px",rb:"99px",f:SANS,hf:SANS,on:"#fff"};
+TH.turq.x='.turq .hero{background:linear-gradient(135deg,var(--ac),var(--ac2));border-radius:var(--r);padding:44px 32px;color:#fff;margin-bottom:18px}.turq .hero h1,.turq .hero small,.turq .hero .lead{color:#fff}.turq .hero .btn{background:#fff;color:#0f766e}.turq .hero .btn.o{background:none;border-color:#fff;color:#fff}.turq .box{border-top:4px solid var(--ac)}';
 TH.cosmos={n:"Cosmos",l:"card",bg:"radial-gradient(60% 40% at 20% 0,rgba(0,255,163,.16),transparent),radial-gradient(50% 45% at 90% 90%,rgba(124,92,255,.2),transparent),#050816",fg:"#e6f4ff",ac:"#00ffa3",ac2:"#7c5cff",card:"rgba(255,255,255,.05)",r:"26px",rb:"99px",f:SANS,hf:SANS,on:"#02140d",fx:1};
 const SPACE='<div class="sp" aria-hidden="true"><i>🛰️</i><i>🚀</i><i>🛸</i><i>🪐</i></div><div class="nx" aria-hidden="true"></div>';
 const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.7;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent)}.sp i{position:absolute;left:0;font-style:normal;font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(0,255,163,.55));animation:fly 30s linear infinite}.sp i:nth-child(2){top:14%;animation-duration:34s}.sp i:nth-child(3){top:62%;animation-duration:22s;animation-delay:-9s}.sp i:nth-child(4){top:38%;animation-duration:40s;animation-delay:-20s}.sp i:nth-child(5){top:80%;left:auto;right:-20px;font-size:90px;opacity:.3;animation:none}@keyframes fly{from{transform:translateX(-12vw)}to{transform:translateX(112vw)}}@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;padding:2px;background:conic-gradient(from var(--a),transparent 0 70%,#00ffa3 88%,#b6ffe6 92%,transparent);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;filter:drop-shadow(0 0 7px #00ffa3);animation:ang 7s linear infinite}@keyframes ang{to{--a:360deg}}@media(prefers-reduced-motion:reduce){.sp,.nx{display:none}}';
@@ -171,7 +173,7 @@ const handle = s => (s||"").trim().replace(/^@/,"").replace(/[^\w.]/g,"");
 const digits = s => (s||"").replace(/[^\d]/g,"");
 
 /* ===== ГЕНЕРАТОР САЙТА ===== */
-function site(){
+function site(hosted){
   const t=TH[cur], e=esc, v=val;
   const tg=handle(v("tg")), ig=handle(v("ig")), ph=digits(v("phone")), pay=url(v("pay")), img=photo||url(v("img"));
   const main = tg?"https://t.me/"+tg : ph?"https://wa.me/"+ph : ig?"https://instagram.com/"+ig : "#";
@@ -202,7 +204,7 @@ footer{padding:30px 0 10px;opacity:.7;font-size:14px;display:flex;flex-wrap:wrap
 <section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener">${e(v("price")||"💳")}</a>`:""}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}">`:""}</section>
 <section class="box" aria-labelledby="s-about"><h2 id="s-about">${e(T("about",slang))}</h2><p>${e(v("desc"))}</p>${feats?`<ul>${feats}</ul>`:""}</section>
 ${v("price")?`<section class="box" aria-labelledby="s-price"><h2 id="s-price">${e(T("pricing",slang))}</h2><div class="price">${e(v("price"))}</div><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a></section>`:""}
-<footer><div>${links}</div><div>${mark}</div></footer></main></body></html>`;
+<footer><div>${links}</div><div>${mark}${hosted?`<a href="https://t.me/ifield_lab?text=Report%20__SLUG__" target="_blank" rel="noopener">⚑ Report</a>`:""}</div></footer></main></body></html>`;
 }
 
 /* ===== ДОСТУП ===== */
@@ -247,7 +249,7 @@ async function publish(){
   if(!API){ toast(T("puberr")); return; }
   if(!hostOn()){ openModal("host"); return; }
   try{
-    const r=await fetch(API+"/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:store.get("if_code",""),slug:store.get("if_slug",""),brand:val("brand"),html:site()})});
+    const r=await fetch(API+"/publish",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({code:store.get("if_code",""),slug:store.get("if_slug",""),brand:val("brand"),html:site(true)})});
     const j=await r.json(); if(!j.ok) throw 0;
     store.set("if_slug",j.slug);
     const a=document.createElement("a"); a.href=j.url; a.textContent=j.url; a.target="_blank"; a.rel="noopener";
@@ -306,6 +308,8 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape") $("modal").classLi
 function setFx(on){ document.documentElement.classList.toggle("nofx",!on); $("fx").setAttribute("aria-pressed",on); store.set("if_fx",on); }
 setFx(store.get("if_fx",true)); $("fx").onclick=()=>setFx(document.documentElement.classList.contains("nofx"));
 $("aibox").hidden=!AI_ON; $("aib").onclick=aiFill; $("pb").onclick=publish; refresh();
+if(API){ $("lt").href=API+"/terms"; $("lp").href=API+"/privacy"; } else { $("lt").hidden=true; $("lp").hidden=true; }
+(function(){ const c=new URLSearchParams(location.search).get("code"); if(c){ $("code").value=c; history.replaceState(null,"",location.pathname); unlock().then(()=>{ if(isPro()) toast("✓ Pro"); }); } })();
 </script>
 </body>
 </html>

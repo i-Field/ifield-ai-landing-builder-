@@ -8,14 +8,14 @@
 
 ## ✨ Key Features
 
-- **14 Built-in Designs** — Nexus, Forge, Pulse, Slate, Aurora, Noir, Sunset, Mint, Turquoise, Nature, Holographic, Cyberpunk, Luxury, Cosmos (mobile & desktop preview).
-- **One-Tap Niche Presets** — instant templates for Coffee Shop, Barbershop, Designer, Auto Service, and Coaching.
-- **High-Converting Sections** — Hero, Benefits grid, Client Reviews, Pricing card, and accessible pure-HTML FAQ accordion (CSP-safe, zero JS).
+- **20 Studio Designs** — Nexus, Rose, Espresso, Bento, Swiss, Ocean, Sand, Forge, Pulse, Slate, Aurora, Noir, Sunset, Mint, Turquoise, Nature, Holographic, Cyberpunk, Luxury, Cosmos (mobile, desktop & fullscreen preview).
+- **12 One-Tap Niche Presets** — Coffee Shop, Nail & Beauty, Designer, Barbershop, Auto Studio, Coaching, Fitness Coach, Photographer, Dental Clinic, Real Estate, Wellness, Brand Shop.
+- **High-Converting Sections** — Clean top navigation, Hero with architectural fallback card, Trust metrics strip, Benefits grid, Client Reviews, Pricing & Schedule card, and pure-HTML FAQ accordion (CSP-safe, zero JS).
 - **6 Languages** — English, Russian, Ukrainian, Polish, German, French (separate UI language & generated site language).
 - **Zero-Dependency Output** — exports a clean, standalone, responsive single-file HTML page with OpenGraph & SEO meta tags.
 - **Photo Compression** — client-side Canvas resize (up to 900px JPEG) + safe external image URLs.
 - **AI Copywriter (Optional)** — server-side `/ai` endpoint powered by Cloudflare Worker + Gemini API.
-- **30-Day Live Hosting** — one-tap publish to Cloudflare KV (`https://ifield.qx420.workers.dev/s/<slug>`) with strict `Content-Security-Policy`.
+- **Instant Live Hosting** — one-tap publish to Cloudflare KV (`https://ifield.qx420.workers.dev/s/<slug>`) with strict `Content-Security-Policy` (plus optional 24h free test link).
 
 ---
 

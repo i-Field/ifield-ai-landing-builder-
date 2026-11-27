@@ -21,6 +21,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0}
 body{
   background:radial-gradient(60% 45% at 15% 0,rgba(155,77,255,.18),transparent),
@@ -1270,7 +1271,7 @@ $("fdm").onclick=()=>$("fpwrap").classList.add("m"); $("fdd").onclick=()=>$("fpw
 document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ closeModal(); $("guide").classList.remove("on"); $("fullpv").classList.remove("on"); } });
 function setFx(on){ document.documentElement.classList.toggle("nofx",!on); $("fx").setAttribute("aria-pressed",on); store.set("if_fx",on); }
 setFx(store.get("if_fx",true)); $("fx").onclick=()=>setFx(document.documentElement.classList.contains("nofx"));
-let PRICES={pro:500,host:300};
+let PRICES={pro:500,host:600};
 function loadPrices(){
   if(!API) return;
   fetch(API+"/prices?_="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(p=>{

@@ -1,80 +1,54 @@
-# ifield-ai-landing-builder-
-⚡ AI Landing Page Builder — generate client-ready landing pages in 10 seconds. No coding. No design skills. Just describe your idea.
-<p align="center">
-  <img src="https://placehold.co/1200x300/1a1a2e/40E0D0?text=iField+AI+-+Landing+Builder" alt="iField AI Banner">
-</p>
- # ⚡ iField AI — Landing Page Builder
+# ⚡ iField Studio — Landing Page Builder
 
-**From idea to client page in 10 seconds.**
+**From idea to a client-ready one-page website in a minute.**
 
-[Live Demo](https://ifield.github.io/ifield-ai-landing-builder) • [Report Bug](https://github.com/ifield/ifield-ai-landing-builder/issues)
+[Live App](https://i-field.github.io/ifield-ai-landing-builder-/) • [Telegram Bot](https://t.me/ifield_studio_bot) • [Support](https://t.me/ifield_lab) • [Portfolio](https://i-field.github.io/ifield-studio)
 
 ---
 
-## 🚀 What is this?
+## ✨ Key Features
 
-iField AI is a **smart landing page generator** that creates professional, conversion-optimized websites from just a few words.
-
-**No coding. No design. No stress.**
-
----
-
-## ✨ Features
-
-| Mode | What it does |
-|------|---------------|
-| 🚀 **AUTO** | One click — AI generates a complete landing page |
-| ✍️ **IDEA** | Write one sentence → AI does the rest |
-| ⚙️ **MANUAL** | Full control over brand, niche, product |
-
-**Smart features:**
-- 🧠 AI Improve — boosts conversion by +32% (estimated)
-- 🌐 Publish to GitHub Gists — get a live link
-- 📤 Send to client — Telegram sharing
-- 🎨 Auto-design — colors & fonts match your niche
-- 🌍 3 languages — EN / UA / RU
-- 📱 Platform presets — Instagram / TikTok / Telegram
+- **14 Built-in Designs** — Nexus, Forge, Pulse, Slate, Aurora, Noir, Sunset, Mint, Turquoise, Nature, Holographic, Cyberpunk, Luxury, Cosmos (mobile & desktop preview).
+- **6 Languages** — English, Russian, Ukrainian, Polish, German, French (separate UI language & generated site language).
+- **Zero-Dependency Output** — exports a clean, standalone, responsive single-file HTML page with OpenGraph & SEO meta tags.
+- **Photo Compression** — client-side Canvas resize (up to 900px JPEG) + safe external image URLs.
+- **AI Copywriter (Optional)** — server-side `/ai` endpoint powered by Cloudflare Worker + Gemini API.
+- **30-Day Live Hosting** — one-tap publish to Cloudflare KV (`https://ifield-api.your-subdomain.workers.dev/s/<slug>`) with strict `Content-Security-Policy`.
 
 ---
 
-## 💰 Monetization
+## 💰 Tiers & Telegram Stars
 
-- **FREE** — 3 generations, watermark, no publishing
-- **PRO** — Unlimited + AI Improve + publish + no watermark (200 Telegram Stars)
+- **FREE** — 3 free downloads/copies/shares with a footer attribution link.
+- **PRO (500 ⭐)** — unlimited downloads, no watermark, AI copy assistant.
+- **HOSTING (300 ⭐ / 30 days)** — live short link on Cloudflare Workers + all PRO features.
 
----
-
-## 🛠️ Tech Stack
-
-- Pure HTML/CSS/JS — no frameworks
-- GitHub Gists API — free hosting for generated pages
-- Telegram Stars — payments (optional)
+Payments run natively through [@ifield_studio_bot](https://t.me/ifield_studio_bot) using **Telegram Stars (`XTR`)**, automatically issuing an `IF-XXXXXXXXXXXX` activation code.
 
 ---
 
-## 📦 How to use
+## 🛠️ Architecture (100% Free-Tier Friendly)
 
-1. Open `index.html` in any browser
-2. Choose mode: AUTO / IDEA / MANUAL
-3. Click **Generate**
-4. Download, publish, or send to client
+- **Frontend (`index.html`)** — Pure HTML/CSS/JS hosted on **GitHub Pages**.
+- **Backend (`src/worker.ts`)** — **Cloudflare Workers + KV** (`/verify`, `/prices`, `/publish`, `/s/:slug`, `/ai`, `/webhook/telegram`, `/terms`, `/privacy`).
+- **CI/CD (`.github/workflows/deploy.yml`)** — Automatic TypeScript check, secret scan, and deploy via **GitHub Actions**.
 
 ---
 
-## 🧠 Why this exists
+## ⚙️ Quick Setup
 
-Most landing builders are **too complex**. iField AI gives you **a ready-to-sell page in seconds** — not a blank canvas.
+1. Create a Cloudflare KV namespace (`IFIELD_KV`) and put its ID in `wrangler.toml`.
+2. Add encrypted secrets in **Cloudflare Dashboard → Workers & Pages → Settings → Variables and Secrets**:
+   - `TELEGRAM_BOT_TOKEN`
+   - `TELEGRAM_WEBHOOK_SECRET`
+   - `ALLOWED_TELEGRAM_IDS`
+   - `GEMINI_API_KEY` *(optional, for `/ai`)*
+3. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` to **GitHub → Settings → Secrets and variables → Actions**.
+4. Set your Worker URL in `const API = "https://ifield-api.your-subdomain.workers.dev";` inside `index.html`.
+5. Register your Telegram webhook via `setWebhook` with `secret_token`.
 
 ---
 
 ## 📄 License
 
-MIT — free for personal and commercial use
-
----
-
-## 🙏 Support
-
-- 💬 [Telegram](https://t.me/ifield_studio)
-- ⭐ Star this repo if you like it
-
+MIT — free for personal and commercial use.

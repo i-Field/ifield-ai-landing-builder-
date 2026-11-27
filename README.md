@@ -8,8 +8,9 @@
 
 ## ✨ Key Features
 
-- **20 Studio Designs** — Nexus, Rose, Espresso, Bento, Swiss, Ocean, Sand, Forge, Pulse, Slate, Aurora, Noir, Sunset, Mint, Turquoise, Nature, Holographic, Cyberpunk, Luxury, Cosmos (mobile, desktop & fullscreen preview).
-- **12 One-Tap Niche Presets** — Coffee Shop, Nail & Beauty, Designer, Barbershop, Auto Studio, Coaching, Fitness Coach, Photographer, Dental Clinic, Real Estate, Wellness, Brand Shop.
+- **20 Studio Designs & Dual Opposing Ribbons** — Nexus, Rose, Espresso, Bento, Swiss, Ocean, Sand, Forge, Pulse, Slate, Aurora, Noir, Sunset, Mint, Turquoise, Nature, Holographic, Cyberpunk, Luxury, Cosmos gliding in one ribbon while enlarged Niche Presets glide in the opposite direction (full touch-swipe & motion-safe support).
+- **12 One-Tap Presets + Offline Smart Niche Autofill** — Coffee Shop, Nail & Beauty, Designer, Barbershop, Auto Studio, Coaching, Fitness Coach, Photographer, Dental Clinic, Real Estate, Wellness, Brand Shop — plus instant offline autofill for dozens of micro-niches (sugaring, brow lamination, phone repair, bakery, florists, massage, legal, tutoring, cleaning, grooming, tattoo) and a universal custom-niche synthesizer with **Undo**.
+- **Layout & Accent Customizer** — Override layout (`Auto` / `Card` / `Split` / `Stack`) and pick a custom accent color on any of the 20 themes with automatic contrast calculation, live block readiness counter, and mobile/desktop/fullscreen preview.
 - **High-Converting Sections** — Clean top navigation, Hero with architectural fallback card, Trust metrics strip, Benefits grid, Client Reviews, Pricing & Schedule card, and pure-HTML FAQ accordion (CSP-safe, zero JS).
 - **6 Languages** — English, Russian, Ukrainian, Polish, German, French (separate UI language & generated site language).
 - **Zero-Dependency Output** — exports a clean, standalone, responsive single-file HTML page with OpenGraph & SEO meta tags.

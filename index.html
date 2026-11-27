@@ -221,6 +221,8 @@ details.glass[open] summary{margin-bottom:14px}
 .price{font-size:44px;font-weight:700;letter-spacing:-.03em;margin:6px 0}
 .small{font-size:13px;color:var(--mut)}
 #msg{min-height:20px;color:#ff9a9a;font-size:13px;margin:8px 0}
+.steps{display:grid;gap:9px;text-align:left;margin:14px 0 18px}
+.step{background:rgba(255,255,255,.045);border:1px solid var(--ln);border-radius:14px;padding:11px 13px;font-size:13.5px;line-height:1.45;color:var(--tx)}
 .fullpv{
   position:fixed;inset:0;z-index:11;background:#070911;display:none;flex-direction:column;
   padding:calc(10px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px));
@@ -287,17 +289,17 @@ footer a{color:var(--mut);margin:0 8px}
 @keyframes flyl{from{transform:translate3d(115vw,0,0)}to{transform:translate3d(-15vw,var(--dy,0),0)}}
 .pl{position:absolute;right:-24px;top:16vh;font-size:110px;opacity:.28;animation:flt 14s ease-in-out infinite alternate}
 @keyframes flt{to{transform:translateY(30px) rotate(8deg)}}
-@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
 .neon{
   position:fixed;inset:0;z-index:6;pointer-events:none;padding:3px;
-  background:conic-gradient(from var(--a),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);
+  background:conic-gradient(from var(--ang),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   mask-composite:exclude;
   filter:drop-shadow(0 0 8px rgba(167,139,250,.55)) drop-shadow(0 0 20px rgba(108,196,255,.35));
   animation:ang 9s linear infinite;
 }
-@keyframes ang{to{--a:360deg}}
+@keyframes ang{to{--ang:360deg}}
 .nofx .space,.nofx .neon{display:none}
 @media(prefers-reduced-motion:reduce){.space,.neon{display:none}*{transition:none!important}}
 </style>
@@ -322,6 +324,7 @@ footer a{color:var(--mut);margin:0 8px}
       <span class="pill" data-i="lb"></span>
     </div>
     <div class="chips">
+      <button class="chip" id="guidebtn" type="button" data-i="guideb" style="cursor:pointer"></button>
       <select id="lang" aria-label="Language">
         <option value="en">🇬🇧 EN</option>
         <option value="ru">🇷🇺 RU</option>
@@ -415,6 +418,7 @@ footer a{color:var(--mut);margin:0 8px}
     <div class="price" id="mprice">500 ⭐</div>
     <p class="small" id="mtext" data-i="mp"></p>
     <a class="btn p" id="pay" target="_blank" rel="noopener" data-i="payb" style="display:flex"></a>
+    <p class="small" data-i="starsnote" style="margin:10px 0 0;font-size:12px;opacity:.82"></p>
     <button class="btn" id="trialbtn" type="button" data-i="trialbtn" hidden style="width:100%;margin-top:8px"></button>
     <p class="small" data-i="have" style="margin:18px 0 6px"></p>
     <input id="code" autocomplete="off" aria-label="Code" placeholder="IF-XXXXXXXXXXXX">
@@ -423,6 +427,19 @@ footer a{color:var(--mut);margin:0 8px}
       <button class="btn p" id="act" type="button" data-i="act"></button>
       <button class="btn" id="close" type="button" data-i="close"></button>
     </div>
+  </div>
+</div>
+
+<div class="modal" id="guide" role="dialog" aria-modal="true" aria-labelledby="gt">
+  <div class="glass">
+    <h2 id="gt" data-i="guidet"></h2>
+    <div class="steps">
+      <div class="step" data-i="g1"></div>
+      <div class="step" data-i="g2"></div>
+      <div class="step" data-i="g3"></div>
+      <div class="step" data-i="g4"></div>
+    </div>
+    <button class="btn p" id="gcls" type="button" data-i="close" style="display:flex;width:100%"></button>
   </div>
 </div>
 
@@ -460,7 +477,7 @@ const KEYS=(
   "h1 lead style niches ident offer contacts brand tag niche product desc feats price stats addr pay tg ig phone img siteurl " +
   "reviews faq revtitle faqtitle sharetg hostuntil upload reset dl copy share free pro mt mp payb have act close bad ok err " +
   "contact book built preview about pricing aiq aib aierr publish pubok puberr pubneedapi hostt hostp more lb freeb designs " +
-  "autofill undo layauto laycard laysplit laystack accent blocks trialbtn trialok trialused"
+  "autofill undo layauto laycard laysplit laystack accent blocks trialbtn trialok trialused starsnote guideb guidet g1 g2 g3 g4"
 ).split(" ");
 
 const L={
@@ -483,7 +500,13 @@ en:[
   "Instant 30-day hosting on workers.dev: one tap gives your client-ready short link, no watermark & all Pro tools.",
   "More options","landing builder","{n} FREE","20 designs",
   "✨ Autofill","↩ Undo","Auto","Card","Split","Stack","Color","Ready: {n}/6 blocks",
-  "🎁 Free 24h test link","Test link live for 24h:","24h trial limit reached. Get 30-day hosting in Telegram."
+  "🎁 Free 24h test link","Test link live for 24h:","24h trial limit reached. Get 30-day hosting in Telegram.",
+  "Digital tool & 30d hosting access via Telegram Stars (XTR). Terms (/terms) & support (/paysupport) inside bot.",
+  "❓ Guide","How it works in 4 steps",
+  "1. Pick one of 20 designs or swipe a niche preset — or type any niche and tap «✨ Autofill».",
+  "2. Edit brand, price, Telegram/WhatsApp, reviews, FAQ or upload a photo — preview updates live.",
+  "3. Download HTML free up to 3 times, or tap «🔗 Publish» for a live link.",
+  "4. After Stars payment in Telegram, open the auto-activation link the bot sends you."
 ],
 ru:[
   "Лендинг за минуту",
@@ -504,7 +527,13 @@ ru:[
   "После оплаты в Telegram бот сразу пришлёт авто-ссылку: жмите «Опубликовать» и получите готовый адрес на 30 дней без доп. настроек.",
   "Дополнительные параметры","конструктор лендингов","{n} БЕСПЛАТНО","20 дизайнов",
   "✨ Заполнить","↩ Отменить","Авто","Карта","2 колонки","Стек","Цвет","Готово: {n}/6 блоков",
-  "🎁 Пробная ссылка на 24ч (бесплатно)","Тестовая ссылка на 24ч:","Пробная ссылка на сегодня уже создана. Полный хостинг — в боте."
+  "🎁 Пробная ссылка на 24ч (бесплатно)","Тестовая ссылка на 24ч:","Пробная ссылка на сегодня уже создана. Полный хостинг — в боте.",
+  "Цифровой доступ за Telegram Stars (XTR). Условия (/terms) и поддержка по оплатам (/paysupport) — в боте.",
+  "❓ Как создать сайт","Как пользоваться за 1 минуту",
+  "1. Свайпните один из 20 дизайнов и нишу — или введите любую свою сферу и нажмите «✨ Заполнить».",
+  "2. Замените контакты (Telegram/телефон), цену, фото и отзывы — превью сразу обновится.",
+  "3. Скачайте готовый HTML (3 раза бесплатно) или нажмите «🔗 Опубликовать» для живой ссылки.",
+  "4. После оплаты Stars бот сразу пришлёт ссылку автоактивации — просто перейдите по ней."
 ],
 uk:[
   "Лендінг за хвилину",
@@ -525,7 +554,13 @@ uk:[
   "Після оплати в Telegram бот надішле авто-посилання: отримайте коротку адресу на 30 днів миттєво.",
   "Додаткові параметри","конструктор лендінгів","{n} БЕЗКОШТОВНО","20 дизайнів",
   "✨ Заповнити","↩ Скасувати","Авто","Картка","2 колонки","Стек","Колір","Готово: {n}/6 блоків",
-  "🎁 Тестове посилання на 24г","Тестове посилання на 24г:","Ліміт тесту на сьогодні вичерпано. Повний хостинг — у боті."
+  "🎁 Тестове посилання на 24г","Тестове посилання на 24г:","Ліміт тесту на сьогодні вичерпано. Повний хостинг — у боті.",
+  "Цифровий доступ за Telegram Stars (XTR). Умови (/terms) та підтримка (/paysupport) — у боті.",
+  "❓ Інструкція","Як створити сайт за 1 хвилину",
+  "1. Оберіть один із 20 дизайнів та нішу — або впишіть свою сферу й натисніть «✨ Заповнити».",
+  "2. Вкажіть свої контакти, ціну, фото та відгуки — прев’ю одразу оновиться.",
+  "3. Завантажте HTML (3 рази безкоштовно) або натисніть «🔗 Опублікувати» для живого посилання.",
+  "4. Після оплати Stars бот надішле посилання автоактивації — просто відкрийте його."
 ],
 pl:[
   "Landing page w minutę",
@@ -546,7 +581,13 @@ pl:[
   "Natychmiastowy hosting na 30 dni pod krótkim linkiem, bez znaku wodnego i z pełnym Pro.",
   "Dodatkowe opcje","kreator landingów","{n} ZA DARMO","20 projektów",
   "✨ Wypełnij","↩ Cofnij","Auto","Karta","2 kolumny","Stos","Kolor","Gotowe: {n}/6 sekcji",
-  "🎁 Darmowy link testowy 24h","Link testowy 24h:","Wykorzystano darmowy test 24h. Pełny hosting w Telegramie."
+  "🎁 Darmowy link testowy 24h","Link testowy 24h:","Wykorzystano darmowy test 24h. Pełny hosting w Telegramie.",
+  "Dostęp cyfrowy przez Telegram Stars (XTR). Zasady (/terms) i wsparcie (/paysupport) w bocie.",
+  "❓ Instrukcja","Jak stworzyć stronę w minutę",
+  "1. Wybierz jeden z 20 stylów i branżę — lub wpisz własną i kliknij «✨ Wypełnij».",
+  "2. Podmień kontakt (Telegram/telefon), cenę, zdjęcie i opinie — podgląd działa na żywo.",
+  "3. Pobierz plik HTML (3 razy za darmo) lub kliknij «🔗 Opublikuj», aby dostać aktywny link.",
+  "4. Po opłaceniu Stars bot wyśle link aktywacyjny — wystarczy go kliknąć."
 ],
 de:[
   "Landingpage in einer Minute",
@@ -567,7 +608,13 @@ de:[
   "Sofortiges 30-Tage-Hosting unter einem kurzen Link, ohne Wasserzeichen & mit Pro.",
   "Weitere Optionen","Landingpage-Builder","{n} GRATIS","20 Designs",
   "✨ Ausfüllen","↩ Rückgängig","Auto","Karte","Split","Stack","Farbe","Bereit: {n}/6 Blöcke",
-  "🎁 Kostenloser 24h-Testlink","Testlink (24h):","24h-Testlimit erreicht. 30-Tage-Hosting im Bot verfügbar."
+  "🎁 Kostenloser 24h-Testlink","Testlink (24h):","24h-Testlimit erreicht. 30-Tage-Hosting im Bot verfügbar.",
+  "Digitaler Zugang via Telegram Stars (XTR). Regeln (/terms) & Support (/paysupport) im Bot.",
+  "❓ Anleitung","So funktioniert es in 4 Schritten",
+  "1. Wähle eines von 20 Designs und eine Branche – oder tippe dein Thema ein und klicke «✨ Ausfüllen».",
+  "2. Passe Marke, Preis, Telegram/Telefon, Bewertungen und Foto an – die Vorschau aktualisiert sofort.",
+  "3. Lade die HTML-Datei bis zu 3× gratis herunter oder klicke «🔗 Veröffentlichen» für einen Live-Link.",
+  "4. Nach Zahlung mit Stars schickt der Bot einen Aktivierungslink – einfach antippen."
 ],
 fr:[
   "Landing page en une minute",
@@ -588,7 +635,13 @@ fr:[
   "Hébergement 30 jours instantané sous lien court, sans filigrane et avec toutes les options Pro.",
   "Options supplémentaires","créateur de landing","{n} GRATUITS","20 designs",
   "✨ Remplir","↩ Annuler","Auto","Carte","Split","Empilé","Couleur","Prêt : {n}/6 blocs",
-  "🎁 Lien test gratuit 24h","Lien test 24h :","Test 24h déjà utilisé aujourd’hui. Hébergement 30j sur Telegram."
+  "🎁 Lien test gratuit 24h","Lien test 24h :","Test 24h déjà utilisé aujourd’hui. Hébergement 30j sur Telegram.",
+  "Accès numérique via Telegram Stars (XTR). Conditions (/terms) et support (/paysupport) dans le bot.",
+  "❓ Mode d’emploi","Comment créer votre site en 1 min",
+  "1. Choisissez un des 20 designs et un métier — ou tapez le vôtre et cliquez «✨ Remplir».",
+  "2. Modifiez vos contacts, tarifs, avis ou photo — l’aperçu se met à jour en direct.",
+  "3. Téléchargez le HTML (3 essais gratuits) ou cliquez «🔗 Publier» pour obtenir un lien en ligne.",
+  "4. Après paiement en Stars, ouvrez simplement le lien d’activation envoyé par le bot."
 ]
 };
 let lang = store.get("if_lang", (navigator.language||"en").slice(0,2));
@@ -642,11 +695,12 @@ TH.lux.x='.lux h1{font-weight:400;letter-spacing:.02em}.lux small{letter-spacing
 TH.cosmos.x='.cosmos .hero{background:var(--card);border:1px solid var(--line);border-radius:34px;padding:42px 28px;margin-bottom:18px}';
 
 const SPACE='<div class="sp" aria-hidden="true"><i>🛰️</i><i>🚀</i><i>🛸</i><i>🪐</i></div><div class="nx" aria-hidden="true"></div>';
-const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.7;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent)}.sp i{position:absolute;left:0;font-style:normal;font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(0,255,163,.55));animation:fly 30s linear infinite}.sp i:nth-child(2){top:14%;animation-duration:34s}.sp i:nth-child(3){top:62%;animation-duration:22s;animation-delay:-9s}.sp i:nth-child(4){top:38%;animation-duration:40s;animation-delay:-20s}.sp i:nth-child(5){top:80%;left:auto;right:-20px;font-size:90px;opacity:.3;animation:none}@keyframes fly{from{transform:translateX(-12vw);rotate:0deg}to{transform:translateX(112vw);rotate:var(--spin,0deg)}}.sp i:nth-child(1){--spin:1080deg}@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;padding:3px;background:conic-gradient(from var(--a),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;filter:drop-shadow(0 0 8px rgba(167,139,250,.55)) drop-shadow(0 0 20px rgba(108,196,255,.35));animation:ang 9s linear infinite}@keyframes ang{to{--a:360deg}}@media(prefers-reduced-motion:reduce){.sp,.nx{display:none}}';
+const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.7;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent)}.sp i{position:absolute;left:0;font-style:normal;font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(0,255,163,.55));animation:fly 30s linear infinite}.sp i:nth-child(2){top:14%;animation-duration:34s}.sp i:nth-child(3){top:62%;animation-duration:22s;animation-delay:-9s}.sp i:nth-child(4){top:38%;animation-duration:40s;animation-delay:-20s}.sp i:nth-child(5){top:80%;left:auto;right:-20px;font-size:90px;opacity:.3;animation:none}@keyframes fly{from{transform:translateX(-12vw);rotate:0deg}to{transform:translateX(112vw);rotate:var(--spin,0deg)}}.sp i:nth-child(1){--spin:1080deg}@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;padding:3px;background:conic-gradient(from var(--ang),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;filter:drop-shadow(0 0 8px rgba(167,139,250,.55)) drop-shadow(0 0 20px rgba(108,196,255,.35));animation:ang 9s linear infinite}@keyframes ang{to{--ang:360deg}}@media(prefers-reduced-motion:reduce){.sp,.nx{display:none}}';
 
+const validLay = v => (v==="card"||v==="split"||v==="stack") ? v : "";
 let cur = store.get("if_style","nexus"); if(!TH[cur]) cur="nexus";
 let curPreset = "";
-let customLay = store.get("if_lay","");
+let customLay = validLay(store.get("if_lay",""));
 let customAc = store.get("if_ac","");
 
 /* ===== ПОЛЯ ФОРМЫ ===== */
@@ -851,8 +905,8 @@ const digits = s => (s||"").replace(/[^\d]/g,"");
 
 /* ===== ГЕНЕРАТОР ГОТОВОГО САЙТА (100% БЕЗ JS, ПОД СТРОГИЙ CSP) ===== */
 function site(hosted){
-  const t=TH[cur], e=esc, v=val;
-  const lay = customLay || t.l;
+  const t=TH[cur]||TH.nexus, e=esc, v=val;
+  const lay = validLay(customLay) || t.l;
   const ac = /^#[0-9a-f]{6}$/i.test(customAc) ? customAc : t.ac;
   const tg=handle(v("tg")), ig=handle(v("ig")), ph=digits(v("phone")), pay=url(v("pay"));
   const safePhoto=validDataImg(photo)?photo:"", img=safePhoto||url(v("img"));
@@ -911,15 +965,15 @@ footer{padding:28px 0 10px;opacity:.72;font-size:14px;display:flex;flex-wrap:wra
   const desc = e((v("tag")||v("desc")).slice(0,150));
   const odesc = e(v("desc").slice(0,200)||v("tag")), su = url(v("URL")), tc = (t.bg.match(/#[0-9a-f]{6}/i)||["#000000"])[0];
   const loc = {en:"en_US",ru:"ru_RU",uk:"uk_UA",pl:"pl_PL",de:"de_DE",fr:"fr_FR"}[slang];
-  return `<!DOCTYPE html><html lang="${slang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${e(v("brand"))}${v("product")?" — "+e(v("product")):""}</title><meta name="description" content="${desc}"><meta name="theme-color" content="${tc}"><meta property="og:type" content="website"><meta property="og:site_name" content="${e(v("brand"))}"><meta property="og:locale" content="${loc}"><meta name="twitter:card" content="${img&&!img.startsWith("data:")?"summary_large_image":"summary"}"><meta property="og:title" content="${e(v("brand"))}"><meta property="og:description" content="${odesc}">${su?`<meta property="og:url" content="${e(su)}"><link rel="canonical" href="${e(su)}">`:``}${img&&!img.startsWith("data:")?`<meta property="og:image" content="${e(img)}">`:``}<style>${css}${t.x||""}${t.fx?FX:""}</style></head><body class="${lay} ${cur}">${t.fx?SPACE:""}<main id="top">
+  return `<!DOCTYPE html><html lang="${slang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${e(v("brand"))}${v("product")?" — "+e(v("product")):""}</title><meta name="description" content="${desc}"><meta name="theme-color" content="${tc}"><meta property="og:type" content="website"><meta property="og:site_name" content="${e(v("brand"))}"><meta property="og:locale" content="${loc}"><meta name="twitter:card" content="${img&&!img.startsWith("data:")?"summary_large_image":"summary"}"><meta property="og:title" content="${e(v("brand"))}"><meta property="og:description" content="${odesc}">${su?`<meta property="og:url" content="${e(su)}"><link rel="canonical" href="${e(su)}">`:""}${img&&!img.startsWith("data:")?`<meta property="og:image" content="${e(img)}">`:""}<style>${css}${t.x||""}${t.fx?FX:""}</style></head><body class="${lay} ${cur}">${t.fx?SPACE:""}<main id="top">
 <header><a class="logo" href="#top">${e(v("brand"))}</a><nav class="nav" aria-label="Menu">${nav}</nav><a class="btn o" href="${e(main)}" target="_blank" rel="noopener">${e(T("contact",slang))}</a></header>
-<section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener">${e(v("price")||"💳")}</a>`:``}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}" referrerpolicy="no-referrer">`:`${artCard}`}</section>
+<section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener">${e(v("price")||"💳")}</a>`:""}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}" referrerpolicy="no-referrer">`:`${artCard}`}</section>
 ${stats?`<section class="stats" aria-label="Highlights">${stats}</section>`:""}
-<section class="box" id="s-about" aria-labelledby="h-about"><h2 id="h-about">${e(T("about",slang))}</h2><p>${e(v("desc"))}</p>${feats?`<ul>${feats}</ul>`:``}</section>
+<section class="box" id="s-about" aria-labelledby="h-about"><h2 id="h-about">${e(T("about",slang))}</h2><p>${e(v("desc"))}</p>${feats?`<ul>${feats}</ul>`:""}</section>
 ${revs?`<section class="box" id="s-rev" aria-labelledby="h-rev"><h2 id="h-rev">${e(T("revtitle",slang))}</h2><div class="revs">${revs}</div></section>`:""}
 ${v("price")?`<section class="box" id="s-price" aria-labelledby="h-price"><h2 id="h-price">${e(T("pricing",slang))}</h2><div class="price">${e(v("price"))}</div>${v("addr")?`<p class="addr">${e(v("addr"))}</p>`:""}<a class="btn" href="${e(main)}" target="_blank" rel="noopener">${e(T("book",slang))}</a></section>`:""}
 ${faqs?`<section class="box" id="s-faq" aria-labelledby="h-faq"><h2 id="h-faq">${e(T("faqtitle",slang))}</h2>${faqs}</section>`:""}
-<footer><div>${links}${v("addr")?`<span>${e(v("addr"))}</span>`:""}</div><div>${mark}${hosted?`<a href="https://t.me/ifield_lab?text=Report%20__SLUG__" target="_blank" rel="noopener">⚑ Report</a>`:``}</div></footer></main></body></html>`;
+<footer><div>${links}${v("addr")?`<span>${e(v("addr"))}</span>`:""}</div><div>${mark}${hosted?`<a href="https://t.me/ifield_lab?text=Report%20__SLUG__" target="_blank" rel="noopener">⚑ Report</a>`:""}</div></footer></main></body></html>`;
 }
 
 /* ===== ДОСТУП ===== */
@@ -986,19 +1040,23 @@ function preview(){
 function save(){ const o={}; F.forEach(f=>o[f[0]]=$("f-"+f[0]).value); store.set("if_form",o); }
 let TRIAL_ON=false;
 
+let MODAL_KIND="pro";
 function openModal(k){
-  const h=k==="host";
+  MODAL_KIND=k==="host"?"host":"pro";
+  const h=MODAL_KIND==="host";
   $("mt").dataset.i=h?"hostt":"mt"; $("mtext").dataset.i=h?"hostp":"mp";
   $("mt").textContent=T($("mt").dataset.i); $("mtext").textContent=T($("mtext").dataset.i);
   $("mprice").textContent=(h?PRICES.host:PRICES.pro)+" ⭐"; $("pay").href=h?HOST_URL:PAY_URL;
   $("trialbtn").hidden=!(h&&TRIAL_ON);
   $("modal").classList.add("on"); $("code").focus();
+  loadPrices();
 }
 function showPublished(urlStr, labelKey){
+  const safeUrl = url(urlStr); if(!safeUrl) return;
   const box=$("pubinfo"); box.textContent=T(labelKey)+" ";
-  const a=document.createElement("a"); a.href=urlStr; a.textContent=urlStr; a.target="_blank"; a.rel="noopener";
+  const a=document.createElement("a"); a.href=safeUrl; a.textContent=safeUrl; a.target="_blank"; a.rel="noopener";
   const tgShare=document.createElement("a");
-  tgShare.href="https://t.me/share/url?url="+encodeURIComponent(urlStr)+"&text="+encodeURIComponent(val("brand")||"iField Studio");
+  tgShare.href="https://t.me/share/url?url="+encodeURIComponent(safeUrl)+"&text="+encodeURIComponent(val("brand")||"iField Studio");
   tgShare.textContent=" · "+T("sharetg"); tgShare.target="_blank"; tgShare.rel="noopener";
   box.append(a,tgShare);
 }
@@ -1107,6 +1165,7 @@ function renderStyles(){
   const one=(dup)=>Object.entries(TH).map(([k,t])=>`<button type="button" class="st" data-k="${k}" aria-pressed="${k===cur}"${dup?' tabindex="-1" aria-hidden="true"':""}><span class="sw" style="background:${t.bg}"><i style="background:${t.ac}"></i><i style="background:${t.ac2}"></i></span>${t.n}</button>`).join("");
   $("styles").innerHTML=`<div class="track">${one(false)}${one(true)}</div>`;
   document.querySelectorAll(".st").forEach(b=>b.onclick=()=>{
+    if(!TH[b.dataset.k]) return;
     cur=b.dataset.k; store.set("if_style",cur);
     syncTuneUI(); preview();
   });
@@ -1169,9 +1228,11 @@ requestAnimationFrame(tickRibbons);
 $("yr").textContent=new Date().getFullYear();
 $("lang").onchange=e=>{ lang=e.target.value; store.set("if_lang",lang); slang=lang; store.set("if_slang",slang); const sl=$("slang"); if(sl) sl.value=slang; applyLang(); };
 $("dl").onclick=dl; $("cp").onclick=cp; $("sh").onclick=sh; $("act").onclick=unlock; $("close").onclick=()=>$("modal").classList.remove("on");
+$("guidebtn").onclick=()=>$("guide").classList.add("on"); $("gcls").onclick=()=>$("guide").classList.remove("on");
+$("guide").onclick=e=>{ if(e.target===$("guide")) $("guide").classList.remove("on"); };
 $("trialbtn").onclick=publishTrial;
 $("undo").onclick=undoFill;
-document.querySelectorAll("[data-lay]").forEach(b=>b.onclick=()=>{ customLay=b.dataset.lay; store.set("if_lay",customLay); syncTuneUI(); preview(); });
+document.querySelectorAll("[data-lay]").forEach(b=>b.onclick=()=>{ customLay=validLay(b.dataset.lay); store.set("if_lay",customLay); syncTuneUI(); preview(); });
 $("acpick").oninput=e=>{ customAc=e.target.value; store.set("if_ac",customAc); $("acrst").hidden=false; preview(); };
 $("acrst").onclick=()=>{ customAc=""; store.set("if_ac",""); syncTuneUI(); preview(); };
 $("code").addEventListener("keydown",e=>{ if(e.key==="Enter") unlock(); });
@@ -1179,10 +1240,24 @@ $("dm").onclick=()=>$("fw").classList.add("m"); $("dd").onclick=()=>$("fw").clas
 $("df").onclick=()=>{ $("fpframe").srcdoc=site(); $("fpwrap").classList.toggle("m",$("fw").classList.contains("m")); $("fullpv").classList.add("on"); };
 $("fcls").onclick=()=>$("fullpv").classList.remove("on");
 $("fdm").onclick=()=>$("fpwrap").classList.add("m"); $("fdd").onclick=()=>$("fpwrap").classList.remove("m");
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("modal").classList.remove("on"); $("fullpv").classList.remove("on"); } });
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ $("modal").classList.remove("on"); $("guide").classList.remove("on"); $("fullpv").classList.remove("on"); } });
 function setFx(on){ document.documentElement.classList.toggle("nofx",!on); $("fx").setAttribute("aria-pressed",on); store.set("if_fx",on); }
 setFx(store.get("if_fx",true)); $("fx").onclick=()=>setFx(document.documentElement.classList.contains("nofx"));
-let PRICES={pro:500,host:300}; if(API){ fetch(API+"/prices").then(r=>r.json()).then(p=>{ if(p.pro&&p.host) PRICES=p; if(p.ai) $("aibox").hidden=false; if(p.trial) TRIAL_ON=true; }).catch(()=>{}); }
+let PRICES={pro:500,host:300};
+function loadPrices(){
+  if(!API) return;
+  fetch(API+"/prices?_="+Date.now(),{cache:"no-store"}).then(r=>r.json()).then(p=>{
+    if(p.pro&&p.host){
+      PRICES=p;
+      if($("modal").classList.contains("on")){
+        $("mprice").textContent=(MODAL_KIND==="host"?PRICES.host:PRICES.pro)+" ⭐";
+      }
+    }
+    if(p.ai) $("aibox").hidden=false;
+    if(p.trial) TRIAL_ON=true;
+  }).catch(()=>{});
+}
+loadPrices();
 $("aibox").hidden=!AI_ON; $("aib").onclick=aiFill; $("pb").onclick=publish; refresh();
 if(API){ $("lt").href=API+"/terms"; $("lp").href=API+"/privacy"; } else { $("lt").hidden=true; $("lp").hidden=true; }
 (function(){ const c=new URLSearchParams(location.search).get("code"); if(c){ $("code").value=c; history.replaceState(null,"",location.pathname); unlock().then(()=>{ if(isPro()) toast("✓ Pro"); }); } })();

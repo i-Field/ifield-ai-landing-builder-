@@ -166,14 +166,14 @@ export default {
 
     if (request.method === "GET" && url.pathname === "/terms") {
       return new Response(
-        "<!doctype html><meta charset='utf-8'><title>Terms — iField Studio</title><body style='font-family:system-ui;max-width:680px;margin:40px auto;padding:0 16px;line-height:1.6'><h1>Terms of Service</h1><p><strong>Digital Goods:</strong> Telegram Stars (XTR) purchases unlock iField Studio Pro exports and 30-day static hosting on workers.dev.</p><p><strong>Acceptable Use:</strong> Scam, phishing, piracy, malware, and 18+/adult content are strictly prohibited and removed immediately without refund.</p><p><strong>Refunds &amp; Support:</strong> Use <code>/paysupport</code> inside @ifield_studio_bot if an activation code was not delivered or hosting failed.</p></body>",
+        "<!doctype html><meta charset='utf-8'><title>Terms — iField Studio</title><body style='font-family:system-ui;max-width:680px;margin:40px auto;padding:0 16px;line-height:1.6'><h1>Terms of Service</h1><p><strong>Digital Goods:</strong> Telegram Stars (XTR) purchases unlock iField Studio Pro exports and 30-day static hosting on workers.dev (up to 5 active hosted pages per code).</p><p><strong>Fair Use:</strong> Activation codes are bound to the buyer's Telegram account inside the Mini App and support up to 2 external browser devices. Free 24-hour test links are limited to 1 per Telegram account.</p><p><strong>Acceptable Use:</strong> Scam, phishing, piracy, malware, and 18+/adult content are strictly prohibited and removed immediately without refund.</p><p><strong>Refunds &amp; Support:</strong> Use <code>/paysupport</code> inside @ifield_studio_bot if an activation code was not delivered or hosting failed.</p></body>",
         { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
       );
     }
 
     if (request.method === "GET" && url.pathname === "/privacy") {
       return new Response(
-        "<!doctype html><meta charset='utf-8'><title>Privacy — iField Studio</title><body style='font-family:system-ui;max-width:680px;margin:40px auto;padding:0 16px'><h1>Privacy Policy</h1><p>Draft form data stays in your browser localStorage. Published pages and activation codes are stored in Cloudflare KV.</p></body>",
+        "<!doctype html><meta charset='utf-8'><title>Privacy — iField Studio</title><body style='font-family:system-ui;max-width:680px;margin:40px auto;padding:0 16px;line-height:1.6'><h1>Privacy Policy</h1><p>Draft form data and uploaded photos stay in your browser localStorage until you publish a page.</p><p>When activating a code or publishing, Cloudflare KV stores your activation code, linked Telegram user ID, anonymized browser device token (<code>if_did</code>, max 2), and sanitized static HTML without tracking scripts.</p></body>",
         { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
       );
     }
@@ -907,7 +907,7 @@ async function sendTermsMessage(
 ): Promise<void> {
   await tgSendOrEditHtml(
     chatId,
-    `<b>📜 Условия использования (Terms of Service)</b>\n\n• За Telegram Stars (XTR) приобретаются цифровые функции конструктора: безлимитный экспорт без водяного знака (Pro) и 30-дневный хостинг статической страницы (Hosting).\n• Запрещено размещать скам, фишинг, нелегальный контент, пиратство и материалы 18+ — такие страницы удаляются без возврата средств.\n• Если код не выдался или возник сбой оплаты, обратитесь в /paysupport.\n\nПолные правила и приватность:\n${escapeHtml(baseSite)}`,
+    `<b>📜 Условия использования (Terms of Service)</b>\n\n• За Telegram Stars (XTR) приобретаются цифровые функции конструктора: безлимитный экспорт без водяного знака (Pro) и 30-дневный хостинг (Hosting, до 5 активных сайтов на 1 код).\n• Код привязывается к вашему Telegram-аккаунту и работает до 2 внешних браузеров. Пробная ссылка 24ч выдаётся 1 раз в боте.\n• Запрещено размещать скам, фишинг, нелегальный контент, пиратство и материалы 18+ — такие страницы удаляются без возврата средств.\n• Если код не выдался или возник сбой оплаты, обратитесь в /paysupport.\n\nКонструктор и правила:\n${escapeHtml(baseSite)}`,
     env,
     { inline_keyboard: [[{ text: "⬅️ Назад", callback_data: "menu" }]] },
     editMessageId

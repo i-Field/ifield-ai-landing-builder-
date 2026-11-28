@@ -443,6 +443,7 @@ footer a{color:var(--mut);margin:0 8px}
             <input type="color" id="acpick" value="#40e0d0" aria-label="Accent color">
             <button class="seg" id="acrst" type="button" hidden>×</button>
           </label>
+          <button class="seg" type="button" id="sitefx" aria-pressed="true" data-i="sitefx"></button>
         </div>
       </section>
 
@@ -554,7 +555,7 @@ const KEYS=(
   "reviews faq revtitle faqtitle sharetg hostuntil upload reset dl copy share free pro mt mp payb have act close bad ok err " +
   "contact book built preview about pricing aiq aib aierr publish pubok puberr pubneedapi hostt hostp more lb freeb designs " +
   "autofill undo layauto laycard laysplit laystack accent blocks trialbtn trialok trialused starsnote guideb guidet g1 g2 g3 g4 " +
-  "baddev badtg sitelim trial_tg ratelim"
+  "baddev badtg sitelim trial_tg ratelim sitefx"
 ).split(" ");
 
 const L={
@@ -581,14 +582,15 @@ en:[
   "Digital tool & 30d hosting access via Telegram Stars (XTR). Terms (/terms) & support (/paysupport) inside bot.",
   "❓ Guide","How it works in 4 steps",
   "1. Pick one of 20 designs or swipe a niche preset — or type any niche and tap «✨ Autofill».",
-  "2. Edit brand, price, Telegram/WhatsApp, reviews, FAQ or upload a photo — preview updates live.",
-  "3. Download HTML free up to 3 times, or tap «🔗 Publish» for a live link.",
-  "4. After Stars payment in Telegram, open the auto-activation link the bot sends you.",
+  "2. Customize layout, color, «✨ Glow FX», contacts, price, photo and reviews — preview updates live.",
+  "3. Download HTML free up to 3 times, try a 1-time 24h test in the bot, or tap «🔗 Publish» (up to 5 sites/code).",
+  "4. After Stars payment in Telegram, open the auto-activation link (your Telegram account + up to 2 browsers).",
   "Device limit reached (max 2 devices per code).",
   "This code is bound to another Telegram account.",
   "Site limit reached (max 5 sites per code).",
   "Free 24h test link is available only inside Telegram bot @ifield_studio_bot.",
-  "Too many requests. Please wait a minute."
+  "Too many requests. Please wait a minute.",
+  "✨ Glow FX"
 ],
 ru:[
   "Лендинг за минуту",
@@ -613,14 +615,15 @@ ru:[
   "Цифровой доступ за Telegram Stars (XTR). Условия (/terms) и поддержка по оплатам (/paysupport) — в боте.",
   "❓ Как создать сайт","Как пользоваться за 1 минуту",
   "1. Свайпните один из 20 дизайнов и нишу — или введите любую свою сферу и нажмите «✨ Заполнить».",
-  "2. Замените контакты (Telegram/телефон), цену, фото и отзывы — превью сразу обновится.",
-  "3. Скачайте готовый HTML (3 раза бесплатно) или нажмите «🔗 Опубликовать» для живой ссылки.",
-  "4. После оплаты Stars бот сразу пришлёт ссылку автоактивации — просто перейдите по ней.",
+  "2. Настройте сетку, цвет, «✨ Подсветка», контакты, цену, фото и отзывы — превью сразу обновится.",
+  "3. Скачайте HTML (3 раза бесплатно), возьмите тест 24ч в боте или жмите «🔗 Опубликовать» (до 5 сайтов на код).",
+  "4. После оплаты Stars откройте ссылку автоактивации от бота (ваш Telegram + до 2 браузеров).",
   "Лимит устройств исчерпан (макс. 2 устройства на код).",
   "Код привязан к другому аккаунту Telegram.",
   "Лимит сайтов исчерпан (макс. 5 сайтов на 1 код).",
   "Пробная ссылка 24ч доступна только в Telegram-боте @ifield_studio_bot.",
-  "Слишком много запросов. Подождите минуту."
+  "Слишком много запросов. Подождите минуту.",
+  "✨ Подсветка"
 ],
 uk:[
   "Лендінг за хвилину",
@@ -645,14 +648,15 @@ uk:[
   "Цифровий доступ за Telegram Stars (XTR). Умови (/terms) та підтримка (/paysupport) — у боті.",
   "❓ Інструкція","Як створити сайт за 1 хвилину",
   "1. Оберіть один із 20 дизайнів та нішу — або впишіть свою сферу й натисніть «✨ Заповнити».",
-  "2. Вкажіть свої контакти, ціну, фото та відгуки — прев’ю одразу оновиться.",
-  "3. Завантажте HTML (3 рази безкоштовно) або натисніть «🔗 Опублікувати» для живого посилання.",
-  "4. Після оплати Stars бот надішле посилання автоактивації — просто відкрийте його.",
+  "2. Налаштуйте сітку, колір, «✨ Підсвітка», контакти, ціну, фото та відгуки — прев’ю одразу оновиться.",
+  "3. Завантажте HTML (3 рази безкоштовно), візьміть тест 24г у боті або тисніть «🔗 Опублікувати» (до 5 сайтів на код).",
+  "4. Після оплати Stars відкрийте посилання автоактивації від бота (ваш Telegram + до 2 браузерів).",
   "Ліміт пристроїв вичерпано (макс. 2 пристрої на код).",
   "Код прив’язаний до іншого акаунта Telegram.",
   "Ліміт сайтів вичерпано (макс. 5 сайтів на 1 код).",
   "Тестове посилання 24г доступне лише в Telegram-боті @ifield_studio_bot.",
-  "Забагато запитів. Зачекайте хвилину."
+  "Забагато запитів. Зачекайте хвилину.",
+  "✨ Підсвітка"
 ],
 pl:[
   "Landing page w minutę",
@@ -677,14 +681,15 @@ pl:[
   "Dostęp cyfrowy przez Telegram Stars (XTR). Zasady (/terms) i wsparcie (/paysupport) w bocie.",
   "❓ Instrukcja","Jak stworzyć stronę w minutę",
   "1. Wybierz jeden z 20 stylów i branżę — lub wpisz własną i kliknij «✨ Wypełnij».",
-  "2. Podmień kontakt (Telegram/telefon), cenę, zdjęcie i opinie — podgląd działa na żywo.",
-  "3. Pobierz plik HTML (3 razy za darmo) lub kliknij «🔗 Opublikuj», aby dostać aktywny link.",
-  "4. Po opłaceniu Stars bot wyśle link aktywacyjny — wystarczy go kliknąć.",
+  "2. Ustaw układ, kolor, «✨ Podświetlenie», kontakty, cenę, zdjęcie i opinie — podgląd działa na żywo.",
+  "3. Pobierz HTML (3× za darmo), wypróbuj link 24h w bocie lub kliknij «🔗 Opublikuj» (do 5 stron na kod).",
+  "4. Po opłaceniu Stars otwórz link aktywacyjny od bota (Twoje konto Telegram + maks. 2 przeglądarki).",
   "Osiągnięto limit urządzeń (maks. 2 na kod).",
   "Ten kod jest przypisany do innego konta Telegram.",
   "Osiągnięto limit stron (maks. 5 na kod).",
   "Darmowy link testowy 24h jest dostępny tylko w bocie @ifield_studio_bot.",
-  "Zbyt wiele żądań. Odczekaj minutę."
+  "Zbyt wiele żądań. Odczekaj minutę.",
+  "✨ Podświetlenie"
 ],
 de:[
   "Landingpage in einer Minute",
@@ -709,14 +714,15 @@ de:[
   "Digitaler Zugang via Telegram Stars (XTR). Regeln (/terms) & Support (/paysupport) im Bot.",
   "❓ Anleitung","So funktioniert es in 4 Schritten",
   "1. Wähle eines von 20 Designs und eine Branche – oder tippe dein Thema ein und klicke «✨ Ausfüllen».",
-  "2. Passe Marke, Preis, Telegram/Telefon, Bewertungen und Foto an – die Vorschau aktualisiert sofort.",
-  "3. Lade die HTML-Datei bis zu 3× gratis herunter oder klicke «🔗 Veröffentlichen» für einen Live-Link.",
-  "4. Nach Zahlung mit Stars schickt der Bot einen Aktivierungslink – einfach antippen.",
+  "2. Passe Layout, Farbe, «✨ Glow FX», Kontakte, Preis, Foto und Bewertungen an – Vorschau sofort live.",
+  "3. Lade HTML bis zu 3× gratis herunter, teste 24h im Bot oder klicke «🔗 Veröffentlichen» (bis 5 Seiten/Code).",
+  "4. Öffne nach Stars-Zahlung den Aktivierungslink vom Bot (dein Telegram-Konto + bis zu 2 Browser).",
   "Gerätelimit erreicht (max. 2 Geräte pro Code).",
   "Dieser Code ist an ein anderes Telegram-Konto gebunden.",
   "Seitenlimit erreicht (max. 5 Seiten pro Code).",
   "Der 24h-Testlink ist nur im Telegram-Bot @ifield_studio_bot verfügbar.",
-  "Zu viele Anfragen. Bitte 1 Minute warten."
+  "Zu viele Anfragen. Bitte 1 Minute warten.",
+  "✨ Glow FX"
 ],
 fr:[
   "Landing page en une minute",
@@ -741,14 +747,15 @@ fr:[
   "Accès numérique via Telegram Stars (XTR). Conditions (/terms) et support (/paysupport) dans le bot.",
   "❓ Mode d’emploi","Comment créer votre site en 1 min",
   "1. Choisissez un des 20 designs et un métier — ou tapez le vôtre et cliquez «✨ Remplir».",
-  "2. Modifiez vos contacts, tarifs, avis ou photo — l’aperçu se met à jour en direct.",
-  "3. Téléchargez le HTML (3 essais gratuits) ou cliquez «🔗 Publier» pour obtenir un lien en ligne.",
-  "4. Après paiement en Stars, ouvrez simplement le lien d’activation envoyé par le bot.",
+  "2. Réglez mise en page, couleur, «✨ Effets FX», contacts, tarifs, photo et avis — aperçu en direct.",
+  "3. Téléchargez le HTML (3 essais gratuits), testez 24h dans le bot ou cliquez «🔗 Publier» (jusqu’à 5 sites/code).",
+  "4. Après paiement Stars, ouvrez le lien d’activation du bot (votre compte Telegram + jusqu’à 2 navigateurs).",
   "Limite d’appareils atteinte (max 2 par code).",
   "Ce code est lié à un autre compte Telegram.",
   "Limite de sites atteinte (max 5 par code).",
   "Le lien test 24h est disponible uniquement dans le bot @ifield_studio_bot.",
-  "Trop de requêtes. Veuillez patienter une minute."
+  "Trop de requêtes. Veuillez patienter une minute.",
+  "✨ Effets FX"
 ]
 };
 let lang = store.get("if_lang", (navigator.language||"en").slice(0,2));
@@ -801,14 +808,17 @@ TH.cyber.x='body.cyber::after{content:"";position:fixed;inset:0;pointer-events:n
 TH.lux.x='.lux h1{font-weight:400;letter-spacing:.02em}.lux small{letter-spacing:.26em}.lux .box{border:1px solid rgba(230,194,122,.45);background:transparent}.lux .btn{letter-spacing:.1em;text-transform:uppercase;font-size:14px}';
 TH.cosmos.x='.cosmos .hero{background:var(--card);border:1px solid var(--line);border-radius:34px;padding:42px 28px;margin-bottom:18px}';
 
-const SPACE='<div class="sp" aria-hidden="true"><b>🚀</b><i>🪐</i></div><div class="nx" aria-hidden="true"><i class="nbt"></i><i class="nbb"></i></div>';
-const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.65;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent);animation:sptw 6s ease-in-out infinite}.sp i{position:absolute;right:-20px;top:76%;font-style:normal;font-size:90px;opacity:.26;animation:spfl 9s ease-in-out infinite}.sp b{position:absolute;left:0;top:16%;font-size:24px;font-weight:400;opacity:.82;animation:spfly 26s linear infinite}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;border:1.5px solid rgba(0,255,163,.24);box-shadow:inset 0 0 18px rgba(124,92,255,.16)}.nx i{position:absolute;left:0;width:200px;height:2px}.nbt{top:0;background:linear-gradient(90deg,transparent,#00ffa3,#7c5cff,transparent);animation:nbt 4.2s linear infinite}.nbb{bottom:0;background:linear-gradient(90deg,transparent,#7c5cff,#00ffa3,transparent);animation:nbb 4.2s linear infinite}@keyframes sptw{0%,100%{opacity:.3}50%{opacity:.72}}@keyframes spfl{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-6px,-12px,0)}}@keyframes spfly{from{transform:translate3d(-15vw,0,0)}to{transform:translate3d(115vw,-18vh,0)}}@keyframes nbt{from{transform:translate3d(-220px,0,0)}to{transform:translate3d(calc(100vw + 20px),0,0)}}@keyframes nbb{from{transform:translate3d(calc(100vw + 20px),0,0)}to{transform:translate3d(-220px,0,0)}}@media(prefers-reduced-motion:reduce){.sp b,.sp i,.sp::before,.nx i{animation:none}}';
+const SPACE='<div class="sp" aria-hidden="true"><b>🚀</b><i>🪐</i></div>';
+const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.65;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent);animation:sptw 6s ease-in-out infinite}.sp i{position:absolute;right:-20px;top:76%;font-style:normal;font-size:90px;opacity:.26;animation:spfl 9s ease-in-out infinite}.sp b{position:absolute;left:0;top:16%;font-size:24px;font-weight:400;opacity:.82;animation:spfly 26s linear infinite}@keyframes sptw{0%,100%{opacity:.3}50%{opacity:.72}}@keyframes spfl{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(-6px,-12px,0)}}@keyframes spfly{from{transform:translate3d(-15vw,0,0)}to{transform:translate3d(115vw,-18vh,0)}}@media(prefers-reduced-motion:reduce){.sp b,.sp i,.sp::before{animation:none}}';
+const UNX='<div class="unx" aria-hidden="true"><i class="unb unb-t"></i><i class="unb unb-r"></i><i class="unb unb-b"></i><i class="unb unb-l"></i></div>';
+const scifiCss = dark => `@keyframes urise{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:translate3d(0,0,0)}}@keyframes urim{0%,26%{transform:translate3d(-120%,0,0);opacity:0}38%{opacity:.95}72%{transform:translate3d(220%,0,0);opacity:0}100%{transform:translate3d(220%,0,0);opacity:0}}@keyframes usheen{0%,36%{transform:translate3d(-150%,0,0) skewX(-18deg);opacity:0}46%{opacity:.9}68%{transform:translate3d(260%,0,0) skewX(-18deg);opacity:0}100%{transform:translate3d(260%,0,0) skewX(-18deg);opacity:0}}@keyframes unbt{from{transform:translate3d(-300px,0,0)}to{transform:translate3d(calc(100vw + 40px),0,0)}}@keyframes unbb{from{transform:translate3d(calc(100vw + 40px),0,0)}to{transform:translate3d(-300px,0,0)}}@keyframes unbr{from{transform:translate3d(0,-280px,0)}to{transform:translate3d(0,calc(100vh + 40px),0)}}@keyframes unbl{from{transform:translate3d(0,calc(100vh + 40px),0)}to{transform:translate3d(0,-280px,0)}}header,.hero,.stats,.box,footer{animation:urise .45s ease both}.hero{animation-delay:.06s}.stats{animation-delay:.12s}.box{animation-delay:.18s}footer{animation-delay:.24s}.stats,.box,.art,.nexus .hero,.ocean .hero,.cosmos .hero,.turq .hero,.btn:not(.o){position:relative;overflow:hidden}.stats::before,.box::before,.art::before,.nexus .hero::before,.ocean .hero::before,.cosmos .hero::before,.turq .hero::before{content:"";position:absolute;top:0;left:0;width:54%;height:1.5px;pointer-events:none;background:linear-gradient(90deg,transparent,var(--ac),#fff,var(--ac2),transparent);opacity:0;will-change:transform,opacity;animation:urim 6.8s ease-in-out infinite}.stats::after,.box::after,.art::after,.nexus .hero::after,.ocean .hero::after,.cosmos .hero::after,.turq .hero::after{content:"";position:absolute;top:-10px;left:0;width:54%;height:22px;pointer-events:none;background:radial-gradient(ellipse at center,color-mix(in srgb,var(--ac) 34%,transparent),color-mix(in srgb,var(--ac2) 16%,transparent) 52%,transparent 75%);opacity:0;will-change:transform,opacity;animation:urim 6.8s ease-in-out infinite}.stats::before,.stats::after{animation-delay:1s}.box:nth-of-type(odd)::before,.box:nth-of-type(odd)::after{animation-delay:2.1s}.box:nth-of-type(even)::before,.box:nth-of-type(even)::after{animation-delay:3.8s}.btn:not(.o)::after{content:"";position:absolute;top:0;bottom:0;left:0;width:58%;pointer-events:none;background:linear-gradient(105deg,transparent 18%,rgba(255,255,255,.32) 50%,transparent 82%);opacity:0;will-change:transform,opacity;animation:usheen 5.2s ease-in-out .9s infinite}.unx{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;border:1px solid color-mix(in srgb,var(--ac) 26%,transparent);box-shadow:inset 0 0 22px color-mix(in srgb,var(--ac) 12%,transparent),inset 0 0 36px color-mix(in srgb,var(--ac2) 10%,transparent)}.unb{position:absolute;will-change:transform;opacity:${dark?".9":".58"}}.unb-t{top:-8px;left:0;width:280px;height:18px;background:radial-gradient(ellipse at 50% 45%,#fff,var(--ac) 28%,var(--ac2) 55%,transparent 76%);animation:unbt 4.8s linear infinite}.unb-b{bottom:-8px;left:0;width:280px;height:18px;background:radial-gradient(ellipse at 50% 55%,#fff,var(--ac2) 28%,var(--ac) 55%,transparent 76%);animation:unbb 4.8s linear infinite}.unb-r{top:0;right:-8px;width:18px;height:260px;background:radial-gradient(ellipse at 55% 50%,#fff,var(--ac) 28%,var(--ac2) 55%,transparent 76%);animation:unbr 6s linear infinite;animation-delay:-1.5s}.unb-l{top:0;left:-8px;width:18px;height:260px;background:radial-gradient(ellipse at 45% 50%,#fff,var(--ac2) 28%,var(--ac) 55%,transparent 76%);animation:unbl 6s linear infinite;animation-delay:-3s}@media(prefers-reduced-motion:reduce){.unx,.unb,.btn:not(.o)::after,.stats::before,.stats::after,.box::before,.box::after,.art::before,.art::after,.hero::before,.hero::after{display:none;animation:none}header,.hero,.stats,.box,footer{animation:none}}`;
 
 const validLay = v => (v==="card"||v==="split"||v==="stack") ? v : "";
 let cur = store.get("if_style","nexus"); if(!TH[cur]) cur="nexus";
 let curPreset = "";
 let customLay = validLay(store.get("if_lay",""));
 let customAc = store.get("if_ac","");
+let siteFx = store.get("if_sitefx",true) !== false;
 
 /* ===== ПОЛЯ ФОРМЫ ===== */
 const F=[
@@ -1073,7 +1083,7 @@ footer{padding:28px 0 10px;opacity:.72;font-size:14px;display:flex;flex-wrap:wra
   const desc = e((v("tag")||v("desc")).slice(0,150));
   const odesc = e(v("desc").slice(0,200)||v("tag")), su = url(v("URL")), tc = (t.bg.match(/#[0-9a-f]{6}/i)||["#000000"])[0];
   const loc = {en:"en_US",ru:"ru_RU",uk:"uk_UA",pl:"pl_PL",de:"de_DE",fr:"fr_FR"}[slang];
-  return `<!DOCTYPE html><html lang="${slang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${e(v("brand"))}${v("product")?" — "+e(v("product")):""}</title><meta name="description" content="${desc}"><meta name="theme-color" content="${tc}"><meta property="og:type" content="website"><meta property="og:site_name" content="${e(v("brand"))}"><meta property="og:locale" content="${loc}"><meta name="twitter:card" content="${img&&!img.startsWith("data:")?"summary_large_image":"summary"}"><meta property="og:title" content="${e(v("brand"))}"><meta property="og:description" content="${odesc}">${su?`<meta property="og:url" content="${e(su)}"><link rel="canonical" href="${e(su)}">`:``}${img&&!img.startsWith("data:")?`<meta property="og:image" content="${e(img)}">`:``}<style>${css}${t.x||""}${t.fx?FX:""}</style></head><body class="${lay} ${cur}">${t.fx?SPACE:""}<main id="top">
+  return `<!DOCTYPE html><html lang="${slang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>${e(v("brand"))}${v("product")?" — "+e(v("product")):""}</title><meta name="description" content="${desc}"><meta name="theme-color" content="${tc}"><meta property="og:type" content="website"><meta property="og:site_name" content="${e(v("brand"))}"><meta property="og:locale" content="${loc}"><meta name="twitter:card" content="${img&&!img.startsWith("data:")?"summary_large_image":"summary"}"><meta property="og:title" content="${e(v("brand"))}"><meta property="og:description" content="${odesc}">${su?`<meta property="og:url" content="${e(su)}"><link rel="canonical" href="${e(su)}">`:``}${img&&!img.startsWith("data:")?`<meta property="og:image" content="${e(img)}">`:``}<style>${css}${t.x||""}${t.fx?FX:""}${siteFx?scifiCss(dark):""}</style></head><body class="${lay} ${cur}">${t.fx?SPACE:""}${siteFx?UNX:""}<main id="top">
 <header><a class="logo" href="#top">${e(v("brand"))}</a><nav class="nav" aria-label="Menu">${nav}</nav><a class="btn o" href="${e(main)}" target="_blank" rel="noopener noreferrer">${e(T("contact",slang))}</a></header>
 <section class="hero"><div><small>${e(v("niche"))}</small><h1>${cur==="forge"?(v("product")||v("brand")).split(" ").map((w,i)=>i===1?`<em>${e(w)}</em>`:e(w)).join(" "):e(v("product")||v("brand"))}</h1><p class="lead">${e(v("tag"))}</p><div class="btns"><a class="btn" href="${e(main)}" target="_blank" rel="noopener noreferrer">${e(T("book",slang))}</a>${pay?`<a class="btn o" href="${e(pay)}" target="_blank" rel="noopener noreferrer">${e(v("price")||"💳")}</a>`:``}</div></div>${img?`<img src="${e(img)}" alt="${e(v("product"))}" referrerpolicy="no-referrer">`:`${artCard}`}</section>
 ${stats?`<section class="stats" aria-label="Highlights">${stats}</section>`:""}
@@ -1382,6 +1392,7 @@ function syncTuneUI(){
   const pick=$("acpick");
   pick.value = /^#[0-9a-f]{6}$/i.test(customAc) ? customAc : TH[cur].ac;
   $("acrst").hidden = !customAc;
+  if($("sitefx")) $("sitefx").setAttribute("aria-pressed",siteFx);
 }
 
 function buildForm(){
@@ -1397,7 +1408,7 @@ function buildForm(){
   $("f-niche").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); smartAutofill(); } });
   $("slang").onchange=e=>{ slang=e.target.value; store.set("if_slang",slang); preview(); };
   $("up").onclick=()=>$("file").click(); $("file").onchange=e=>{ handlePhoto(e.target.files[0]); e.target.value=""; };
-  $("rst").onclick=()=>{ F.forEach(f=>{ $("f-"+f[0]).value=f[1]; }); curPreset=""; customLay=""; customAc=""; photo=""; store.set("if_photo",""); store.set("if_lay",""); store.set("if_ac",""); save(); thumb(); syncTuneUI(); preview(); };
+  $("rst").onclick=()=>{ F.forEach(f=>{ $("f-"+f[0]).value=f[1]; }); curPreset=""; customLay=""; customAc=""; siteFx=true; photo=""; store.set("if_photo",""); store.set("if_lay",""); store.set("if_ac",""); store.set("if_sitefx",true); save(); thumb(); syncTuneUI(); preview(); };
 }
 
 function applyLang(){
@@ -1428,6 +1439,7 @@ $("undo").onclick=undoFill;
 document.querySelectorAll("[data-lay]").forEach(b=>b.onclick=()=>{ customLay=validLay(b.dataset.lay); store.set("if_lay",customLay); syncTuneUI(); preview(); });
 $("acpick").oninput=e=>{ customAc=e.target.value; store.set("if_ac",customAc); $("acrst").hidden=false; preview(); };
 $("acrst").onclick=()=>{ customAc=""; store.set("if_ac",""); syncTuneUI(); preview(); };
+$("sitefx").onclick=()=>{ siteFx=!siteFx; store.set("if_sitefx",siteFx); syncTuneUI(); preview(); };
 $("code").addEventListener("keydown",e=>{ if(e.key==="Enter"){ $("code").blur(); unlock(); } });
 document.addEventListener("touchstart",e=>{
   const ae=document.activeElement;

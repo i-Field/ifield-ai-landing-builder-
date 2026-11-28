@@ -29,22 +29,35 @@ interface CodeRecord {
 interface ChargeRecord {
   code: string;
   userId?: number;
+  username?: string;
+  firstName?: string;
   kind: "pro" | "host";
   amount: number;
   createdAt: number;
   refunded?: boolean;
 }
 
+interface ChargeMeta {
+  u?: number;
+  un?: string;
+  fn?: string;
+  k?: "pro" | "host";
+  a?: number;
+  t?: number;
+  r?: boolean;
+  c?: string;
+}
+
 interface TelegramUpdate {
   update_id: number;
   callback_query?: {
     id: string;
-    from: { id: number };
+    from: { id: number; username?: string; first_name?: string };
     message?: { message_id: number; chat: { id: number } };
     data?: string;
   };
   message?: {
-    from?: { id: number };
+    from?: { id: number; username?: string; first_name?: string };
     chat: { id: number };
     text?: string;
     successful_payment?: {
@@ -583,11 +596,23 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
 
   const cq = update.callback_query;
   if (cq) {
-    await tgCall("answerCallbackQuery", { callback_query_id: cq.id }, env);
     const cqChatId = cq.message?.chat.id ?? cq.from.id;
     const cqMsgId = cq.message?.message_id;
     const cqUserId = cq.from.id;
     const data = cq.data ?? "";
+    if (data.startsWith("adm:") && !isOwner(cqUserId, env)) {
+      await tgCall(
+        "answerCallbackQuery",
+        {
+          callback_query_id: cq.id,
+          text: "🔒 Эта функция доступна только создателю.",
+          show_alert: true,
+        },
+        env
+      );
+      return;
+    }
+    await tgCall("answerCallbackQuery", { callback_query_id: cq.id }, env);
     if (data === "menu") {
       await sendStartMenu(cqChatId, baseSite, env, cqMsgId);
     } else if (data === "tariffs") {
@@ -600,6 +625,38 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
       await sendTermsMessage(cqChatId, baseSite, env, cqMsgId);
     } else if (data === "paysupport") {
       await sendPaySupportMessage(cqChatId, cqUserId, env, cqMsgId);
+    } else if (data.startsWith("adm:")) {
+      if (!isOwner(cqUserId, env)) return;
+      if (data === "adm:menu") {
+        await sendAdminMenu(cqChatId, env, cqMsgId);
+      } else if (data === "adm:pro" || data === "adm:host") {
+        const isHost = data === "adm:host";
+        const code = `IF-${generateRandomAlnum(12)}`;
+        const rec: CodeRecord = {
+          pro: true,
+          host: isHost ? Date.now() + 30 * 24 * 60 * 60 * 1000 : 0,
+          createdAt: Date.now(),
+          userId: cqUserId,
+        };
+        await env.CODES.put(`code:${code}`, JSON.stringify(rec));
+        const link = `${baseSite}/?code=${code}`;
+        await tgSendHtml(
+          cqChatId,
+          `✅ Выдан код (<b>${isHost ? "Host + Pro (30д)" : "Pro"}</b>): <code>${code}</code>\n\nНажмите кнопку ниже для мгновенной активации:`,
+          env,
+          {
+            inline_keyboard: [
+              [{ text: "⚡ Активировать в конструкторе", web_app: { url: link } }],
+              [{ text: "🛡 Админка", callback_data: "adm:menu" }],
+            ],
+          }
+        );
+      } else if (data === "adm:trial") {
+        await env.CODES.delete(`trial-user:${cqUserId}`);
+        await tgSendHtml(cqChatId, "✅ Ваш лимит пробной ссылки 24ч сброшен для теста.", env);
+      } else if (data === "adm:stats") {
+        await sendStatsMessage(cqChatId, env, cqMsgId);
+      }
     }
     return;
   }
@@ -636,24 +693,41 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
       ? `IF-${await deriveChargeAlnum(chargeId, env.WEBHOOK_SECRET || env.BOT_TOKEN, 12)}`
       : `IF-${generateRandomAlnum(12)}`;
     const hostExpiry = kind === "host" ? Date.now() + 30 * 24 * 60 * 60 * 1000 : 0;
+    const nowTs = Date.now();
+    const buyerUsername = msg.from?.username ? msg.from.username.slice(0, 40) : undefined;
+    const buyerName = msg.from?.first_name ? msg.from.first_name.slice(0, 40) : undefined;
     const rec: CodeRecord = {
       pro: true,
       host: hostExpiry,
-      createdAt: Date.now(),
+      createdAt: nowTs,
       userId,
       chargeId,
     };
     const chargeRec: ChargeRecord = {
       code,
       userId,
+      ...(buyerUsername ? { username: buyerUsername } : {}),
+      ...(buyerName ? { firstName: buyerName } : {}),
       kind,
       amount: sp.total_amount,
-      createdAt: Date.now(),
+      createdAt: nowTs,
       refunded: false,
+    };
+    const chargeMeta: ChargeMeta = {
+      u: userId,
+      ...(buyerUsername ? { un: buyerUsername } : {}),
+      ...(buyerName ? { fn: buyerName } : {}),
+      k: kind,
+      a: sp.total_amount,
+      t: nowTs,
+      r: false,
+      c: code,
     };
     await Promise.all([
       env.CODES.put(`code:${code}`, JSON.stringify(rec)),
-      chargeId ? env.CODES.put(chargeKey, JSON.stringify(chargeRec)) : Promise.resolve(),
+      chargeId
+        ? env.CODES.put(chargeKey, JSON.stringify(chargeRec), { metadata: chargeMeta })
+        : Promise.resolve(),
     ]);
 
     const link = `${baseSite}/?code=${code}`;
@@ -698,7 +772,63 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
     return;
   }
 
-  if (!isOwner(userId, env)) return;
+  if (!isOwner(userId, env)) {
+    if (/^\/(admin|stats|del|reset_trial|issue|refund)(?:@|\s|$)/.test(text)) {
+      await tgSendHtml(chatId, "🔒 Эта функция доступна только создателю.", env);
+    }
+    return;
+  }
+
+  if (text === "/admin" || text.startsWith("/admin@")) {
+    await sendAdminMenu(chatId, env);
+    return;
+  }
+
+  if (text === "/stats" || text.startsWith("/stats@")) {
+    await sendStatsMessage(chatId, env);
+    return;
+  }
+
+  if (text === "/del" || text.startsWith("/del ")) {
+    const rawArg = text.slice(4).trim();
+    if (!rawArg) {
+      await tgSendHtml(
+        chatId,
+        "Укажите slug или ссылку: <code>/del my-site</code> или <code>/del https://.../s/my-site</code>",
+        env
+      );
+      return;
+    }
+    const extracted = rawArg.includes("/s/")
+      ? rawArg.split("/s/").pop()!.split(/[?#/\s]/)[0]
+      : rawArg.split(/[?#/\s]/)[0];
+    const slug = extracted.toLowerCase().replace(/[^a-z0-9-]/g, "");
+    if (!slug) {
+      await tgSendHtml(chatId, "❌ Некорректный slug.", env);
+      return;
+    }
+    const [existingSite, ownerCode] = await Promise.all([
+      env.CODES.get(`site:${slug}`),
+      env.CODES.get(`site-owner:${slug}`),
+    ]);
+    if (!existingSite && !ownerCode) {
+      await tgSendHtml(chatId, `ℹ️ Сайт <code>${escapeHtml(slug)}</code> не найден (или уже удалён).`, env);
+      return;
+    }
+    await Promise.all([
+      env.CODES.delete(`site:${slug}`),
+      env.CODES.delete(`site-owner:${slug}`),
+    ]);
+    if (ownerCode) {
+      const ownerRec = await getCodeRecord(ownerCode, env);
+      if (ownerRec && Array.isArray(ownerRec.sites) && ownerRec.sites.includes(slug)) {
+        ownerRec.sites = ownerRec.sites.filter((s) => s !== slug);
+        await env.CODES.put(`code:${ownerCode}`, JSON.stringify(ownerRec));
+      }
+    }
+    await tgSendHtml(chatId, `🗑 Сайт <code>${escapeHtml(slug)}</code> удалён из хостинга.`, env);
+    return;
+  }
 
   if (text === "/reset_trial" && userId) {
     await env.CODES.delete(`trial-user:${userId}`);
@@ -716,7 +846,13 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
       userId,
     };
     await env.CODES.put(`code:${code}`, JSON.stringify(rec));
-    await tgSendHtml(chatId, `Выдан код (${isHost ? "Host+Pro" : "Pro"}): <code>${code}</code>`, env);
+    const link = `${baseSite}/?code=${code}`;
+    await tgSendHtml(
+      chatId,
+      `Выдан код (${isHost ? "Host+Pro" : "Pro"}): <code>${code}</code>`,
+      env,
+      { inline_keyboard: [[{ text: "⚡ Активировать в конструкторе", web_app: { url: link } }]] }
+    );
     return;
   }
 
@@ -729,6 +865,9 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
     let chargeId = arg;
     let code = "";
     let targetUserId: number | undefined;
+    let buyerUsername: string | undefined;
+    let buyerName: string | undefined;
+    let origCreatedAt = Date.now();
     let kind: "pro" | "host" = "pro";
     let amount = 0;
 
@@ -753,6 +892,9 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
           const parsed = JSON.parse(rawCharge) as ChargeRecord;
           amount = parsed.amount;
           kind = parsed.kind;
+          buyerUsername = parsed.username;
+          buyerName = parsed.firstName;
+          if (parsed.createdAt) origCreatedAt = parsed.createdAt;
         } catch {}
       }
     } else {
@@ -768,6 +910,9 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
           targetUserId = parsed.userId;
           kind = parsed.kind;
           amount = parsed.amount;
+          buyerUsername = parsed.username;
+          buyerName = parsed.firstName;
+          if (parsed.createdAt) origCreatedAt = parsed.createdAt;
         } catch {}
       }
     }
@@ -793,10 +938,27 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
         JSON.stringify({ pro: false, host: 0, createdAt: Date.now(), userId: targetUserId, chargeId, refunded: true })
       );
     }
-    await env.CODES.put(
-      `charge:${chargeId}`,
-      JSON.stringify({ code, userId: targetUserId, kind, amount, createdAt: Date.now(), refunded: true })
-    );
+    const refundedCharge: ChargeRecord = {
+      code,
+      userId: targetUserId,
+      ...(buyerUsername ? { username: buyerUsername } : {}),
+      ...(buyerName ? { firstName: buyerName } : {}),
+      kind,
+      amount,
+      createdAt: origCreatedAt,
+      refunded: true,
+    };
+    const refundedMeta: ChargeMeta = {
+      u: targetUserId,
+      ...(buyerUsername ? { un: buyerUsername } : {}),
+      ...(buyerName ? { fn: buyerName } : {}),
+      k: kind,
+      a: amount,
+      t: origCreatedAt,
+      r: true,
+      c: code,
+    };
+    await env.CODES.put(`charge:${chargeId}`, JSON.stringify(refundedCharge), { metadata: refundedMeta });
     await tgSendHtml(chatId, `✅ Возврат Stars выполнен, код <code>${escapeHtml(code || chargeId)}</code> деактивирован.`, env);
   }
 }
@@ -929,6 +1091,220 @@ async function sendPaySupportMessage(
   );
 }
 
+async function sendAdminMenu(
+  chatId: number,
+  env: Env,
+  editMessageId?: number
+): Promise<void> {
+  await tgSendOrEditHtml(
+    chatId,
+    `<b>🛡 Панель владельца iField</b>\n\nБыстрые действия доступны кнопками ниже.\n\n<b>Команды:</b>\n• <code>/stats</code> — статистика оплат и сайтов\n• <code>/del &lt;slug или ссылка&gt;</code> — снять сайт с хостинга\n• <code>/refund &lt;IF-КОД или charge_id&gt;</code> — возврат Stars + отзыв кода\n• <code>/issue pro</code> · <code>/issue host</code> · <code>/reset_trial</code>`,
+    env,
+    {
+      inline_keyboard: [
+        [{ text: "📊 Статистика оплат и сайтов", callback_data: "adm:stats" }],
+        [
+          { text: "🎟 Выдать Pro", callback_data: "adm:pro" },
+          { text: "🔗 Выдать Host (30д)", callback_data: "adm:host" },
+        ],
+        [{ text: "🔄 Сбросить 24ч тест", callback_data: "adm:trial" }],
+        [{ text: "🏠 Обычное меню", callback_data: "menu" }],
+      ],
+    },
+    editMessageId
+  );
+}
+
+async function sendStatsMessage(
+  chatId: number,
+  env: Env,
+  editMessageId?: number
+): Promise<void> {
+  const [chargeList, siteList, siteOwnerList, trialList, codeList] = await Promise.all([
+    env.CODES.list<ChargeMeta>({ prefix: "charge:", limit: 1000 }),
+    env.CODES.list({ prefix: "site:", limit: 1000 }),
+    env.CODES.list({ prefix: "site-owner:", limit: 1000 }),
+    env.CODES.list({ prefix: "trial-user:", limit: 1000 }),
+    env.CODES.list({ prefix: "code:", limit: 1000 }),
+  ]);
+
+  const records: ChargeRecord[] = [];
+  const missingKeys: string[] = [];
+
+  for (const entry of chargeList.keys) {
+    const m = entry.metadata;
+    if (m && typeof m.a === "number") {
+      records.push({
+        code: m.c ?? "",
+        userId: m.u,
+        username: m.un,
+        firstName: m.fn,
+        kind: m.k === "host" ? "host" : "pro",
+        amount: m.a,
+        createdAt: m.t ?? 0,
+        refunded: Boolean(m.r),
+      });
+    } else {
+      missingKeys.push(entry.name);
+    }
+  }
+
+  if (missingKeys.length > 0) {
+    const fetched = await Promise.all(
+      missingKeys.slice(0, 20).map(async (key) => {
+        const raw = await env.CODES.get(key);
+        if (!raw) return null;
+        try {
+          return JSON.parse(raw) as ChargeRecord;
+        } catch {
+          return null;
+        }
+      })
+    );
+    for (const item of fetched) {
+      if (item) records.push(item);
+    }
+  }
+
+  const now = Date.now();
+  const d7 = now - 7 * 86_400_000;
+  const d30 = now - 30 * 86_400_000;
+
+  let netStars = 0;
+  let stars7d = 0;
+  let stars30d = 0;
+  let proCount = 0;
+  let proStars = 0;
+  let hostCount = 0;
+  let hostStars = 0;
+  let refundCount = 0;
+  let refundStars = 0;
+
+  const buyers = new Map<
+    string,
+    { label: string; stars: number; pro: number; host: number; lastAt: number }
+  >();
+
+  for (const r of records) {
+    const amt = Number(r.amount) || 0;
+    if (r.refunded) {
+      refundCount += 1;
+      refundStars += amt;
+      continue;
+    }
+    netStars += amt;
+    if (r.createdAt >= d7) stars7d += amt;
+    if (r.createdAt >= d30) stars30d += amt;
+    if (r.kind === "host") {
+      hostCount += 1;
+      hostStars += amt;
+    } else {
+      proCount += 1;
+      proStars += amt;
+    }
+
+    const buyerKey = r.userId ? String(r.userId) : r.username || r.code || "anon";
+    const label = r.username
+      ? `@${r.username}`
+      : r.firstName
+      ? `${r.firstName} (ID ${r.userId ?? "?"})`
+      : `ID ${r.userId ?? "?"}`;
+    const prev = buyers.get(buyerKey) ?? { label, stars: 0, pro: 0, host: 0, lastAt: 0 };
+    if (r.username) prev.label = `@${r.username}`;
+    prev.stars += amt;
+    if (r.kind === "host") prev.host += 1;
+    else prev.pro += 1;
+    if (r.createdAt > prev.lastAt) prev.lastAt = r.createdAt;
+    buyers.set(buyerKey, prev);
+  }
+
+  const topBuyers = [...buyers.values()]
+    .sort((a, b) => b.stars - a.stars || b.lastAt - a.lastAt)
+    .slice(0, 7);
+
+  const recentPayments = [...records]
+    .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0))
+    .slice(0, 6);
+
+  const fmtDate = (ts: number) => {
+    if (!ts) return "—";
+    const d = new Date(ts);
+    const dd = String(d.getUTCDate()).padStart(2, "0");
+    const mm = String(d.getUTCMonth() + 1).padStart(2, "0");
+    return `${dd}.${mm}`;
+  };
+  const nowClock = new Date(now);
+  const hhmm = `${String(nowClock.getUTCHours()).padStart(2, "0")}:${String(nowClock.getUTCMinutes()).padStart(2, "0")} UTC`;
+
+  const totalSites = siteList.keys.length;
+  const paidSites = siteOwnerList.keys.length;
+  const activeTrialSites = Math.max(0, totalSites - paidSites);
+
+  const lines: string[] = [
+    `<b>📊 Статистика iField Studio</b> <i>(${hhmm})</i>`,
+    "",
+    `💰 <b>Выручка: ${netStars} ⭐</b> (платежей: ${proCount + hostCount}, клиентов: ${buyers.size})`,
+    `• За 7 дн: <b>${stars7d} ⭐</b> · За 30 дн: <b>${stars30d} ⭐</b>`,
+    `• Pro: ${proCount} шт (${proStars} ⭐) · Host: ${hostCount} шт (${hostStars} ⭐)`,
+  ];
+  if (refundCount > 0) {
+    lines.push(`• Возвраты: ${refundCount} шт (-${refundStars} ⭐)`);
+  }
+
+  lines.push(
+    "",
+    `🌐 <b>Сайты и коды:</b>`,
+    `• Живых сайтов: <b>${totalSites}</b> (платных: ${paidSites}, тест 24ч: ${activeTrialSites})`,
+    `• Всего кодов: <b>${codeList.keys.length}</b> · Взято 24ч тестов: <b>${trialList.keys.length}</b>`
+  );
+
+  if (topBuyers.length > 0) {
+    lines.push("", "🏆 <b>Кто сколько оплатил:</b>");
+    topBuyers.forEach((b, idx) => {
+      const parts: string[] = [];
+      if (b.host > 0) parts.push(`${b.host} Host`);
+      if (b.pro > 0) parts.push(`${b.pro} Pro`);
+      lines.push(`${idx + 1}. ${escapeHtml(b.label)} — <b>${b.stars} ⭐</b> (${parts.join(", ")})`);
+    });
+  } else {
+    lines.push("", "🏆 <b>Оплат Stars пока нет</b> — статистика появится сразу после первой покупки.");
+  }
+
+  if (recentPayments.length > 0) {
+    lines.push("", "🧾 <b>Последние оплаты:</b>");
+    for (const p of recentPayments) {
+      const who = p.username
+        ? `@${p.username}`
+        : p.firstName
+        ? p.firstName
+        : `ID ${p.userId ?? "?"}`;
+      const tariff = p.kind === "host" ? "Host" : "Pro";
+      const codeStr = p.code ? ` · <code>${escapeHtml(p.code)}</code>` : "";
+      const refStr = p.refunded ? " <i>(возврат)</i>" : "";
+      lines.push(`• ${fmtDate(p.createdAt)} · ${escapeHtml(who)} — ${tariff} ${p.amount} ⭐${codeStr}${refStr}`);
+    }
+  }
+
+  if (missingKeys.length > 20) {
+    lines.push("", `<i>Примечание: показаны первые 20 старых чеков без метаданных из ${missingKeys.length}.</i>`);
+  }
+
+  await tgSendOrEditHtml(
+    chatId,
+    lines.join("\n"),
+    env,
+    {
+      inline_keyboard: [
+        [
+          { text: "🔄 Обновить", callback_data: "adm:stats" },
+          { text: "🛡 Админка", callback_data: "adm:menu" },
+        ],
+      ],
+    },
+    editMessageId
+  );
+}
+
 async function sendStarsInvoice(
   chatId: number,
   title: string,
@@ -983,7 +1359,7 @@ async function tgSendOrEditHtml(
       },
       env
     );
-    if (edited.ok) return;
+    if (edited.ok || (edited.description ?? "").includes("message is not modified")) return;
   }
   await tgSendHtml(chatId, html, env, replyMarkup);
 }

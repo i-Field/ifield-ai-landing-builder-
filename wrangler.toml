@@ -1,0 +1,22 @@
+name = "ifield"
+main = "src/worker.ts"
+compatibility_date = "2026-01-15"
+workers_dev = true
+keep_vars = true
+
+[[kv_namespaces]]
+binding = "CODES"
+id = "7dc05d4e787945c6a70f900c591751ca"
+
+[vars]
+ALLOWED_ORIGIN = "https://i-field.github.io"
+SITE_URL = "https://i-field.github.io/ifield-ai-landing-builder-"
+PRICE_PRO = "500"
+HOST_PRICE = "600"
+
+# В Cloudflare Dashboard -> Variables & Secrets установите как Secret (Encrypt):
+# - BOT_TOKEN
+# - WEBHOOK_SECRET
+# - GEMINI_API_KEY (опционально, для /ai)
+# И как Variable (или Secret):
+# - OWNER_ID (ваш Telegram User ID)

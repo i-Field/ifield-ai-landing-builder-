@@ -44,45 +44,22 @@ main{
   cursor:pointer;min-height:44px;
 }
 .brandrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mark{
+  width:34px;height:34px;border-radius:10px;
+  background:linear-gradient(135deg,var(--a),var(--b));
+  box-shadow:0 0 14px rgba(64,224,208,.38);
+  display:grid;place-items:center;color:#06101a;
+}
+.mark span{display:block}
+.lt{color:var(--tx);font-size:24px;font-weight:800;letter-spacing:-.02em}
 .pill{
   padding:6px 14px;border-radius:99px;background:rgba(110,150,255,.14);
   border:1px solid var(--ln);font-size:13px;font-weight:700;
-  animation:gl 4.5s steps(1) infinite;animation-delay:-1.2s;
 }
 #badge{
   background:linear-gradient(135deg,#22c55e,#16a34a);border:0;color:#fff;
   font-weight:800;letter-spacing:.02em;
-  animation:gl 4.5s steps(1) infinite;animation-delay:-2.4s;
 }
-.mark{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,var(--a),var(--b));background-size:200% 200%;
-  display:grid;place-items:center;color:#06101a;
-  animation:glow 3.2s ease-in-out infinite;
-}
-.mark span{display:block;animation:fl 5s linear infinite}
-.lt{
-  color:var(--tx);font-size:24px;font-weight:800;letter-spacing:-.02em;
-  animation:gl 4.5s steps(1) infinite;
-}
-@keyframes gl{
-  0%,86%,100%{text-shadow:none;transform:none}
-  87%{text-shadow:2px 0 #ff2bd6,-2px 0 #19f1ff;transform:skewX(-6deg) translateX(1px)}
-  89%{text-shadow:-3px 0 #ff2bd6,3px 0 #19f1ff;transform:skewX(5deg)}
-  91%{text-shadow:2px 1px #ff2bd6,-2px -1px #19f1ff;transform:none}
-  93%{text-shadow:none}
-}
-@keyframes glow{
-  0%,100%{box-shadow:0 0 10px rgba(64,224,208,.35);background-position:0 0}
-  50%{box-shadow:0 0 24px rgba(155,77,255,.75);background-position:100% 100%}
-}
-@keyframes fl{
-  0%,90%,100%{opacity:1;transform:none}
-  92%{opacity:.35}94%{opacity:1;transform:scale(1.2) rotate(-6deg)}
-  96%{opacity:.5}98%{opacity:1}
-}
-.nofx .mark,.nofx .mark span,.nofx .lt,.nofx .pill,.nofx #badge{animation:none}
-@media(prefers-reduced-motion:reduce){.mark,.mark span,.lt,.pill,#badge{animation:none}}
 
 .chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .chip,select{
@@ -104,8 +81,8 @@ h1{
   .sticky{position:sticky;top:16px}
 }
 .glass{
-  background:var(--gl);border:1px solid var(--ln);border-radius:22px;padding:20px;
-  backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);margin-bottom:16px;
+  background:rgba(14,18,30,.86);border:1px solid var(--ln);border-radius:22px;padding:20px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);margin-bottom:16px;
 }
 .sec-h{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:12px}
 .sec-h h2{margin:0}
@@ -213,7 +190,7 @@ details.glass[open] summary{margin-bottom:14px}
 .thumb{display:flex;align-items:center;gap:10px;margin-top:10px}
 .thumb img{width:56px;height:56px;object-fit:cover;border-radius:10px}
 .modal{
-  position:fixed;inset:0;background:rgba(0,0,0,.76);backdrop-filter:blur(8px);
+  position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(4px);
   display:none;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   padding:16px;z-index:9;
 }
@@ -252,8 +229,7 @@ footer a{color:var(--mut);margin:0 8px}
 
 .space{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
 .space::before{
-  content:"";position:absolute;inset:0;opacity:.7;background-size:420px 420px;
-  animation:tw 7s ease-in-out infinite alternate;
+  content:"";position:absolute;inset:0;opacity:.62;background-size:420px 420px;
   background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),
                    radial-gradient(1px 1px at 38% 62%,#cfe,transparent),
                    radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),
@@ -262,10 +238,8 @@ footer a{color:var(--mut);margin:0 8px}
                    radial-gradient(1.5px 1.5px at 92% 12%,#fff,transparent),
                    radial-gradient(1px 1px at 24% 82%,#fff,transparent);
 }
-@keyframes tw{to{opacity:.25}}
 .space::after{
-  content:"";position:absolute;inset:0;opacity:.5;background-size:300px 300px;
-  animation:tw 5s ease-in-out infinite alternate-reverse;
+  content:"";position:absolute;inset:0;opacity:.42;background-size:300px 300px;
   background-image:radial-gradient(1px 1px at 8% 14%,#fff,transparent),
                    radial-gradient(2px 2px at 22% 48%,#bff,transparent),
                    radial-gradient(1px 1px at 41% 8%,#fff,transparent),
@@ -275,41 +249,26 @@ footer a{color:var(--mut);margin:0 8px}
                    radial-gradient(1px 1px at 95% 52%,#fff,transparent),
                    radial-gradient(1px 1px at 33% 92%,#fff,transparent);
 }
-.shoot{
-  position:absolute;top:12%;left:-10%;width:100px;height:2px;
-  background:linear-gradient(to left,#fff,transparent);opacity:0;
-  animation:shoot 11s linear infinite;
-}
-@keyframes shoot{
-  0%{transform:translate3d(0,0,0) rotate(25deg);opacity:0}
-  3%{opacity:1}
-  10%{transform:translate3d(120vw,56vh,0) rotate(25deg);opacity:0}
-  100%{opacity:0}
-}
-.fly{
-  position:absolute;left:0;font-size:30px;line-height:1;
-  filter:drop-shadow(0 0 8px rgba(0,255,163,.55));
-  animation:fly 30s linear infinite;will-change:transform;
-}
-.fly.l{animation-name:flyl}
-@keyframes fly{from{transform:translate3d(-15vw,0,0);rotate:0deg}to{transform:translate3d(115vw,var(--dy,0),0);rotate:var(--spin,0deg)}}
-.space .fly:nth-child(1),.space .fly:nth-child(4){--spin:1080deg}
-@keyframes flyl{from{transform:translate3d(115vw,0,0)}to{transform:translate3d(-15vw,var(--dy,0),0)}}
-.pl{position:absolute;right:-24px;top:16vh;font-size:110px;opacity:.28;animation:flt 14s ease-in-out infinite alternate}
-@keyframes flt{to{transform:translateY(30px) rotate(8deg)}}
-@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+.shoot,.fly{display:none}
+.pl{position:absolute;right:-24px;top:16vh;font-size:110px;opacity:.22}
 .neon{
-  position:fixed;inset:0;z-index:6;pointer-events:none;padding:3px;
-  background:conic-gradient(from var(--ang),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  mask-composite:exclude;
-  filter:drop-shadow(0 0 8px rgba(167,139,250,.55)) drop-shadow(0 0 20px rgba(108,196,255,.35));
-  animation:ang 9s linear infinite;
+  position:fixed;inset:0;z-index:6;pointer-events:none;
+  border:2px solid rgba(108,196,255,.24);
+  box-shadow:inset 0 0 18px rgba(155,77,255,.14);
 }
-@keyframes ang{to{--ang:360deg}}
 .nofx .space,.nofx .neon{display:none}
-@media(prefers-reduced-motion:reduce){.space,.neon{display:none}*{transition:none!important}}
+@media(pointer:coarse){
+  .glass,.modal{backdrop-filter:none;-webkit-backdrop-filter:none}
+  .glass{background:rgba(15,19,32,.92)}
+  .modal{background:rgba(4,6,12,.86)}
+}
+@media(hover:hover) and (pointer:fine){
+  .fly{display:block;position:absolute;left:0;font-size:28px;line-height:1;animation:fly 34s linear infinite}
+  .fly.l{animation-name:flyl}
+  @keyframes fly{from{transform:translate3d(-15vw,0,0)}to{transform:translate3d(115vw,var(--dy,0),0)}}
+  @keyframes flyl{from{transform:translate3d(115vw,0,0)}to{transform:translate3d(-15vw,var(--dy,0),0)}}
+}
+@media(prefers-reduced-motion:reduce){.space,.neon,.fly{display:none}*{transition:none!important}}
 </style>
 </head>
 <body>
@@ -471,8 +430,8 @@ footer a{color:var(--mut);margin:0 8px}
 const FREE = 3;
 const PAY_URL = "https://t.me/ifield_studio_bot?start=pro";
 const HOST_URL = "https://t.me/ifield_studio_bot?start=host";
-const API = "https://ifield.qx420.workers.dev";
-const AI_ON = false;
+const API = "https://ifield.qx420.workers.dev";  // URL вашего Cloudflare Worker, например https://ifield.qx420.workers.dev
+const AI_ON = false; // включается автоматически, если /prices вернёт ai: true
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"'`]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","`":"&#96;"}[c]));
@@ -704,8 +663,8 @@ TH.cyber.x='body.cyber::after{content:"";position:fixed;inset:0;pointer-events:n
 TH.lux.x='.lux h1{font-weight:400;letter-spacing:.02em}.lux small{letter-spacing:.26em}.lux .box{border:1px solid rgba(230,194,122,.45);background:transparent}.lux .btn{letter-spacing:.1em;text-transform:uppercase;font-size:14px}';
 TH.cosmos.x='.cosmos .hero{background:var(--card);border:1px solid var(--line);border-radius:34px;padding:42px 28px;margin-bottom:18px}';
 
-const SPACE='<div class="sp" aria-hidden="true"><i>🛰️</i><i>🚀</i><i>🛸</i><i>🪐</i></div><div class="nx" aria-hidden="true"></div>';
-const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.7;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent)}.sp i{position:absolute;left:0;font-style:normal;font-size:30px;line-height:1;filter:drop-shadow(0 0 8px rgba(0,255,163,.55));animation:fly 30s linear infinite}.sp i:nth-child(2){top:14%;animation-duration:34s}.sp i:nth-child(3){top:62%;animation-duration:22s;animation-delay:-9s}.sp i:nth-child(4){top:38%;animation-duration:40s;animation-delay:-20s}.sp i:nth-child(5){top:80%;left:auto;right:-20px;font-size:90px;opacity:.3;animation:none}@keyframes fly{from{transform:translateX(-12vw);rotate:0deg}to{transform:translateX(112vw);rotate:var(--spin,0deg)}}.sp i:nth-child(1){--spin:1080deg}@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;padding:3px;background:conic-gradient(from var(--ang),#ff7ac6,#ffb86b,#fff27a,#7dffc8,#6cc4ff,#a98bff,#ff7ac6);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;filter:drop-shadow(0 0 8px rgba(167,139,250,.55)) drop-shadow(0 0 20px rgba(108,196,255,.35));animation:ang 9s linear infinite}@keyframes ang{to{--ang:360deg}}@media(prefers-reduced-motion:reduce){.sp,.nx{display:none}}';
+const SPACE='<div class="sp" aria-hidden="true"><i>🪐</i></div><div class="nx" aria-hidden="true"></div>';
+const FX='.sp{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}.sp::before{content:"";position:absolute;inset:0;opacity:.65;background-size:420px 420px;background-image:radial-gradient(1.5px 1.5px at 12% 18%,#fff,transparent),radial-gradient(1px 1px at 38% 62%,#cfe,transparent),radial-gradient(1.5px 1.5px at 66% 28%,#fff,transparent),radial-gradient(1px 1px at 84% 74%,#fff,transparent),radial-gradient(1px 1px at 52% 90%,#bfe,transparent)}.sp i{position:absolute;right:-20px;top:76%;font-style:normal;font-size:90px;opacity:.24}.nx{position:fixed;inset:0;z-index:5;pointer-events:none;border:2px solid rgba(0,255,163,.26);box-shadow:inset 0 0 18px rgba(124,92,255,.16)}';
 
 const validLay = v => (v==="card"||v==="split"||v==="stack") ? v : "";
 let cur = store.get("if_style","nexus"); if(!TH[cur]) cur="nexus";
@@ -846,6 +805,7 @@ function smartAutofill(){
     curPreset = matched.id || "";
     const fillIds = ["brand","tag","product","desc","feats","price","stats","addr","reviews","faq"];
     fillIds.forEach(id=>{ if($("f-"+id) && d[id]) $("f-"+id).value = d[id]; });
+    // Оставляем введённую пользователем формулировку ниши, если она точнее
     if(raw.length >= 3) $("f-niche").value = raw[0].toUpperCase() + raw.slice(1);
     customAc=""; store.set("if_ac","");
     syncTuneUI(); save(); preview();
@@ -853,6 +813,7 @@ function smartAutofill(){
     return;
   }
 
+  // Универсальный умный синтезатор для ЛЮБОЙ редкой ниши на 6 языках
   const cap = raw[0].toUpperCase() + raw.slice(1);
   const b = val("brand") && val("brand")!=="Nova Studio" ? val("brand") : cap+" Pro";
   const tpl = {
@@ -968,6 +929,7 @@ h2{font:700 13px var(--hf);letter-spacing:.1em;text-transform:uppercase;color:va
 footer{padding:28px 0 10px;opacity:.72;font-size:14px;display:flex;flex-wrap:wrap;gap:10px 22px;justify-content:space-between}footer div{display:flex;gap:18px;flex-wrap:wrap}
 .card main{--w:720px}.card .hero{text-align:center}.card .lead{margin:auto}.card .btns{justify-content:center}.card img{margin:26px auto 0;max-width:440px}
 .split main{--w:1040px}.split .hero{padding:18px 0 36px}.stack main{--w:840px}.stack header{border-bottom:1px solid rgba(128,128,128,.22);border-bottom:1px solid color-mix(in srgb,var(--fg) 12%,transparent);margin-bottom:36px}
+@media(pointer:coarse){.box{-webkit-backdrop-filter:none;backdrop-filter:none}}
 @media(min-width:800px){.split .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}.split img{margin:0}}`;
 
   const desc = e((v("tag")||v("desc")).slice(0,150));
@@ -1043,7 +1005,7 @@ function preview(){
     $("frame").srcdoc=h;
     if($("fullpv").classList.contains("on")) $("fpframe").srcdoc=h;
     updateMeta(h);
-  },100);
+  },200);
 }
 function save(){ const o={}; F.forEach(f=>o[f[0]]=$("f-"+f[0]).value); store.set("if_form",o); }
 let TRIAL_ON=false;
@@ -1154,8 +1116,9 @@ function thumb(){
   box.append(img,btn);
 }
 
-/* ===== ДВЕ ПРОТИВОПОЛОЖНЫЕ БЕГУЩИЕ ЛЕНТЫ (с поддержкой свайпа на iPhone!) ===== */
+/* ===== ДВЕ ПРОТИВОПОЛОЖНЫЕ ЛЕНТЫ (с поддержкой свайпа на iPhone без нагрузки на батарею) ===== */
 const ribbons=[];
+const DESKTOP_AUTO = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 function setupRibbon(el, speedPxPerSec){
   let pausedUntil = 0;
   const pause = (ms) => { pausedUntil = Math.max(pausedUntil, Date.now() + ms); };
@@ -1171,10 +1134,11 @@ function setupRibbon(el, speedPxPerSec){
 }
 let lastTs = 0;
 function tickRibbons(ts){
+  if(!DESKTOP_AUTO) return;
   if(!lastTs) lastTs = ts;
   const dt = Math.min(0.05, (ts - lastTs) / 1000);
   lastTs = ts;
-  const fxOff = document.documentElement.classList.contains("nofx") || window.matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const fxOff = document.hidden || document.documentElement.classList.contains("nofx") || window.matchMedia("(prefers-reduced-motion:reduce)").matches;
   if(!fxOff){
     for(const r of ribbons){
       if(r.isPaused()) continue;
@@ -1251,7 +1215,7 @@ function applyLang(){
 buildForm(); renderStyles(); photo=store.get("if_photo",""); thumb(); applyLang();
 setupRibbon($("styles"), 22);
 setupRibbon($("presets"), -18);
-requestAnimationFrame(tickRibbons);
+if(DESKTOP_AUTO) requestAnimationFrame(tickRibbons);
 
 $("yr").textContent=new Date().getFullYear();
 $("lang").onchange=e=>{ lang=e.target.value; store.set("if_lang",lang); slang=lang; store.set("if_slang",slang); const sl=$("slang"); if(sl) sl.value=slang; applyLang(); };

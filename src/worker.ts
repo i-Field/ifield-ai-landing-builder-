@@ -22,6 +22,8 @@ interface CodeRecord {
   userId?: number;
   chargeId?: string;
   refunded?: boolean;
+  devices?: string[];
+  sites?: string[];
 }
 
 interface ChargeRecord {
@@ -91,14 +93,35 @@ export default {
       );
     }
 
-    if (request.method === "GET" && url.pathname === "/verify") {
-      const code = normalizeCode(url.searchParams.get("code"));
+    if ((request.method === "GET" || request.method === "POST") && url.pathname === "/verify") {
+      const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+      if (!checkBurstLimit(`verify:${ip}`, 30, 60_000)) {
+        return jsonResponse({ ok: false, error: "Too many requests" }, 429, corsHeaders);
+      }
+      let rawCode: string | null = url.searchParams.get("code");
+      let initData = url.searchParams.get("initData") ?? "";
+      let did = url.searchParams.get("did") ?? "";
+      if (request.method === "POST") {
+        if (!isAllowedOrigin(request, env)) {
+          return jsonResponse({ ok: false, error: "Forbidden origin" }, 403, corsHeaders);
+        }
+        const body = await safeJson<{ code?: string; initData?: string; did?: string }>(request, 8192);
+        if (!body) return jsonResponse({ ok: false }, 400, corsHeaders);
+        rawCode = body.code ?? null;
+        initData = typeof body.initData === "string" ? body.initData : "";
+        did = typeof body.did === "string" ? body.did : "";
+      }
+      const code = normalizeCode(rawCode);
       if (!code) {
         return jsonResponse({ ok: false }, 400, corsHeaders);
       }
       const record = await getCodeRecord(code, env);
-      if (!record) {
+      if (!record || record.refunded) {
         return jsonResponse({ ok: false }, 404, corsHeaders);
+      }
+      const access = await verifyCodeAccess(code, record, initData, did, env, true);
+      if (!access.ok) {
+        return jsonResponse({ ok: false, error: access.error ?? "Code locked" }, access.status ?? 403, corsHeaders);
       }
       return jsonResponse(
         { ok: true, pro: record.pro, host: record.host },
@@ -130,7 +153,11 @@ export default {
         headers: {
           "Content-Type": "text/html; charset=utf-8",
           "X-Content-Type-Options": "nosniff",
+          "X-Frame-Options": "DENY",
           "Referrer-Policy": "no-referrer",
+          "X-Robots-Tag": "noindex, nofollow, noarchive",
+          "Cross-Origin-Resource-Policy": "same-origin",
+          "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
           "Content-Security-Policy":
             "default-src 'none'; style-src 'unsafe-inline'; img-src https: data:; font-src 'none'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
         },
@@ -185,13 +212,39 @@ export default {
   },
 };
 
-function buildCorsHeaders(request: Request, env: Env): Record<string, string> {
-  const origin = (request.headers.get("Origin") ?? "").replace(/\/+$/, "");
+const rlMap = new Map<string, { count: number; resetAt: number }>();
+const seenUpdates = new Set<number>();
+
+function checkBurstLimit(key: string, max: number, windowMs: number): boolean {
+  const now = Date.now();
+  const cur = rlMap.get(key);
+  if (!cur || cur.resetAt <= now) {
+    if (rlMap.size > 2000) rlMap.clear();
+    rlMap.set(key, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  if (cur.count >= max) return false;
+  cur.count += 1;
+  return true;
+}
+
+function getAllowedOrigins(env: Env): string[] {
   const rawAllowed = env.SITE_ORIGIN || env.ALLOWED_ORIGIN || "https://i-field.github.io";
-  const allowed = rawAllowed
+  return rawAllowed
     .split(",")
     .map((s) => s.trim().replace(/\/+$/, ""))
     .filter(Boolean);
+}
+
+function isAllowedOrigin(request: Request, env: Env): boolean {
+  const origin = (request.headers.get("Origin") ?? "").replace(/\/+$/, "");
+  if (!origin) return true;
+  return getAllowedOrigins(env).includes(origin);
+}
+
+function buildCorsHeaders(request: Request, env: Env): Record<string, string> {
+  const origin = (request.headers.get("Origin") ?? "").replace(/\/+$/, "");
+  const allowed = getAllowedOrigins(env);
   const matched = allowed.includes(origin) ? origin : allowed[0] ?? "https://i-field.github.io";
   return {
     "Access-Control-Allow-Origin": matched,
@@ -306,33 +359,94 @@ async function getCodeRecord(code: string, env: Env): Promise<CodeRecord | null>
   }
 }
 
+function isSafePublishedHtml(html: string): boolean {
+  if (!html || html.length > 200_000) return false;
+  if (!/^<!doctype html><html\b/i.test(html.trimStart())) return false;
+  const normalized = html
+    .replace(/<meta\s+(?:charset=|name=['"](?:viewport|description|theme-color|twitter:card)['"]|property=['"]og:)/gi, "<safe-meta ")
+    .replace(/<link\s+rel=['"]canonical['"]\s+href=['"]https?:\/\/[^'">\s]+['"]\s*>/gi, "<safe-link>");
+  return !/<(?:script|iframe|object|embed|base|form|portal|frame|frameset|svg|math|link|applet|meta)\b|http-equiv\s*=|javascript:|vbscript:|data:\s*(?:text\/html|image\/svg\+xml|application\/)|\bon[a-z]+\s*=|srcdoc\s*=|formaction\s*=|xlink:href|@import\b|expression\s*\(/i.test(
+    normalized
+  );
+}
+
+async function verifyCodeAccess(
+  code: string,
+  record: CodeRecord,
+  initData: string,
+  did: string,
+  env: Env,
+  requireClient: boolean
+): Promise<{ ok: boolean; status?: number; error?: string }> {
+  if (record.refunded) {
+    return { ok: false, status: 403, error: "Code refunded" };
+  }
+  const cleanInit = (initData ?? "").trim();
+  if (cleanInit) {
+    const verified = await verifyTelegramInitData(cleanInit, env.BOT_TOKEN);
+    if (!verified) {
+      return { ok: false, status: 403, error: "Invalid Telegram signature" };
+    }
+    if (record.userId && verified.userId !== record.userId && !isOwner(verified.userId, env)) {
+      return { ok: false, status: 403, error: "Code bound to another Telegram account" };
+    }
+    return { ok: true };
+  }
+  const cleanDid = (did ?? "").trim();
+  const validDid = /^[a-zA-Z0-9_-]{8,40}$/.test(cleanDid);
+  if (requireClient && !validDid) {
+    return { ok: false, status: 403, error: "Client verification required" };
+  }
+  if (validDid && !(record.userId && isOwner(record.userId, env))) {
+    const devices = Array.isArray(record.devices) ? [...record.devices] : [];
+    if (!devices.includes(cleanDid)) {
+      if (devices.length >= 2) {
+        return { ok: false, status: 403, error: "Device limit reached (max 2)" };
+      }
+      devices.push(cleanDid);
+      record.devices = devices;
+      await env.CODES.put(`code:${code}`, JSON.stringify(record));
+    }
+  }
+  return { ok: true };
+}
+
 async function handlePublish(
   request: Request,
   origin: string,
   env: Env,
   corsHeaders: Record<string, string>
 ): Promise<Response> {
+  if (!isAllowedOrigin(request, env)) {
+    return jsonResponse({ ok: false, error: "Forbidden origin" }, 403, corsHeaders);
+  }
+  const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  if (!checkBurstLimit(`pub:${ip}`, 12, 60_000)) {
+    return jsonResponse({ ok: false, error: "Too many requests" }, 429, corsHeaders);
+  }
   const body = await safeJson<{
     code?: string;
     slug?: string;
     brand?: string;
     html?: string;
-  }>(request, 180_000);
+    initData?: string;
+    did?: string;
+  }>(request, 220_000);
   if (!body || typeof body.html !== "string") {
     return jsonResponse({ ok: false, error: "Invalid request" }, 400, corsHeaders);
   }
 
   const code = normalizeCode(body.code);
   const record = code ? await getCodeRecord(code, env) : null;
-  if (!record || record.host <= Date.now()) {
+  if (!record || record.refunded || record.host <= Date.now()) {
     return jsonResponse({ ok: false, error: "Hosting inactive" }, 403, corsHeaders);
   }
+  const access = await verifyCodeAccess(code, record, body.initData ?? "", body.did ?? "", env, true);
+  if (!access.ok) {
+    return jsonResponse({ ok: false, error: access.error ?? "Access denied" }, access.status ?? 403, corsHeaders);
+  }
 
-  if (
-    /<(?:script|iframe|object|embed|base|form|portal|frame|frameset)\b|http-equiv\s*=|javascript:|vbscript:|data:\s*text\/html|\bon[a-z]+\s*=/i.test(
-      body.html
-    )
-  ) {
+  if (!isSafePublishedHtml(body.html)) {
     return jsonResponse({ ok: false, error: "Unsafe HTML rejected" }, 400, corsHeaders);
   }
 
@@ -352,8 +466,19 @@ async function handlePublish(
     slug = `${slug}-${generateRandomAlnum(4).toLowerCase()}`;
   }
 
+  const sites = Array.isArray(record.sites) ? [...record.sites] : [];
+  const isOwnerCode = Boolean(record.userId && isOwner(record.userId, env));
+  if (!sites.includes(slug)) {
+    if (!isOwnerCode && sites.length >= 5) {
+      return jsonResponse({ ok: false, error: "Site limit reached (max 5 per code)" }, 403, corsHeaders);
+    }
+    sites.push(slug);
+    record.sites = sites;
+    await env.CODES.put(`code:${code}`, JSON.stringify(record));
+  }
+
   const cleanHtml = body.html.replace(/__SLUG__/g, encodeURIComponent(slug));
-  const ttl = 30 * 24 * 60 * 60;
+  const ttl = Math.min(30 * 24 * 60 * 60, Math.max(60, Math.floor((record.host - Date.now()) / 1000)));
   await Promise.all([
     env.CODES.put(`site:${slug}`, cleanHtml, { expirationTtl: ttl }),
     env.CODES.put(`site-owner:${slug}`, code, { expirationTtl: ttl }),
@@ -372,34 +497,33 @@ async function handlePublishTrial(
   env: Env,
   corsHeaders: Record<string, string>
 ): Promise<Response> {
+  if (!isAllowedOrigin(request, env)) {
+    return jsonResponse({ ok: false, error: "Forbidden origin" }, 403, corsHeaders);
+  }
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
-  const ipKey = `trial-ip:${ip}`;
-  if (await env.CODES.get(ipKey)) {
-    return jsonResponse({ ok: false, error: "Trial already used" }, 429, corsHeaders);
+  if (!checkBurstLimit(`trial:${ip}`, 6, 60_000)) {
+    return jsonResponse({ ok: false, error: "Too many requests" }, 429, corsHeaders);
   }
 
-  const body = await safeJson<{ brand?: string; html?: string; initData?: string }>(request, 180_000);
+  const body = await safeJson<{ brand?: string; html?: string; initData?: string }>(request, 220_000);
   if (!body || typeof body.html !== "string") {
     return jsonResponse({ ok: false, error: "Invalid request" }, 400, corsHeaders);
   }
 
-  let tgUserId: number | null = null;
-  if (typeof body.initData === "string" && body.initData.trim()) {
-    const verified = await verifyTelegramInitData(body.initData.trim(), env.BOT_TOKEN);
-    if (!verified) {
-      return jsonResponse({ ok: false, error: "Invalid Telegram signature" }, 403, corsHeaders);
-    }
-    tgUserId = verified.userId;
-    if (await env.CODES.get(`trial-user:${tgUserId}`)) {
-      return jsonResponse({ ok: false, error: "Trial already used" }, 429, corsHeaders);
-    }
+  const rawInit = typeof body.initData === "string" ? body.initData.trim() : "";
+  if (!rawInit) {
+    return jsonResponse({ ok: false, error: "Trial available only inside Telegram bot" }, 403, corsHeaders);
+  }
+  const verified = await verifyTelegramInitData(rawInit, env.BOT_TOKEN);
+  if (!verified) {
+    return jsonResponse({ ok: false, error: "Invalid Telegram signature" }, 403, corsHeaders);
+  }
+  const tgUserId = verified.userId;
+  if (await env.CODES.get(`trial-user:${tgUserId}`)) {
+    return jsonResponse({ ok: false, error: "Trial already used" }, 429, corsHeaders);
   }
 
-  if (
-    /<(?:script|iframe|object|embed|base|form|portal|frame|frameset)\b|http-equiv\s*=|javascript:|vbscript:|data:\s*text\/html|\bon[a-z]+\s*=/i.test(
-      body.html
-    )
-  ) {
+  if (!isSafePublishedHtml(body.html)) {
     return jsonResponse({ ok: false, error: "Unsafe HTML rejected" }, 400, corsHeaders);
   }
 
@@ -414,10 +538,7 @@ async function handlePublishTrial(
   const cleanHtml = body.html.replace(/__SLUG__/g, encodeURIComponent(slug));
   await Promise.all([
     env.CODES.put(`site:${slug}`, cleanHtml, { expirationTtl: 86_400 }),
-    env.CODES.put(ipKey, "1", { expirationTtl: 30 * 86_400 }),
-    tgUserId
-      ? env.CODES.put(`trial-user:${tgUserId}`, slug, { expirationTtl: 180 * 86_400 })
-      : Promise.resolve(),
+    env.CODES.put(`trial-user:${tgUserId}`, slug, { expirationTtl: 180 * 86_400 }),
   ]);
 
   return jsonResponse(
@@ -452,9 +573,9 @@ async function answerPreCheckout(
 }
 
 async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<void> {
-  const dedupKey = `tg-upd:${update.update_id}`;
-  if (await env.CODES.get(dedupKey)) return;
-  await env.CODES.put(dedupKey, "1", { expirationTtl: 300 });
+  if (seenUpdates.has(update.update_id)) return;
+  if (seenUpdates.size > 500) seenUpdates.clear();
+  seenUpdates.add(update.update_id);
 
   const proPrice = Number(env.PRICE_PRO ?? env.PRO_STARS_PRICE ?? env.PRICE) || 500;
   const hostPrice = Number(env.HOST_PRICE ?? env.HOST_STARS_PRICE) || 600;
@@ -578,6 +699,12 @@ async function handleTelegramUpdate(update: TelegramUpdate, env: Env): Promise<v
   }
 
   if (!isOwner(userId, env)) return;
+
+  if (text === "/reset_trial" && userId) {
+    await env.CODES.delete(`trial-user:${userId}`);
+    await tgSendHtml(chatId, "✅ Ваш лимит пробной ссылки 24ч сброшен для теста.", env);
+    return;
+  }
 
   if (text === "/issue pro" || text === "/issue host") {
     const isHost = text.endsWith("host");
@@ -922,18 +1049,29 @@ async function handleAiCopy(
   env: Env,
   corsHeaders: Record<string, string>
 ): Promise<Response> {
+  if (!isAllowedOrigin(request, env)) {
+    return jsonResponse({ ok: false, error: "Forbidden origin" }, 403, corsHeaders);
+  }
+  const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  if (!checkBurstLimit(`ai:${ip}`, 15, 60_000)) {
+    return jsonResponse({ ok: false, error: "Too many requests" }, 429, corsHeaders);
+  }
   if (!env.GEMINI_API_KEY) {
     return jsonResponse({ ok: false, error: "AI not configured" }, 503, corsHeaders);
   }
-  const body = await safeJson<{ q?: string; lang?: string; code?: string }>(request, 8192);
+  const body = await safeJson<{ q?: string; lang?: string; code?: string; initData?: string; did?: string }>(request, 8192);
   if (!body || typeof body.q !== "string" || !body.q.trim()) {
     return jsonResponse({ ok: false, error: "Missing prompt" }, 400, corsHeaders);
   }
 
   const code = normalizeCode(body.code);
   const record = code ? await getCodeRecord(code, env) : null;
-  if (!record || (!record.pro && record.host <= Date.now())) {
+  if (!record || record.refunded || (!record.pro && record.host <= Date.now())) {
     return jsonResponse({ ok: false, error: "Pro code required" }, 403, corsHeaders);
+  }
+  const access = await verifyCodeAccess(code, record, body.initData ?? "", body.did ?? "", env, true);
+  if (!access.ok) {
+    return jsonResponse({ ok: false, error: access.error ?? "Access denied" }, access.status ?? 403, corsHeaders);
   }
 
   const hourBucket = Math.floor(Date.now() / 3600000);

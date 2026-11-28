@@ -49,32 +49,52 @@ main{
   background:linear-gradient(135deg,var(--a),var(--b));
   box-shadow:0 0 14px rgba(64,224,208,.38);
   display:grid;place-items:center;color:#06101a;
-  animation:mpulse 4.5s ease-in-out infinite;
+  animation:wave 4s ease-in-out infinite;
 }
 .mark span{display:block}
-.lt{color:var(--tx);font-size:24px;font-weight:800;letter-spacing:-.02em}
+.lt{color:var(--tx);font-size:24px;font-weight:800;letter-spacing:-.02em;animation:wave 4s ease-in-out .4s infinite}
 .pill{
-  padding:6px 13px;border-radius:99px;background:rgba(110,150,255,.14);
-  border:1px solid var(--ln);font-size:12.5px;font-weight:700;white-space:nowrap;
+  padding:0 12px;height:34px;border-radius:99px;background:rgba(110,150,255,.14);
+  border:1px solid var(--ln);font-size:12px;font-weight:700;white-space:nowrap;
+  display:inline-flex;align-items:center;
+  animation:wave 4s ease-in-out .8s infinite;
 }
+#guidebtn{animation:wave 4s ease-in-out 1.2s infinite}
 #badge{
   background:linear-gradient(135deg,#22c55e,#16a34a);border:0;color:#fff;
-  font-weight:800;letter-spacing:.02em;white-space:nowrap;animation:bpulse 5s ease-in-out infinite;
+  font-weight:800;letter-spacing:.02em;white-space:nowrap;
+  animation:wave 4s ease-in-out 2s infinite;
 }
-@keyframes mpulse{0%,100%{transform:scale(1);opacity:.94}50%{transform:scale(1.05);opacity:1}}
-@keyframes bpulse{0%,100%{opacity:.92}50%{opacity:1}}
+@keyframes wave{
+  0%,32%,100%{transform:translate3d(0,0,0);opacity:.88}
+  14%{transform:translate3d(0,-2px,0) scale(1.03);opacity:1}
+}
+@keyframes rise{from{opacity:0;transform:translate3d(0,12px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
 
 .chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.chips-r{display:flex;align-items:center;gap:6px;margin-left:auto}
 .chip,select{
-  background:var(--gl);border:1px solid var(--ln);color:var(--tx);
-  border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;min-height:38px;
-  display:inline-flex;align-items:center;white-space:nowrap;
+  background-color:var(--gl);border:1px solid var(--ln);color:var(--tx);
+  border-radius:99px;padding:0 11px;font:inherit;font-size:12.5px;font-weight:600;
+  height:34px;min-height:34px;display:inline-flex;align-items:center;justify-content:center;
+  white-space:nowrap;line-height:1;
 }
+#lang{
+  -webkit-appearance:none;appearance:none;cursor:pointer;
+  width:auto;padding:0 20px 0 10px;text-align:center;text-align-last:center;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23eef1fa' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 7px center;
+  animation:wave 4s ease-in-out 1.6s infinite;
+}
+#slang{width:100%;height:44px;min-height:44px;border-radius:12px;padding:0 13px;font-size:16px;font-weight:400;justify-content:flex-start}
 @media(max-width:760px){
   main{padding:14px 14px 72px}
-  .brandrow,.chips{width:100%}
-  .chip,select{padding:6px 10px;font-size:12.5px}
+  .brandrow,.chips{width:100%;justify-content:space-between}
+  .chip,#lang{padding:0 10px;font-size:12px}
+  #lang{padding:0 19px 0 9px}
+}
+@media(max-width:355px){
+  .chip,#lang{padding:0 8px;font-size:11.5px}
+  #lang{padding:0 17px 0 7px}
 }
 option{background:#11131f}
 h1{
@@ -83,9 +103,12 @@ h1{
   background:linear-gradient(180deg,#fff,#97a1c4);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   text-wrap:balance;
+  animation:rise .45s ease .04s both;
 }
-.lead{color:var(--mut);font-size:clamp(16px,2.2vw,19px);max-width:590px;margin:0 0 26px}
+.lead{color:var(--mut);font-size:clamp(16px,2.2vw,19px);max-width:590px;margin:0 0 26px;animation:rise .45s ease .12s both}
 .grid{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}.grid>*{min-width:0}
+.grid>div:first-child{animation:rise .45s ease .18s both}
+.sticky{animation:rise .45s ease .26s both}
 @media(min-width:920px){
   .grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:start}
   .sticky{position:sticky;top:16px}
@@ -300,6 +323,7 @@ footer a{color:var(--mut);margin:0 8px}
 @keyframes nbr{from{transform:translate3d(0,-240px,0)}to{transform:translate3d(0,calc(100vh + 40px),0)}}
 @keyframes nbl{from{transform:translate3d(0,calc(100vh + 40px),0)}to{transform:translate3d(0,-240px,0)}}
 .nofx .space,.nofx .neon{display:none}
+.nofx .mark,.nofx .lt,.nofx .pill,.nofx #guidebtn,.nofx #lang,.nofx #badge{animation:none;opacity:1}
 @media(pointer:coarse){
   .glass,.modal{backdrop-filter:none;-webkit-backdrop-filter:none}
   .glass{
@@ -310,7 +334,7 @@ footer a{color:var(--mut);margin:0 8px}
 }
 @media(prefers-reduced-motion:reduce){
   .space,.neon,.fly,.shoot{display:none}
-  .mark,#badge,.pl{animation:none}
+  .mark,.lt,.pill,#guidebtn,#lang,#badge,.pl,h1,.lead,.grid>div:first-child,.sticky{animation:none}
   *{transition:none!important}
 }
 </style>
@@ -335,17 +359,15 @@ footer a{color:var(--mut);margin:0 8px}
     </div>
     <div class="chips">
       <button class="chip" id="guidebtn" type="button" data-i="guideb" style="cursor:pointer"></button>
-      <div class="chips-r">
-        <select id="lang" aria-label="Language">
-          <option value="en">🇬🇧 EN</option>
-          <option value="ru">🇷🇺 RU</option>
-          <option value="uk">🇺🇦 UK</option>
-          <option value="pl">🇵🇱 PL</option>
-          <option value="de">🇩🇪 DE</option>
-          <option value="fr">🇫🇷 FR</option>
-        </select>
-        <span class="chip" id="badge"></span>
-      </div>
+      <select id="lang" aria-label="Language">
+        <option value="en">🇬🇧 EN</option>
+        <option value="ru">🇷🇺 RU</option>
+        <option value="uk">🇺🇦 UK</option>
+        <option value="pl">🇵🇱 PL</option>
+        <option value="de">🇩🇪 DE</option>
+        <option value="fr">🇫🇷 FR</option>
+      </select>
+      <span class="chip" id="badge"></span>
     </div>
   </div>
 

@@ -471,8 +471,8 @@ footer a{color:var(--mut);margin:0 8px}
 const FREE = 3;
 const PAY_URL = "https://t.me/ifield_studio_bot?start=pro";
 const HOST_URL = "https://t.me/ifield_studio_bot?start=host";
-const API = "https://ifield.qx420.workers.dev";  // URL вашего Cloudflare Worker, например https://ifield.qx420.workers.dev
-const AI_ON = false; // включается автоматически, если /prices вернёт ai: true
+const API = "https://ifield.qx420.workers.dev";
+const AI_ON = false;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s ?? "").replace(/[&<>"'`]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","`":"&#96;"}[c]));
@@ -510,7 +510,7 @@ en:[
   "Instant 30-day hosting on workers.dev: one tap gives your client-ready short link, no watermark & all Pro tools.",
   "More options","landing builder","{n} FREE","20 designs",
   "✨ Autofill","↩ Undo","Auto","Card","Split","Stack","Color","Ready: {n}/6 blocks",
-  "🎁 Free 24h test link","Test link live for 24h:","24h trial limit reached. Get 30-day hosting in Telegram.",
+  "🎁 1-time 24h test link","Test link live for 24h:","Free 24h test link already used. Get 30-day hosting in Telegram.",
   "Digital tool & 30d hosting access via Telegram Stars (XTR). Terms (/terms) & support (/paysupport) inside bot.",
   "❓ Guide","How it works in 4 steps",
   "1. Pick one of 20 designs or swipe a niche preset — or type any niche and tap «✨ Autofill».",
@@ -537,7 +537,7 @@ ru:[
   "После оплаты в Telegram бот сразу пришлёт авто-ссылку: жмите «Опубликовать» и получите готовый адрес на 30 дней без доп. настроек.",
   "Дополнительные параметры","конструктор лендингов","{n} БЕСПЛАТНО","20 дизайнов",
   "✨ Заполнить","↩ Отменить","Авто","Карта","2 колонки","Стек","Цвет","Готово: {n}/6 блоков",
-  "🎁 Пробная ссылка на 24ч (бесплатно)","Тестовая ссылка на 24ч:","Пробная ссылка на сегодня уже создана. Полный хостинг — в боте.",
+  "🎁 Пробная ссылка на 24ч (1 раз)","Тестовая ссылка на 24ч:","Бесплатная пробная ссылка уже использована. Полный хостинг — в боте.",
   "Цифровой доступ за Telegram Stars (XTR). Условия (/terms) и поддержка по оплатам (/paysupport) — в боте.",
   "❓ Как создать сайт","Как пользоваться за 1 минуту",
   "1. Свайпните один из 20 дизайнов и нишу — или введите любую свою сферу и нажмите «✨ Заполнить».",
@@ -564,7 +564,7 @@ uk:[
   "Після оплати в Telegram бот надішле авто-посилання: отримайте коротку адресу на 30 днів миттєво.",
   "Додаткові параметри","конструктор лендінгів","{n} БЕЗКОШТОВНО","20 дизайнів",
   "✨ Заповнити","↩ Скасувати","Авто","Картка","2 колонки","Стек","Колір","Готово: {n}/6 блоків",
-  "🎁 Тестове посилання на 24г","Тестове посилання на 24г:","Ліміт тесту на сьогодні вичерпано. Повний хостинг — у боті.",
+  "🎁 Тестове посилання на 24г (1 раз)","Тестове посилання на 24г:","Безкоштовний тест на 24г вже використано. Повний хостинг — у боті.",
   "Цифровий доступ за Telegram Stars (XTR). Умови (/terms) та підтримка (/paysupport) — у боті.",
   "❓ Інструкція","Як створити сайт за 1 хвилину",
   "1. Оберіть один із 20 дизайнів та нішу — або впишіть свою сферу й натисніть «✨ Заповнити».",
@@ -591,7 +591,7 @@ pl:[
   "Natychmiastowy hosting na 30 dni pod krótkim linkiem, bez znaku wodnego i z pełnym Pro.",
   "Dodatkowe opcje","kreator landingów","{n} ZA DARMO","20 projektów",
   "✨ Wypełnij","↩ Cofnij","Auto","Karta","2 kolumny","Stos","Kolor","Gotowe: {n}/6 sekcji",
-  "🎁 Darmowy link testowy 24h","Link testowy 24h:","Wykorzystano darmowy test 24h. Pełny hosting w Telegramie.",
+  "🎁 Testowy link 24h (1 raz)","Link testowy 24h:","Darmowy test 24h został już użyty. Pełny hosting w Telegramie.",
   "Dostęp cyfrowy przez Telegram Stars (XTR). Zasady (/terms) i wsparcie (/paysupport) w bocie.",
   "❓ Instrukcja","Jak stworzyć stronę w minutę",
   "1. Wybierz jeden z 20 stylów i branżę — lub wpisz własną i kliknij «✨ Wypełnij».",
@@ -618,7 +618,7 @@ de:[
   "Sofortiges 30-Tage-Hosting unter einem kurzen Link, ohne Wasserzeichen & mit Pro.",
   "Weitere Optionen","Landingpage-Builder","{n} GRATIS","20 Designs",
   "✨ Ausfüllen","↩ Rückgängig","Auto","Karte","Split","Stack","Farbe","Bereit: {n}/6 Blöcke",
-  "🎁 Kostenloser 24h-Testlink","Testlink (24h):","24h-Testlimit erreicht. 30-Tage-Hosting im Bot verfügbar.",
+  "🎁 24h-Testlink (einmalig)","Testlink (24h):","Der kostenlose 24h-Testlink wurde bereits genutzt. Voll-Hosting im Bot.",
   "Digitaler Zugang via Telegram Stars (XTR). Regeln (/terms) & Support (/paysupport) im Bot.",
   "❓ Anleitung","So funktioniert es in 4 Schritten",
   "1. Wähle eines von 20 Designs und eine Branche – oder tippe dein Thema ein und klicke «✨ Ausfüllen».",
@@ -645,7 +645,7 @@ fr:[
   "Hébergement 30 jours instantané sous lien court, sans filigrane et avec toutes les options Pro.",
   "Options supplémentaires","créateur de landing","{n} GRATUITS","20 designs",
   "✨ Remplir","↩ Annuler","Auto","Carte","Split","Empilé","Couleur","Prêt : {n}/6 blocs",
-  "🎁 Lien test gratuit 24h","Lien test 24h :","Test 24h déjà utilisé aujourd’hui. Hébergement 30j sur Telegram.",
+  "🎁 Lien test 24h (1 fois)","Lien test 24h :","Le test gratuit 24h a déjà été utilisé. Hébergement complet dans le bot.",
   "Accès numérique via Telegram Stars (XTR). Conditions (/terms) et support (/paysupport) dans le bot.",
   "❓ Mode d’emploi","Comment créer votre site en 1 min",
   "1. Choisissez un des 20 designs et un métier — ou tapez le vôtre et cliquez «✨ Remplir».",
@@ -846,7 +846,6 @@ function smartAutofill(){
     curPreset = matched.id || "";
     const fillIds = ["brand","tag","product","desc","feats","price","stats","addr","reviews","faq"];
     fillIds.forEach(id=>{ if($("f-"+id) && d[id]) $("f-"+id).value = d[id]; });
-    // Оставляем введённую пользователем формулировку ниши, если она точнее
     if(raw.length >= 3) $("f-niche").value = raw[0].toUpperCase() + raw.slice(1);
     customAc=""; store.set("if_ac","");
     syncTuneUI(); save(); preview();
@@ -854,7 +853,6 @@ function smartAutofill(){
     return;
   }
 
-  // Универсальный умный синтезатор для ЛЮБОЙ редкой ниши на 6 языках
   const cap = raw[0].toUpperCase() + raw.slice(1);
   const b = val("brand") && val("brand")!=="Nova Studio" ? val("brand") : cap+" Pro";
   const tpl = {
@@ -1050,6 +1048,19 @@ function preview(){
 function save(){ const o={}; F.forEach(f=>o[f[0]]=$("f-"+f[0]).value); store.set("if_form",o); }
 let TRIAL_ON=false;
 
+function getTgInitData(){
+  try{
+    const w=window.Telegram&&window.Telegram.WebApp&&window.Telegram.WebApp.initData;
+    if(w){ sessionStorage.setItem("if_tg_init",w); return w; }
+    if(location.hash && location.hash.includes("tgWebAppData=")){
+      const d=new URLSearchParams(location.hash.slice(1)).get("tgWebAppData")||"";
+      if(d){ sessionStorage.setItem("if_tg_init",d); return d; }
+    }
+    return sessionStorage.getItem("if_tg_init")||"";
+  }catch(e){ return ""; }
+}
+getTgInitData();
+
 let MODAL_KIND="pro";
 function closeModal(){
   if(document.activeElement && typeof document.activeElement.blur==="function") document.activeElement.blur();
@@ -1062,7 +1073,7 @@ function openModal(k){
   $("mt").dataset.i=h?"hostt":"mt"; $("mtext").dataset.i=h?"hostp":"mp";
   $("mt").textContent=T($("mt").dataset.i); $("mtext").textContent=T($("mtext").dataset.i);
   $("mprice").textContent=(h?PRICES.host:PRICES.pro)+" ⭐"; $("pay").href=h?HOST_URL:PAY_URL;
-  $("trialbtn").hidden=!(h&&TRIAL_ON);
+  $("trialbtn").hidden=!(h&&TRIAL_ON&&!store.get("if_trial_used",false));
   $("modal").classList.add("on"); $("modal").scrollTop=0;
   loadPrices();
 }
@@ -1092,11 +1103,13 @@ async function publishTrial(){
   if(!API) return;
   $("trialbtn").disabled=true;
   try{
-    const r=await fetch(API+"/publish-trial",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({brand:val("brand"),html:site(true)})});
+    const r=await fetch(API+"/publish-trial",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({brand:val("brand"),html:site(true),initData:getTgInitData()})});
     const j=await r.json();
-    if(r.status===429){ toast(T("trialused")); $("trialbtn").disabled=false; return; }
+    if(r.status===429){ store.set("if_trial_used",true); $("trialbtn").hidden=true; toast(T("trialused")); $("trialbtn").disabled=false; return; }
     if(!j.ok) throw 0;
-    $("modal").classList.remove("on");
+    store.set("if_trial_used",true);
+    $("trialbtn").hidden=true;
+    closeModal();
     showPublished(j.url,"trialok");
     try{ await navigator.clipboard.writeText(j.url); }catch(e){}
   }catch(e){ toast(T("puberr")); }

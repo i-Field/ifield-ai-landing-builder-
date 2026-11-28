@@ -43,7 +43,7 @@ main{
   letter-spacing:-.02em;background:none;border:0;padding:0;color:inherit;
   cursor:pointer;min-height:44px;
 }
-.brandrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .mark{
   width:34px;height:34px;border-radius:10px;
   background:linear-gradient(135deg,var(--a),var(--b));
@@ -54,25 +54,32 @@ main{
 .mark span{display:block}
 .lt{color:var(--tx);font-size:24px;font-weight:800;letter-spacing:-.02em}
 .pill{
-  padding:6px 14px;border-radius:99px;background:rgba(110,150,255,.14);
-  border:1px solid var(--ln);font-size:13px;font-weight:700;
+  padding:6px 13px;border-radius:99px;background:rgba(110,150,255,.14);
+  border:1px solid var(--ln);font-size:12.5px;font-weight:700;white-space:nowrap;
 }
 #badge{
   background:linear-gradient(135deg,#22c55e,#16a34a);border:0;color:#fff;
-  font-weight:800;letter-spacing:.02em;animation:bpulse 5s ease-in-out infinite;
+  font-weight:800;letter-spacing:.02em;white-space:nowrap;animation:bpulse 5s ease-in-out infinite;
 }
 @keyframes mpulse{0%,100%{transform:scale(1);opacity:.94}50%{transform:scale(1.05);opacity:1}}
 @keyframes bpulse{0%,100%{opacity:.92}50%{opacity:1}}
 
-.chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chips-r{display:flex;align-items:center;gap:6px;margin-left:auto}
 .chip,select{
   background:var(--gl);border:1px solid var(--ln);color:var(--tx);
-  border-radius:99px;padding:7px 13px;font:inherit;font-size:14px;min-height:40px;
+  border-radius:99px;padding:6px 12px;font:inherit;font-size:13px;min-height:38px;
+  display:inline-flex;align-items:center;white-space:nowrap;
+}
+@media(max-width:760px){
+  main{padding:14px 14px 72px}
+  .brandrow,.chips{width:100%}
+  .chip,select{padding:6px 10px;font-size:12.5px}
 }
 option{background:#11131f}
 h1{
   font-size:clamp(34px,7vw,58px);line-height:1.04;letter-spacing:-.035em;
-  margin:36px 0 12px;
+  margin:26px 0 12px;
   background:linear-gradient(180deg,#fff,#97a1c4);
   -webkit-background-clip:text;background-clip:text;color:transparent;
   text-wrap:balance;
@@ -328,15 +335,17 @@ footer a{color:var(--mut);margin:0 8px}
     </div>
     <div class="chips">
       <button class="chip" id="guidebtn" type="button" data-i="guideb" style="cursor:pointer"></button>
-      <select id="lang" aria-label="Language">
-        <option value="en">🇬🇧 EN</option>
-        <option value="ru">🇷🇺 RU</option>
-        <option value="uk">🇺🇦 UK</option>
-        <option value="pl">🇵🇱 PL</option>
-        <option value="de">🇩🇪 DE</option>
-        <option value="fr">🇫🇷 FR</option>
-      </select>
-      <span class="chip" id="badge"></span>
+      <div class="chips-r">
+        <select id="lang" aria-label="Language">
+          <option value="en">🇬🇧 EN</option>
+          <option value="ru">🇷🇺 RU</option>
+          <option value="uk">🇺🇦 UK</option>
+          <option value="pl">🇵🇱 PL</option>
+          <option value="de">🇩🇪 DE</option>
+          <option value="fr">🇫🇷 FR</option>
+        </select>
+        <span class="chip" id="badge"></span>
+      </div>
     </div>
   </div>
 
